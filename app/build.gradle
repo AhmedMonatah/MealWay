@@ -8,14 +8,24 @@ android {
     compileSdk {
         version = release(36)
     }
-
+    buildFeatures {
+        buildConfig = true
+    }
     defaultConfig {
         applicationId "com.example.mealway"
         minSdk 24
         targetSdk 36
         versionCode 1
         versionName "1.0"
-
+        def envFile = rootProject.file(".env")
+        if (envFile.exists()) {
+            def props = new Properties()
+            props.load(new FileInputStream(envFile))
+            def apiKey = props.getProperty("GOOGLE_API_KEY", "")
+            buildConfigField "String", "GOOGLE_API_KEY", "\"${apiKey}\""
+        } else {
+            buildConfigField "String", "GOOGLE_API_KEY", "\"\""
+        }
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
