@@ -14,8 +14,30 @@ public class LoginPresenter {
     }
 
     public void login(String email, String password) {
-        boolean success = repository.login(email, password);
-        if (success) view.showLoginSuccess();
-        else view.showLoginError("Invalid credentials");
+        repository.login(email, password, new com.example.mealway.data.callback.AuthCallback() {
+            @Override
+            public void onSuccess() {
+                view.showLoginSuccess();
+            }
+
+            @Override
+            public void onFailure(String message) {
+                view.showLoginError(message);
+            }
+        });
+    }
+
+    public void loginWithGoogle(String idToken) {
+        repository.signInWithGoogle(idToken, new com.example.mealway.data.callback.AuthCallback() {
+            @Override
+            public void onSuccess() {
+                view.showLoginSuccess();
+            }
+
+            @Override
+            public void onFailure(String message) {
+                view.showLoginError(message);
+            }
+        });
     }
 }
