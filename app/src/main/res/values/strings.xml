@@ -9,7 +9,7 @@
     <string name="username">user name</string>
     <string name="password">Password</string>
     <string name="Skip">Skip</string>
-    <string name="OrLoginWith">or login with</string>
+    <string name="OrLoginWith">——— or login with ———</string>
     <string name="don_not_have_account">Don’t have an account? register now</string>
     <string name="FullName">Full Name</string>
     <string name="EmailAddress">Email Address</string>
@@ -30,7 +30,6 @@
     <string name="Hello">Hello,</string>
     <string name="Youtube">Youtube: </string>
     <string name="AddToPlan">Add to Plan</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
 
