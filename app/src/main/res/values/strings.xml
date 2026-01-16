@@ -1,0 +1,37 @@
+<resources>
+    <string name="app_name">MealWay</string>
+    <string name="Splash">Splash</string>
+    <string name="Login">Login</string>
+    <string name="SignUp">SignUp</string>
+    <string name="DailyMeal">DailyMeal</string>
+    <string name="Search">Search</string>
+    <string name="error">error404</string>
+    <string name="username">user name</string>
+    <string name="password">Password</string>
+    <string name="Skip">Skip</string>
+    <string name="OrLoginWith">or login with</string>
+    <string name="don_not_have_account">Don’t have an account? register now</string>
+    <string name="FullName">Full Name</string>
+    <string name="EmailAddress">Email Address</string>
+    <string name="Phone">Phone</string>
+    <string name="Password">Password</string>
+    <string name="SuggestedMeal">Today’s  Suggested Meal:</string>
+    <string name="AnotherGoodMeal">Another Good Meal For You</string>
+    <string name="Category">Category</string>
+    <string name="indeterminate">indeterminate</string>
+    <string name="Country">Country</string>
+    <string name="NoInternetHeader">No internet Connection !</string>
+    <string name="NoInternetTitle">Check your internet connection and try again</string>
+    <string name="Instructions">Instructions</string>
+    <string name="cup">cup</string>
+    <string name="LogOut">Log out</string>
+    <string name="YourWeakPlan">Your Weak Plan:</string>
+    <string name="FavouriteMeals">Favourite Meals</string>
+    <string name="Hello">Hello,</string>
+    <string name="Youtube">Youtube: </string>
+    <string name="AddToPlan">Add to Plan</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
+</resources>
