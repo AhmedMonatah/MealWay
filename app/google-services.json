@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "499298623305",
+    "project_id": "mealway-2e3b5",
+    "storage_bucket": "mealway-2e3b5.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:499298623305:android:6f909411a4e2a0837e0498",
+        "android_client_info": {
+          "package_name": "com.example.mealway"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "499298623305-l06hpce4vmatlnusvq0k4bcejql8dea1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA9szDrewzHu4JwMm4K_rh2CC9mSOqSAQ8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "499298623305-l06hpce4vmatlnusvq0k4bcejql8dea1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
