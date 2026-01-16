@@ -3,6 +3,7 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="MainColor">#00193E</color>
+    <color name="fragment_background_color">#1A3A5C</color>
 
 
 </resources>
