@@ -9,6 +9,8 @@ import com.example.mealway.R;
 import com.example.mealway.screen.MainActivity;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.navigation.NavOptions;
+import androidx.navigation.fragment.NavHostFragment;
 
 public class SplashFragment extends Fragment implements SplashView {
 
@@ -28,8 +30,9 @@ public class SplashFragment extends Fragment implements SplashView {
 
     @Override
     public void navigateToLogin() {
-        if(getActivity() instanceof MainActivity){
-            ((MainActivity) getActivity()).loadFragment(new com.example.mealway.screen.login.LoginFragment());
-        }
+        NavHostFragment.findNavController(this)
+                .navigate(R.id.action_splash_to_login, null, new NavOptions.Builder()
+                        .setPopUpTo(R.id.splashFragment, true)
+                        .build());
     }
 }
