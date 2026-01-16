@@ -1,0 +1,33 @@
+<navigation
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/splashFragment">
+
+    <fragment
+        android:id="@+id/splashFragment"
+        android:name="com.example.mealway.screen.splash.SplashFragment">
+        <action
+            android:id="@+id/action_splash_to_login"
+            app:destination="@id/loginFragment"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.example.mealway.screen.login.LoginFragment">
+        <action
+            android:id="@+id/action_login_to_register"
+            app:destination="@id/registerFragment"/>
+        <action
+            android:id="@+id/action_login_to_home"
+            app:destination="@id/homeFragment"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/registerFragment"
+        android:name="com.example.mealway.screen.signup.SignUpFragment" />
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.example.mealway.screen.homeactivity.HomeFragment" />
+</navigation>
