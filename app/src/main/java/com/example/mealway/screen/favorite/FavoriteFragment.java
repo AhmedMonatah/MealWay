@@ -1,4 +1,4 @@
-package com.example.mealway.screen.favouriate;
+package com.example.mealway.screen.favorite;
 
 import android.os.Bundle;
 

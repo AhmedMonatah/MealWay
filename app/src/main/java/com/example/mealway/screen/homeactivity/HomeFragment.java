@@ -11,7 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.mealway.R;
-import com.example.mealway.screen.favouriate.FavoriteFragment;
+import com.example.mealway.screen.favorite.FavoriteFragment;
 import com.example.mealway.screen.search.SearchFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -47,7 +47,6 @@ public class HomeFragment extends Fragment {
     }
 
     private void loadContentFragment(Fragment fragment) {
-        // load the fragment inside the container inside HomeFragment
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
         transaction.replace(R.id.home_content_container, fragment);
         transaction.commit();
