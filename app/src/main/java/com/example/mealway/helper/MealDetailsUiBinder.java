@@ -26,7 +26,7 @@ public class MealDetailsUiBinder {
         RecyclerView rvIngredients = view.findViewById(R.id.rv_ingredients);
 
         Glide.with(context).load(meal.getStrMealThumb()).into(ivHeader);
-        
+
         String subtitle = "";
         if (meal.getStrArea() != null) subtitle += meal.getStrArea();
         if (meal.getStrCategory() != null) subtitle += (subtitle.isEmpty() ? "" : " | ") + meal.getStrCategory();
@@ -34,13 +34,11 @@ public class MealDetailsUiBinder {
 
         tvInstructions.setText(meal.getStrInstructions());
 
-        // Use VideoHelper (New method bindVideo with fallback)
-        VideoHelper.bindVideo(cardVideo, ivVideoThumbnail, tvNoVideo, meal.getStrYoutube());
 
-        // Use IngredientsHelper
         List<Pair<String, String>> ingredients = IngredientsHelper.extractIngredients(meal);
         IngredientsAdapter adapter = new IngredientsAdapter(context, ingredients);
         rvIngredients.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
         rvIngredients.setAdapter(adapter);
     }
+
 }

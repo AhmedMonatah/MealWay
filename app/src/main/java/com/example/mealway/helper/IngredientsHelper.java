@@ -13,11 +13,9 @@ public class IngredientsHelper {
         
         for (int i = 1; i <= 20; i++) {
             try {
-                // Construct field names dynamically
                 String ingredientFieldName = "strIngredient" + i;
                 String measureFieldName = "strMeasure" + i;
                 
-                // Get field values using reflection
                 java.lang.reflect.Field ingredientField = mealClass.getDeclaredField(ingredientFieldName);
                 java.lang.reflect.Field measureField = mealClass.getDeclaredField(measureFieldName);
                 
@@ -30,7 +28,6 @@ public class IngredientsHelper {
                 addIngredient(ingredients, ingredient, measure);
                 
             } catch (Exception e) {
-                // If a field doesn't exist (unlikely with this model), just skip it
                 e.printStackTrace();
             }
         }

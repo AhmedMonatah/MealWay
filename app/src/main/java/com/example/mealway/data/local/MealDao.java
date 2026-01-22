@@ -8,17 +8,36 @@ import androidx.room.Query;
 import com.example.mealway.data.model.Meal;
 import java.util.List;
 
+import io.reactivex.rxjava3.core.Completable;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.Single;
+import com.example.mealway.data.model.MealAppointment;
+
 @Dao
 public interface MealDao {
+    // Favorites (Meal)
     @Query("SELECT * FROM meals")
-    List<Meal> getAllFavMeals();
+    Observable<List<Meal>> getAllFavMeals();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertFavMeal(Meal meal);
+    Completable insertFavMeal(Meal meal);
 
     @Delete
-    void deleteFavMeal(Meal meal);
+    Completable deleteFavMeal(Meal meal);
 
     @Query("SELECT EXISTS(SELECT 1 FROM meals WHERE idMeal = :id LIMIT 1)")
-    boolean isMealFavorite(String id);
+    Single<Boolean> isMealFavorite(String id);
+
+    // Appointments (MealAppointment)
+    @Query("SELECT * FROM meal_appointments ORDER BY dateTimestamp ASC")
+    Observable<List<MealAppointment>> getAllAppointments();
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    Completable insertAppointment(MealAppointment appointment);
+
+    @Delete
+    Completable deleteAppointment(MealAppointment appointment);
+
+    @Query("SELECT * FROM meal_appointments WHERE mealId = :mealId")
+    Observable<List<MealAppointment>> getAppointmentsForMeal(String mealId);
 }
