@@ -6,18 +6,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.webkit.WebChromeClient;
-import android.webkit.WebView;
-import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.options.IFramePlayerOptions;
 import com.bumptech.glide.Glide;
 import com.example.mealway.R;
 import com.example.mealway.data.model.Meal;
@@ -27,21 +25,26 @@ import com.example.mealway.screen.mealdetails.presenter.MealDetailsPresenter;
 import com.example.mealway.screen.mealdetails.presenter.MealDetailsPresenterImpl;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import android.webkit.WebResourceRequest;
+
 
 import android.app.DatePickerDialog;
 import com.example.mealway.utils.NetworkMonitor;
 import android.widget.Button;
 import java.util.Calendar;
 import androidx.cardview.widget.CardView;
+import android.widget.ProgressBar;
+import com.example.mealway.utils.AlertUtils;
 
-public class MealDetailsFragment extends Fragment implements MealDetailsView {
+public class MealDetailsFragment extends Fragment implements MealDetailsView, MealDetailsUIListener {
 
     private MealDetailsPresenter presenter;
     private ImageView ivMealImage, ivVideoThumbnail;
     private TextView tvInstructions, tvNoVideo, tvDetailArea;
     private YouTubePlayerView youTubePlayerView;
+    private YouTubePlayer mYouTubePlayer;
     private Button btnPlanMeal;
+    private com.google.firebase.auth.FirebaseAuth auth;
+    private ProgressBar progressBar;
 
     private CollapsingToolbarLayout collapsingToolbar;
     private RecyclerView rvIngredients;
@@ -67,6 +70,7 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
         ivVideoThumbnail = view.findViewById(R.id.iv_video_thumbnail);
         tvNoVideo = view.findViewById(R.id.tv_no_video);
         btnPlanMeal = view.findViewById(R.id.btn_plan_meal);
+        progressBar = view.findViewById(R.id.progress_bar);
 
         youTubePlayerView = view.findViewById(R.id.youtube_player_view);
         getLifecycle().addObserver(youTubePlayerView);
@@ -75,6 +79,7 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
 
         rvIngredients.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
 
+        auth = com.google.firebase.auth.FirebaseAuth.getInstance();
         presenter = new MealDetailsPresenterImpl(this, new MealRepository(requireContext()));
 
         Meal mealFromArgs = (Meal) getArguments().getSerializable("meal");
@@ -86,39 +91,78 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
             }
         }
 
-        fabFavorite.setOnClickListener(v -> {
-            if (currentMeal != null) {
-                Boolean isConnected = networkMonitor.getValue();
-                if (isConnected != null && isConnected) {
-                    if (isFavorite) {
-                        presenter.removeFromFavorites(currentMeal);
-                    } else {
-                        presenter.addToFavorites(currentMeal);
-                    }
-                } else {
-                    showMessage("Internet connection required for Favorites");
-                }
+        IFramePlayerOptions options = new IFramePlayerOptions.Builder()
+                .controls(1)
+                .build();
+
+        youTubePlayerView.initialize(new AbstractYouTubePlayerListener() {
+            @Override
+            public void onReady(@NonNull YouTubePlayer youTubePlayer) {
+                mYouTubePlayer = youTubePlayer;
             }
-        });
+        }, options);
 
-        btnPlanMeal.setOnClickListener(v -> showDatePicker());
-
-        cardVideo.setOnClickListener(v -> {
-            String videoId = extractVideoId(currentMeal.getStrYoutube());
-            if (videoId == null) return;
-
-            cardVideo.setVisibility(View.GONE);
-            youTubePlayerView.setVisibility(View.VISIBLE);
-
-            youTubePlayerView.addYouTubePlayerListener(new AbstractYouTubePlayerListener() {
-                @Override
-                public void onReady(@NonNull YouTubePlayer youTubePlayer) {
-                    youTubePlayer.cueVideo(videoId, 0);
-                }
-            });
-        });
+        fabFavorite.setOnClickListener(v -> onFavoriteClicked());
+        btnPlanMeal.setOnClickListener(v -> onPlanClicked());
+        cardVideo.setOnClickListener(v -> onVideoCardClicked());
 
         return view;
+    }
+
+    @Override
+    public void onFavoriteClicked() {
+        if (auth.getCurrentUser() == null) {
+            AlertUtils.showConfirmation(requireContext(), "Login Required", 
+                "You need to login to add to favorites. Go to login?", "Login",
+                () -> {
+                    Navigation.findNavController(requireActivity(), R.id.nav_host)
+                            .navigate(R.id.loginFragment);
+                });
+            return;
+        }
+        if (currentMeal != null) {
+            if (isFavorite) {
+                if (NetworkMonitor.isNetworkAvailable(requireContext())) {
+                    AlertUtils.showConfirmation(requireContext(), "Remove Favorite", 
+                        "Are you sure you want to remove this meal from favorites?", "Remove",
+                        () -> presenter.removeFromFavorites(currentMeal));
+                } else {
+                    showMessage("You must be logged in to sync and remove from Favorites");
+                }
+            } else {
+                presenter.addToFavorites(currentMeal);
+            }
+        }
+    }
+
+    @Override
+    public void onPlanClicked() {
+        if (auth.getCurrentUser() == null) {
+            AlertUtils.showConfirmation(requireContext(), "Login Required", 
+                "You need to login to plan meals. Go to login?", "Login",
+                () -> {
+                    Navigation.findNavController(requireActivity(), R.id.nav_host)
+                            .navigate(R.id.loginFragment);
+                });
+            return;
+        }
+        showDatePicker();
+    }
+
+    @Override
+    public void onVideoCardClicked() {
+        if (currentMeal != null && mYouTubePlayer != null) {
+            String videoId = extractVideoId(currentMeal.getStrYoutube());
+            if (videoId != null) {
+                // Hide thumbnail and show player (it's already visible behind)
+                cardVideo.setVisibility(View.GONE);
+                mYouTubePlayer.loadVideo(videoId, 0);
+            } else {
+                showMessage("Invalid Video ID");
+            }
+        } else if (mYouTubePlayer == null) {
+            showMessage("Preparing player... please tap again in a moment");
+        }
     }
 
     private void showDatePicker() {
@@ -168,9 +212,7 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
 
     private void setupVideo(String youtubeUrl) {
         if (youtubeUrl != null && !youtubeUrl.isEmpty()) {
-
             cardVideo.setVisibility(View.VISIBLE);
-            youTubePlayerView.setVisibility(View.GONE);
             tvNoVideo.setVisibility(View.GONE);
 
             String videoId = extractVideoId(youtubeUrl);
@@ -186,14 +228,13 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
         }
     }
 
-
-
     private String extractVideoId(String url) {
-        if (url == null) return null;
-        if (url.contains("v=")) {
-            return url.split("v=")[1].split("&")[0];
-        } else if (url.contains("be/")) {
-            return url.split("be/")[1];
+        if (url == null || url.isEmpty()) return null;
+        String pattern = "(?<=watch\\?v=|/videos/|embed/|youtu.be/|/v/|/e/|watch\\?v%3D|watch\\?feature=player_embedded&v=|%2Fvideos%2F|embed%2F|youtu.be%2F|%2Fv%2F)[^#&?\\n]*";
+        java.util.regex.Pattern compiledPattern = java.util.regex.Pattern.compile(pattern);
+        java.util.regex.Matcher matcher = compiledPattern.matcher(url);
+        if (matcher.find()) {
+            return matcher.group();
         }
         return null;
     }
@@ -211,7 +252,17 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
     @Override
     public void showMessage(String message) {
         if (isAdded()) {
-            Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+            android.widget.Toast.makeText(requireContext(), message, android.widget.Toast.LENGTH_SHORT).show();
         }
+    }
+
+    @Override
+    public void showLoading() {
+        if (progressBar != null) progressBar.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hideLoading() {
+        if (progressBar != null) progressBar.setVisibility(View.GONE);
     }
 }

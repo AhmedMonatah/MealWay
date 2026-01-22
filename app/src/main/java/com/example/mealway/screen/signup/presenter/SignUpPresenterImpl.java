@@ -15,13 +15,13 @@ public class SignUpPresenterImpl implements SignUpPresenter {
     }
 
     @Override
-    public void register(String email, String password) {
-        if(email.isEmpty() || password.isEmpty()){
+    public void register(String email, String password, String fullName, String phone) {
+        if(email.isEmpty() || password.isEmpty() || fullName.isEmpty() || phone.isEmpty()){
             view.showError("Please fill all fields");
             return;
         }
 
-        repository.register(email, password, new AuthCallback() {
+        repository.register(email, password, fullName, phone, new AuthCallback() {
             @Override
             public void onSuccess() {
                 view.showSuccess();

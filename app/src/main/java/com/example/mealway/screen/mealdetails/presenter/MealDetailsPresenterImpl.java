@@ -47,32 +47,43 @@ public class MealDetailsPresenterImpl implements MealDetailsPresenter {
 
     @Override
     public void addToFavorites(Meal meal) {
+        view.showLoading();
         disposables.add(repository.addToFavorites(meal)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         () -> {
+                            view.hideLoading();
                             view.showFavoriteStatus(true);
                             view.showMessage("Added to Favorites");
                         },
-                        throwable -> view.showMessage("Failed to add to Favorites: " + throwable.getMessage())
+                        throwable -> {
+                            view.hideLoading();
+                            view.showMessage("Failed to add to Favorites: " + throwable.getMessage());
+                        }
                 ));
     }
 
     @Override
     public void removeFromFavorites(Meal meal) {
+        view.showLoading();
         disposables.add(repository.removeFromFavorites(meal)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         () -> {
+                            view.hideLoading();
                             view.showFavoriteStatus(false);
                             view.showMessage("Removed from Favorites");
                         },
-                        throwable -> view.showMessage("Failed to remove from Favorites: " + throwable.getMessage())
+                        throwable -> {
+                            view.hideLoading();
+                            view.showMessage("Failed to remove from Favorites: " + throwable.getMessage());
+                        }
                 ));
     }
 
     @Override
     public void addAppointment(Meal meal, long timestamp) {
+        view.showLoading();
         String appointmentId = meal.getIdMeal() + "_" + timestamp;
         MealAppointment appointment = new MealAppointment(
                 appointmentId, 
@@ -85,8 +96,14 @@ public class MealDetailsPresenterImpl implements MealDetailsPresenter {
         disposables.add(repository.addAppointment(appointment)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        () -> view.showMessage("Meal added to plan"),
-                        throwable -> view.showMessage("Failed to add to plan: " + throwable.getMessage())
+                        () -> {
+                            view.hideLoading();
+                            view.showMessage("Meal added to plan");
+                        },
+                        throwable -> {
+                            view.hideLoading();
+                            view.showMessage("Failed to add to plan: " + throwable.getMessage());
+                        }
                 ));
     }
 

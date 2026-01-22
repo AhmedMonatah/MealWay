@@ -6,4 +6,6 @@ public interface MealDetailsView {
     void showMealDetails(Meal meal);
     void showFavoriteStatus(boolean isFavorite);
     void showMessage(String message);
+    void showLoading();
+    void hideLoading();
 }

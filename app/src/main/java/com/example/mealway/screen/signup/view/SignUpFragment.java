@@ -45,11 +45,16 @@ public class SignUpFragment extends Fragment implements SignUpView {
         presenter = new SignUpPresenterImpl(this, new AuthRepositoryImpl(requireContext()));
 
         signUpButton.setOnClickListener(v -> {
-             progressBar.setVisibility(View.VISIBLE);
-             signUpButton.setEnabled(false);
              String email = emailEditText.getText().toString().trim();
              String password = passwordEditText.getText().toString().trim();
-             presenter.register(email, password);
+             String fullName = fullNameEditText.getText().toString().trim();
+             String phone = phoneEditText.getText().toString().trim();
+             
+             if (!email.isEmpty() && !password.isEmpty()) {
+                 progressBar.setVisibility(View.VISIBLE);
+                 signUpButton.setEnabled(false);
+                 presenter.register(email, password, fullName, phone);
+             }
         });
 
         skipButton.setOnClickListener(v ->
