@@ -261,4 +261,52 @@ public class Meal implements Serializable {
 
     public String getStrMeasure20() { return strMeasure20; }
     public void setStrMeasure20(String strMeasure20) { this.strMeasure20 = strMeasure20; }
+    public List<String> getIngredients() {
+        List<String> ingredients = new ArrayList<>();
+        if (strIngredient1 != null && !strIngredient1.isEmpty()) ingredients.add(strIngredient1);
+        if (strIngredient2 != null && !strIngredient2.isEmpty()) ingredients.add(strIngredient2);
+        if (strIngredient3 != null && !strIngredient3.isEmpty()) ingredients.add(strIngredient3);
+        if (strIngredient4 != null && !strIngredient4.isEmpty()) ingredients.add(strIngredient4);
+        if (strIngredient5 != null && !strIngredient5.isEmpty()) ingredients.add(strIngredient5);
+        if (strIngredient6 != null && !strIngredient6.isEmpty()) ingredients.add(strIngredient6);
+        if (strIngredient7 != null && !strIngredient7.isEmpty()) ingredients.add(strIngredient7);
+        if (strIngredient8 != null && !strIngredient8.isEmpty()) ingredients.add(strIngredient8);
+        if (strIngredient9 != null && !strIngredient9.isEmpty()) ingredients.add(strIngredient9);
+        if (strIngredient10 != null && !strIngredient10.isEmpty()) ingredients.add(strIngredient10);
+        if (strIngredient11 != null && !strIngredient11.isEmpty()) ingredients.add(strIngredient11);
+        if (strIngredient12 != null && !strIngredient12.isEmpty()) ingredients.add(strIngredient12);
+        if (strIngredient13 != null && !strIngredient13.isEmpty()) ingredients.add(strIngredient13);
+        if (strIngredient14 != null && !strIngredient14.isEmpty()) ingredients.add(strIngredient14);
+        if (strIngredient15 != null && !strIngredient15.isEmpty()) ingredients.add(strIngredient15);
+        if (strIngredient16 != null && !strIngredient16.isEmpty()) ingredients.add(strIngredient16);
+        if (strIngredient17 != null && !strIngredient17.isEmpty()) ingredients.add(strIngredient17);
+        if (strIngredient18 != null && !strIngredient18.isEmpty()) ingredients.add(strIngredient18);
+        if (strIngredient19 != null && !strIngredient19.isEmpty()) ingredients.add(strIngredient19);
+        if (strIngredient20 != null && !strIngredient20.isEmpty()) ingredients.add(strIngredient20);
+        return ingredients;
+    }
+    public List<android.util.Pair<String, String>> getIngredientsWithMeasures() {
+        List<android.util.Pair<String, String>> list = new ArrayList<>();
+        if (strIngredient1 != null && !strIngredient1.isEmpty()) list.add(new android.util.Pair<>(strIngredient1, strMeasure1));
+        if (strIngredient2 != null && !strIngredient2.isEmpty()) list.add(new android.util.Pair<>(strIngredient2, strMeasure2));
+        if (strIngredient3 != null && !strIngredient3.isEmpty()) list.add(new android.util.Pair<>(strIngredient3, strMeasure3));
+        if (strIngredient4 != null && !strIngredient4.isEmpty()) list.add(new android.util.Pair<>(strIngredient4, strMeasure4));
+        if (strIngredient5 != null && !strIngredient5.isEmpty()) list.add(new android.util.Pair<>(strIngredient5, strMeasure5));
+        if (strIngredient6 != null && !strIngredient6.isEmpty()) list.add(new android.util.Pair<>(strIngredient6, strMeasure6));
+        if (strIngredient7 != null && !strIngredient7.isEmpty()) list.add(new android.util.Pair<>(strIngredient7, strMeasure7));
+        if (strIngredient8 != null && !strIngredient8.isEmpty()) list.add(new android.util.Pair<>(strIngredient8, strMeasure8));
+        if (strIngredient9 != null && !strIngredient9.isEmpty()) list.add(new android.util.Pair<>(strIngredient9, strMeasure9));
+        if (strIngredient10 != null && !strIngredient10.isEmpty()) list.add(new android.util.Pair<>(strIngredient10, strMeasure10));
+        if (strIngredient11 != null && !strIngredient11.isEmpty()) list.add(new android.util.Pair<>(strIngredient11, strMeasure11));
+        if (strIngredient12 != null && !strIngredient12.isEmpty()) list.add(new android.util.Pair<>(strIngredient12, strMeasure12));
+        if (strIngredient13 != null && !strIngredient13.isEmpty()) list.add(new android.util.Pair<>(strIngredient13, strMeasure13));
+        if (strIngredient14 != null && !strIngredient14.isEmpty()) list.add(new android.util.Pair<>(strIngredient14, strMeasure14));
+        if (strIngredient15 != null && !strIngredient15.isEmpty()) list.add(new android.util.Pair<>(strIngredient15, strMeasure15));
+        if (strIngredient16 != null && !strIngredient16.isEmpty()) list.add(new android.util.Pair<>(strIngredient16, strMeasure16));
+        if (strIngredient17 != null && !strIngredient17.isEmpty()) list.add(new android.util.Pair<>(strIngredient17, strMeasure17));
+        if (strIngredient18 != null && !strIngredient18.isEmpty()) list.add(new android.util.Pair<>(strIngredient18, strMeasure18));
+        if (strIngredient19 != null && !strIngredient19.isEmpty()) list.add(new android.util.Pair<>(strIngredient19, strMeasure19));
+        if (strIngredient20 != null && !strIngredient20.isEmpty()) list.add(new android.util.Pair<>(strIngredient20, strMeasure20));
+        return list;
+    }
 }
