@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+import com.google.android.material.snackbar.Snackbar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,17 +18,23 @@ import com.example.mealway.data.model.Meal;
 import com.example.mealway.data.repository.MealRepository;
 import com.example.mealway.screen.favorite.presenter.FavoritePresenter;
 import com.example.mealway.screen.favorite.presenter.FavoritePresenterImpl;
-import com.example.mealway.screen.search.view.SearchAdapter;
-import com.example.mealway.screen.search.view.SearchClickListener;
+import com.example.mealway.screen.favorite.view.FavoriteAdapter;
 import com.example.mealway.screen.mealdetails.view.MealDetailsFragment;
+import com.example.mealway.utils.NetworkMonitor;
+import com.example.mealway.utils.AlertUtils;
+import com.google.android.material.snackbar.Snackbar;
+import android.widget.ProgressBar;
 
 import java.util.List;
 
-public class FavoriteFragment extends Fragment implements FavoriteView, SearchClickListener {
+public class FavoriteFragment extends Fragment implements FavoriteView, FavoriteAdapter.OnFavoriteClickListener {
 
     private FavoritePresenter presenter;
-    private SearchAdapter adapter;
+    private FavoriteAdapter adapter;
     private RecyclerView rvFavorites;
+    private android.widget.TextView tvNoFavorites;
+    private NetworkMonitor networkMonitor;
+    private ProgressBar progressBar;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -35,10 +42,13 @@ public class FavoriteFragment extends Fragment implements FavoriteView, SearchCl
         View view = inflater.inflate(R.layout.fragment_favorite, container, false);
 
         rvFavorites = view.findViewById(R.id.rv_favorites);
-        rvFavorites.setLayoutManager(new GridLayoutManager(requireContext(), 3));
-        adapter = new SearchAdapter(requireContext(), this);
+        tvNoFavorites = view.findViewById(R.id.tv_no_favorites);
+        progressBar = view.findViewById(R.id.progress_bar);
+        rvFavorites.setLayoutManager(new GridLayoutManager(requireContext(), 2)); 
+        adapter = new FavoriteAdapter(requireContext(), this);
         rvFavorites.setAdapter(adapter);
 
+        networkMonitor = new NetworkMonitor(requireContext());
         presenter = new FavoritePresenterImpl(this, new MealRepository(requireContext()));
         
         return view;
@@ -52,14 +62,37 @@ public class FavoriteFragment extends Fragment implements FavoriteView, SearchCl
 
     @Override
     public void showFavorites(List<Meal> meals) {
-        adapter.setMeals(meals);
+        if (meals == null || meals.isEmpty()) {
+            tvNoFavorites.setVisibility(View.VISIBLE);
+            rvFavorites.setVisibility(View.GONE);
+        } else {
+            tvNoFavorites.setVisibility(View.GONE);
+            rvFavorites.setVisibility(View.VISIBLE);
+            adapter.setMeals(meals);
+        }
     }
 
     @Override
     public void showMessage(String message) {
         if (isAdded()) {
-            Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+            if (message.contains("Success") || message.contains("Removed")) {
+                AlertUtils.showSuccess(requireContext(), message);
+            } else if (message.contains("Failed") || message.contains("Error") || message.contains("logged in")) {
+                AlertUtils.showError(requireContext(), message);
+            } else {
+                AlertUtils.showSuccess(requireContext(), message);
+            }
         }
+    }
+
+    @Override
+    public void showLoading() {
+        if (progressBar != null) progressBar.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hideLoading() {
+        if (progressBar != null) progressBar.setVisibility(View.GONE);
     }
 
     @Override
@@ -74,6 +107,17 @@ public class FavoriteFragment extends Fragment implements FavoriteView, SearchCl
                 .replace(R.id.home_content_container, fragment)
                 .addToBackStack(null)
                 .commit();
+    }
+
+    @Override
+    public void onDeleteClick(Meal meal) {
+        if (NetworkMonitor.isNetworkAvailable(requireContext())) {
+            AlertUtils.showConfirmation(requireContext(), "Remove Favorite", 
+                "Are you sure you want to remove " + meal.getStrMeal() + " from favorites?", "Remove",
+                () -> presenter.removeFromFavorites(meal));
+        } else {
+            showMessage("You must be logged in to sync and remove favorites");
+        }
     }
 
     @Override

@@ -2,6 +2,14 @@ package com.example.mealway.data.repository;
 
 import com.example.mealway.data.callback.AuthCallback;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import android.net.Uri;
+import java.util.HashMap;
+import java.util.Map;
 
 public class AuthRepositoryImpl implements AuthRepository {
 
@@ -15,7 +23,6 @@ public class AuthRepositoryImpl implements AuthRepository {
 
     @Override
     public boolean isLoggedIn() {
-        // Checking both Firebase and Local Preference for robustness
         return firebaseAuth.getCurrentUser() != null && localDataSource.isLoggedIn();
     }
 
@@ -33,15 +40,32 @@ public class AuthRepositoryImpl implements AuthRepository {
     }
 
     @Override
-    public void register(String email, String password, AuthCallback callback) {
+    public void register(String email, String password, String fullName, String phone, AuthCallback callback) {
         firebaseAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        localDataSource.saveLoginState(true);
-                        callback.onSuccess();
+                        String uid = firebaseAuth.getCurrentUser().getUid();
+                        
+                        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                                .setDisplayName(fullName)
+                                .build();
+                        firebaseAuth.getCurrentUser().updateProfile(profileUpdates);
+
+                        FirebaseFirestore db = FirebaseFirestore.getInstance();
+                        Map<String, Object> user = new HashMap<>();
+                        user.put("fullName", fullName);
+                        user.put("phone", phone);
+                        user.put("email", email);
+                        user.put("uid", uid);
+
+                        db.collection("users").document(uid).set(user)
+                                .addOnSuccessListener(aVoid -> {
+                                    localDataSource.saveLoginState(true);
+                                    callback.onSuccess();
+                                })
+                                .addOnFailureListener(e -> callback.onFailure("Auth succeeded but failed to save profile"));
                     } else {
                         String error = task.getException() != null ? task.getException().getMessage() : "Registration failed";
-                        android.util.Log.e("AuthRepo", "Register Error: " + error);
                         callback.onFailure(error);
                     }
                 });
@@ -57,9 +81,66 @@ public class AuthRepositoryImpl implements AuthRepository {
                         callback.onSuccess();
                     } else {
                         String error = task.getException() != null ? task.getException().getMessage() : "Google Sign-In failed";
-                        android.util.Log.e("AuthRepo", "Google Sign-In Error: " + error);
                         callback.onFailure(error);
                     }
                 });
+    }
+
+    @Override
+    public FirebaseUser getCurrentUser() {
+        return firebaseAuth.getCurrentUser();
+    }
+
+    @Override
+    public void signOut() {
+        firebaseAuth.signOut();
+        localDataSource.saveLoginState(false);
+    }
+
+    @Override
+    public void uploadProfileImage(Uri imageUri, AuthCallback callback) {
+        FirebaseUser user = getCurrentUser();
+        if (user == null) {
+            callback.onFailure("User not logged in");
+            return;
+        }
+
+        StorageReference ref = FirebaseStorage.getInstance().getReference().child("profile_pics/" + user.getUid());
+        ref.putFile(imageUri)
+                .addOnSuccessListener(taskSnapshot -> ref.getDownloadUrl().addOnSuccessListener(downloadUri -> {
+                    UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                            .setPhotoUri(downloadUri)
+                            .build();
+                    user.updateProfile(profileUpdates)
+                            .addOnCompleteListener(task -> {
+                                if (task.isSuccessful()) callback.onSuccess();
+                                else callback.onFailure("Failed to update profile info");
+                            });
+                }))
+                .addOnFailureListener(e -> callback.onFailure(e.getMessage()));
+    }
+
+    @Override
+    public void getUserDetails(UserDataCallback callback) {
+        FirebaseUser user = getCurrentUser();
+        if (user == null) {
+            callback.onDataFetched("Guest", "N/A", "guest@mealway.com", null);
+            return;
+        }
+
+        FirebaseFirestore.getInstance().collection("users").document(user.getUid()).get()
+                .addOnSuccessListener(doc -> {
+                    if (doc.exists()) {
+                        callback.onDataFetched(
+                                doc.getString("fullName"),
+                                doc.getString("phone"),
+                                user.getEmail(),
+                                user.getPhotoUrl()
+                        );
+                    } else {
+                        callback.onDataFetched(user.getDisplayName(), "Not set", user.getEmail(), user.getPhotoUrl());
+                    }
+                })
+                .addOnFailureListener(e -> callback.onError(e.getMessage()));
     }
 }

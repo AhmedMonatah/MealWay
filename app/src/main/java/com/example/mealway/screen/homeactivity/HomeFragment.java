@@ -15,6 +15,8 @@ import com.example.mealway.R;
 import com.example.mealway.screen.common.NoInternetFragment;
 import com.example.mealway.screen.homeactivity.view.HomeContentFragment;
 import com.example.mealway.screen.favorite.view.FavoriteFragment;
+import com.example.mealway.screen.plan.view.PlanFragment;
+import com.example.mealway.screen.profile.view.ProfileFragment;
 import com.example.mealway.screen.search.view.SearchFragment;
 import com.example.mealway.utils.NetworkMonitor;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -48,6 +50,10 @@ public class HomeFragment extends Fragment {
                 fragment = new FavoriteFragment();
             } else if (id == R.id.nav_search) {
                 fragment = new SearchFragment();
+            } else if (id == R.id.nav_appointement) {
+                fragment = new PlanFragment();
+            } else if (id == R.id.nav_profile) {
+                fragment = new ProfileFragment();
             }
             
             if (fragment != null) {

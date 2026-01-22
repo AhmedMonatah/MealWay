@@ -1,52 +1,47 @@
-package com.example.mealway.screen.favorite.presenter;
+package com.example.mealway.screen.plan.presenter;
 
-import com.example.mealway.data.callback.NetworkCallback;
-import com.example.mealway.data.model.Meal;
+import com.example.mealway.data.model.MealAppointment;
 import com.example.mealway.data.repository.MealRepository;
-import com.example.mealway.screen.favorite.view.FavoriteView;
-
-import java.util.List;
-
-import io.reactivex.rxjava3.disposables.CompositeDisposable;
+import com.example.mealway.screen.plan.view.PlanView;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
 
-public class FavoritePresenterImpl implements FavoritePresenter {
-
-    private final FavoriteView view;
+public class PlanPresenterImpl implements PlanPresenter {
+    private final PlanView view;
     private final MealRepository repository;
     private final CompositeDisposable disposables = new CompositeDisposable();
 
-    public FavoritePresenterImpl(FavoriteView view, MealRepository repository) {
+    public PlanPresenterImpl(PlanView view, MealRepository repository) {
         this.view = view;
         this.repository = repository;
     }
 
     @Override
-    public void getFavorites() {
+    public void getAppointments() {
         view.showLoading();
-        disposables.add(repository.getStoredFavorites()
+        disposables.add(repository.getAllAppointments()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        meals -> {
+                        appointments -> {
                             view.hideLoading();
-                            view.showFavorites(meals);
+                            view.showAppointments(appointments);
                         },
                         throwable -> {
                             view.hideLoading();
-                            view.showMessage("Failed to load favorites: " + throwable.getMessage());
+                            view.showMessage("Failed to load plan: " + throwable.getMessage());
                         }
                 ));
     }
 
     @Override
-    public void removeFromFavorites(Meal meal) {
+    public void deleteAppointment(MealAppointment appointment) {
         view.showLoading();
-        disposables.add(repository.removeFromFavorites(meal)
+        disposables.add(repository.deleteAppointment(appointment)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         () -> {
                             view.hideLoading();
-                            view.showMessage("Removed from Favorites"); // Room Observable will auto-update view
+                            view.showMessage("Removed from plan");
                         },
                         throwable -> {
                             view.hideLoading();
@@ -55,6 +50,7 @@ public class FavoritePresenterImpl implements FavoritePresenter {
                 ));
     }
 
+    @Override
     public void onDestroy() {
         disposables.clear();
     }

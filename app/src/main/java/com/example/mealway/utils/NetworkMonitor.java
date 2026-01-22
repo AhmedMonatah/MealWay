@@ -71,4 +71,21 @@ public class NetworkMonitor extends LiveData<Boolean> {
             postValue(false);
         }
     }
+
+    public static boolean isNetworkAvailable(Context context) {
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (cm == null) return false;
+        
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            Network activeNetwork = cm.getActiveNetwork();
+            if (activeNetwork == null) return false;
+            NetworkCapabilities caps = cm.getNetworkCapabilities(activeNetwork);
+            return caps != null && (caps.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) || 
+                                   caps.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ||
+                                   caps.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET));
+        } else {
+            android.net.NetworkInfo info = cm.getActiveNetworkInfo();
+            return info != null && info.isConnected();
+        }
+    }
 }
