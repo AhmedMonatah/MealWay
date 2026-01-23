@@ -35,6 +35,10 @@ public class PlanPresenterImpl implements PlanPresenter {
 
     @Override
     public void deleteAppointment(MealAppointment appointment) {
+        if (!repository.isOnline()) {
+            view.showMessage("You cannot remove appointments while offline.");
+            return;
+        }
         view.showLoading();
         disposables.add(repository.deleteAppointment(appointment)
                 .observeOn(AndroidSchedulers.mainThread())

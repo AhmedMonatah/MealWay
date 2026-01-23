@@ -9,11 +9,14 @@ import java.io.Serializable;
 public class MealAppointment implements Serializable {
     @PrimaryKey
     @NonNull
-    private String id; // Unique ID (e.g., mealId + timestamp)
+    private String id;
     private String mealId;
     private String mealName;
     private String mealThumb;
     private long dateTimestamp;
+
+    public MealAppointment() {
+    }
 
     public MealAppointment(@NonNull String id, String mealId, String mealName, String mealThumb, long dateTimestamp) {
         this.id = id;

@@ -13,6 +13,7 @@ public interface AuthRepository {
     void signOut();
     void uploadProfileImage(Uri imageUri, AuthCallback callback);
     void getUserDetails(UserDataCallback callback);
+    void syncUserData(AuthCallback callback);
 
     interface UserDataCallback {
         void onDataFetched(String fullName, String phone, String email, Uri photoUrl);

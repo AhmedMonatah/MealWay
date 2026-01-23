@@ -41,9 +41,29 @@ public class HomeFragment extends Fragment {
 
         loadContentFragment(new HomeContentFragment());
 
+        com.example.mealway.data.repository.AuthRepository authRepository = new com.example.mealway.data.repository.AuthRepositoryImpl(requireContext());
+
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
             Fragment fragment = null;
+            
+            // Guest check for sensitive screens
+            if ((id == R.id.nav_favorite || id == R.id.nav_appointement) && !authRepository.isLoggedIn()) {
+                com.example.mealway.utils.AlertUtils.showConfirmation(
+                    requireContext(),
+                    "Login Required",
+                    "Please login to access your favorites and meal plans.",
+                    "Login",
+                    () -> {
+                        androidx.navigation.Navigation.findNavController(requireActivity(), R.id.nav_host)
+                            .navigate(R.id.loginFragment, null, new androidx.navigation.NavOptions.Builder()
+                                .setPopUpTo(R.id.nav_graph, true)
+                                .build());
+                    }
+                );
+                return false; // Don't switch tab
+            }
+
             if (id == R.id.nav_home) {
                 fragment = new HomeContentFragment();
             } else if (id == R.id.nav_favorite) {

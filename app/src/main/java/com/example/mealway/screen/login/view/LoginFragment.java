@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,11 +20,12 @@ import com.example.mealway.R;
 import com.example.mealway.data.repository.AuthRepositoryImpl;
 import com.example.mealway.screen.login.presenter.LoginPresenter;
 import com.example.mealway.screen.login.presenter.LoginPresenterImpl;
+import com.example.mealway.util.GoogleSignInHelper;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -31,7 +33,9 @@ public class LoginFragment extends Fragment implements LoginView {
 
     private LoginPresenter presenter;
     private TextInputEditText usernameEditText, passwordEditText;
+    private View usernameLayout, passwordLayout;
     private MaterialButton loginButton;
+    private ProgressBar progressBar;
 
     @Nullable
     @Override
@@ -43,20 +47,17 @@ public class LoginFragment extends Fragment implements LoginView {
 
         usernameEditText = view.findViewById(R.id.usernameInput);
         passwordEditText = view.findViewById(R.id.passwordInput);
+        usernameLayout = view.findViewById(R.id.usernameLayout);
+        passwordLayout = view.findViewById(R.id.passwordLayout);
         loginButton = view.findViewById(R.id.loginButton);
+        progressBar = view.findViewById(R.id.progressBar);
         TextView registerLink = view.findViewById(R.id.registerLink);
         MaterialButton skipButton = view.findViewById(R.id.skipButton);
         View googleSignInButton = view.findViewById(R.id.googleSignIn);
 
         presenter = new LoginPresenterImpl(this, new AuthRepositoryImpl(requireContext()));
 
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
-                .requestEmail()
-                .build();
-
-        GoogleSignInClient googleSignInClient =
-                GoogleSignIn.getClient(requireActivity(), gso);
+        GoogleSignInClient googleSignInClient = GoogleSignInHelper.getGoogleSignInClient(requireContext());
 
         ActivityResultLauncher<android.content.Intent> googleLauncher =
                 registerForActivityResult(
@@ -85,16 +86,36 @@ public class LoginFragment extends Fragment implements LoginView {
         );
 
         loginButton.setOnClickListener(v -> {
-            String user = usernameEditText.getText().toString().trim();
+            String email = usernameEditText.getText().toString().trim();
             String pass = passwordEditText.getText().toString().trim();
 
-            if (TextUtils.isEmpty(user) || TextUtils.isEmpty(pass)) {
-                Toast.makeText(getContext(),
-                        "Please enter username & password",
-                        Toast.LENGTH_SHORT).show();
-            } else {
-                presenter.login(user, pass);
+            // Reset backgrounds
+            usernameLayout.setBackgroundResource(R.drawable.input_field_background);
+            passwordLayout.setBackgroundResource(R.drawable.input_field_background);
+
+            boolean hasError = false;
+
+            if (TextUtils.isEmpty(email)) {
+                usernameLayout.setBackgroundResource(R.drawable.input_field_error_background);
+                hasError = true;
+            } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                usernameLayout.setBackgroundResource(R.drawable.input_field_error_background);
+                Toast.makeText(getContext(), "Enter a valid email", Toast.LENGTH_SHORT).show();
+                hasError = true;
             }
+
+            if (TextUtils.isEmpty(pass)) {
+                passwordLayout.setBackgroundResource(R.drawable.input_field_error_background);
+                hasError = true;
+            } else if (pass.length() < 6) {
+                passwordLayout.setBackgroundResource(R.drawable.input_field_error_background);
+                Toast.makeText(getContext(), "Password must be at least 6 characters", Toast.LENGTH_SHORT).show();
+                hasError = true;
+            }
+
+            if (hasError) return;
+
+            presenter.login(email, pass);
         });
 
         skipButton.setOnClickListener(v ->
@@ -112,13 +133,29 @@ public class LoginFragment extends Fragment implements LoginView {
 
     @Override
     public void showLoginSuccess() {
-        Toast.makeText(getContext(), "Login Successful", Toast.LENGTH_SHORT).show();
-        NavHostFragment.findNavController(this)
-                .navigate(R.id.action_login_to_home);
+        if (getContext() != null) {
+            Toast.makeText(getContext(), "Login Successful", Toast.LENGTH_SHORT).show();
+        }
+        if (isAdded()) {
+            NavHostFragment.findNavController(this)
+                    .navigate(R.id.action_login_to_home);
+        }
     }
 
     @Override
     public void showLoginError(String msg) {
         Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void showLoading() {
+        if (progressBar != null) progressBar.setVisibility(View.VISIBLE);
+        if (loginButton != null) loginButton.setEnabled(false);
+    }
+
+    @Override
+    public void hideLoading() {
+        if (progressBar != null) progressBar.setVisibility(View.GONE);
+        if (loginButton != null) loginButton.setEnabled(true);
     }
 }
