@@ -11,6 +11,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
+            android:layout_marginTop="50dp"
             android:text="Meal Schedule"
             android:textSize="24sp"
             android:textStyle="bold"
@@ -27,29 +28,48 @@
             android:textColor="@color/MainColor"
             android:textStyle="bold" />
 
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginHorizontal="16dp"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="6dp"
+        app:cardBackgroundColor="#FFFFFF">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="12dp"
-            android:paddingHorizontal="12dp">
-            <TextView style="@style/CalendarHeader" android:text="S" />
-            <TextView style="@style/CalendarHeader" android:text="M" />
-            <TextView style="@style/CalendarHeader" android:text="T" />
-            <TextView style="@style/CalendarHeader" android:text="W" />
-            <TextView style="@style/CalendarHeader" android:text="T" />
-            <TextView style="@style/CalendarHeader" android:text="F" />
-            <TextView style="@style/CalendarHeader" android:text="S" />
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView style="@style/CalendarHeader" android:text="S" />
+                <TextView style="@style/CalendarHeader" android:text="M" />
+                <TextView style="@style/CalendarHeader" android:text="T" />
+                <TextView style="@style/CalendarHeader" android:text="W" />
+                <TextView style="@style/CalendarHeader" android:text="T" />
+                <TextView style="@style/CalendarHeader" android:text="F" />
+                <TextView style="@style/CalendarHeader" android:text="S" />
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_calendar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp" />
+
         </LinearLayout>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_calendar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:paddingHorizontal="12dp" />
+    </com.google.android.material.card.MaterialCardView>
 
-        <FrameLayout
+
+
+    <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="8dp">

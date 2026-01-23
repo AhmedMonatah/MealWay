@@ -16,7 +16,7 @@
             android:id="@+id/header_bg"
             android:layout_width="match_parent"
             android:layout_height="280dp"
-            android:background="@drawable/gradient_premium"
+            android:background="@drawable/header_background_shape"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
@@ -52,17 +52,17 @@
                 <RelativeLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content">
-                    
+
                     <com.google.android.material.imageview.ShapeableImageView
                         android:id="@+id/iv_profile_pic"
                         android:layout_width="140dp"
                         android:layout_height="140dp"
+                        android:elevation="4dp"
                         android:scaleType="centerCrop"
-                        android:src="@drawable/ic_profile"
-                        app:strokeColor="#FFFFFF"
-                        app:strokeWidth="4dp"
+                        android:src="@drawable/filter_button_bg"
                         app:shapeAppearanceOverlay="@style/CircleImageView"
-                        android:elevation="4dp" />
+                        app:strokeColor="#FFFFFF"
+                        app:strokeWidth="4dp" />
 
                     <com.google.android.material.floatingactionbutton.FloatingActionButton
                         android:id="@+id/fab_edit_photo"
