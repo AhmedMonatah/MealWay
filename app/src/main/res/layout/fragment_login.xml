@@ -8,7 +8,6 @@
     android:background="@color/MainColor"
     android:padding="24dp">
 
-    <!-- GUIDELINES: Restrict width on tablets so content doesn't stretch too far -->
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guidelineStart"
         android:layout_width="wrap_content"
@@ -69,7 +68,6 @@
             android:textColorHint="@android:color/white" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <!-- 3. PASSWORD: Connected to Username. -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/passwordLayout"
         android:layout_width="0dp"
@@ -106,7 +104,6 @@
             android:textColorHint="@android:color/white" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <!-- 4. BUTTONS: Connected to Password. -->
     <LinearLayout
         android:id="@+id/buttonsContainer"
         android:layout_width="0dp"
@@ -147,7 +144,6 @@
             app:cornerRadius="28dp" />
     </LinearLayout>
 
-    <!-- 5. OR LOGIN TEXT: Connected to Buttons. -->
     <TextView
         android:id="@+id/orLoginText"
         android:layout_width="wrap_content"
@@ -161,7 +157,6 @@
         app:layout_constraintStart_toStartOf="@id/guidelineStart"
         app:layout_constraintTop_toBottomOf="@+id/buttonsContainer" />
 
-    <!-- 6. GOOGLE BUTTON: Connected to Text. -->
     <ImageButton
         android:id="@+id/googleSignIn"
         android:layout_width="60dp"
