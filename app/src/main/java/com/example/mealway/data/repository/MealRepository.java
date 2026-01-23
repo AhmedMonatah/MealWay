@@ -95,15 +95,25 @@ public class MealRepository {
                 if (response.isSuccessful() && response.body() != null && response.body().getMeals() != null && !response.body().getMeals().isEmpty()) {
                     callback.onSuccess(response.body().getMeals().get(0));
                 } else {
-                    callback.onFailure("Meal not found");
+                    checkLocalFavMeal(id, callback, "Meal not found");
                 }
             }
 
             @Override
             public void onFailure(Call<MealResponse> call, Throwable t) {
-                callback.onFailure(t.getMessage());
+                checkLocalFavMeal(id, callback, t.getMessage());
             }
         });
+    }
+
+    private void checkLocalFavMeal(String id, NetworkCallback<Meal> callback, String error) {
+        mealDao.getFavMealById(id)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        meal -> callback.onSuccess(meal),
+                        throwable -> callback.onFailure(error)
+                );
     }
 
     // Favorites Logic (Online Only for Add/Remove as per user request)
