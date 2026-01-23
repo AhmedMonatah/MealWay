@@ -81,6 +81,16 @@ public class Meal implements Serializable {
     public Meal() {
     }
 
+    private boolean isFavorite = false;
+
+    public boolean isFavorite() {
+        return isFavorite;
+    }
+
+    public void setFavorite(boolean isFavorite) {
+        this.isFavorite = isFavorite;
+    }
+
     @NonNull
     public String getIdMeal() {
         return idMeal;

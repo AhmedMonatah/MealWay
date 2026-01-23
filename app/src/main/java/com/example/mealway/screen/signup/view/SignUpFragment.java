@@ -22,6 +22,7 @@ public class SignUpFragment extends Fragment implements SignUpView {
 
     private SignUpPresenter presenter;
     private TextInputEditText emailEditText, passwordEditText, fullNameEditText, phoneEditText;
+    private View fullNameLayout, emailLayout, phoneLayout, passwordLayout;
     private MaterialButton signUpButton, skipButton;
     private android.widget.ProgressBar progressBar;
 
@@ -38,6 +39,10 @@ public class SignUpFragment extends Fragment implements SignUpView {
         passwordEditText = view.findViewById(R.id.passwordInput);
         fullNameEditText = view.findViewById(R.id.fullNameInput);
         phoneEditText = view.findViewById(R.id.phoneInput);
+        fullNameLayout = view.findViewById(R.id.fullNameLayout);
+        emailLayout = view.findViewById(R.id.emailLayout);
+        phoneLayout = view.findViewById(R.id.phoneLayout);
+        passwordLayout = view.findViewById(R.id.passwordLayout);
         signUpButton = view.findViewById(R.id.signUpButton);
         skipButton = view.findViewById(R.id.skipButton);
         progressBar = view.findViewById(R.id.progressBar);
@@ -45,16 +50,52 @@ public class SignUpFragment extends Fragment implements SignUpView {
         presenter = new SignUpPresenterImpl(this, new AuthRepositoryImpl(requireContext()));
 
         signUpButton.setOnClickListener(v -> {
-             String email = emailEditText.getText().toString().trim();
-             String password = passwordEditText.getText().toString().trim();
-             String fullName = fullNameEditText.getText().toString().trim();
-             String phone = phoneEditText.getText().toString().trim();
-             
-             if (!email.isEmpty() && !password.isEmpty()) {
-                 progressBar.setVisibility(View.VISIBLE);
-                 signUpButton.setEnabled(false);
-                 presenter.register(email, password, fullName, phone);
-             }
+            String email = emailEditText.getText().toString().trim();
+            String password = passwordEditText.getText().toString().trim();
+            String fullName = fullNameEditText.getText().toString().trim();
+            String phone = phoneEditText.getText().toString().trim();
+
+            // Reset backgrounds
+            fullNameLayout.setBackgroundResource(R.drawable.input_field_background);
+            emailLayout.setBackgroundResource(R.drawable.input_field_background);
+            phoneLayout.setBackgroundResource(R.drawable.input_field_background);
+            passwordLayout.setBackgroundResource(R.drawable.input_field_background);
+
+            boolean hasError = false;
+
+            if (fullName.isEmpty()) {
+                fullNameLayout.setBackgroundResource(R.drawable.input_field_error_background);
+                hasError = true;
+            }
+
+            if (email.isEmpty()) {
+                emailLayout.setBackgroundResource(R.drawable.input_field_error_background);
+                hasError = true;
+            } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                emailLayout.setBackgroundResource(R.drawable.input_field_error_background);
+                Toast.makeText(getContext(), "Enter a valid email", Toast.LENGTH_SHORT).show();
+                hasError = true;
+            }
+
+            if (phone.isEmpty()) {
+                phoneLayout.setBackgroundResource(R.drawable.input_field_error_background);
+                hasError = true;
+            }
+
+            if (password.isEmpty()) {
+                passwordLayout.setBackgroundResource(R.drawable.input_field_error_background);
+                hasError = true;
+            } else if (password.length() < 6) {
+                passwordLayout.setBackgroundResource(R.drawable.input_field_error_background);
+                Toast.makeText(getContext(), "Password must be at least 6 characters", Toast.LENGTH_SHORT).show();
+                hasError = true;
+            }
+
+            if (hasError) return;
+
+            progressBar.setVisibility(View.VISIBLE);
+            signUpButton.setEnabled(false);
+            presenter.register(email, password, fullName, phone);
         });
 
         skipButton.setOnClickListener(v ->
@@ -69,7 +110,9 @@ public class SignUpFragment extends Fragment implements SignUpView {
         if (isAdded()) {
             progressBar.setVisibility(View.GONE);
             signUpButton.setEnabled(true);
-            Toast.makeText(getContext(), "Registration Successful", Toast.LENGTH_SHORT).show();
+            if (getContext() != null) {
+                Toast.makeText(getContext(), "Registration Successful", Toast.LENGTH_SHORT).show();
+            }
             NavHostFragment.findNavController(this).navigate(R.id.action_signup_to_home);
         }
     }

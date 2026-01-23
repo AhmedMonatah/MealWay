@@ -30,17 +30,22 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class MealRepository {
-
     private final MealApiService apiService;
     private final MealDao mealDao;
     private final FirebaseManager firebaseManager;
     private static Meal cachedDailyMeal;
+    private final Context context;
 
     public MealRepository(Context context) {
+        this.context = context;
         this.apiService = RetrofitClient.getClient().create(MealApiService.class);
         AppDatabase db = AppDatabase.getInstance(context);
         this.mealDao = db.mealDao();
         this.firebaseManager = new FirebaseManager();
+    }
+
+    public boolean isOnline() {
+        return com.example.mealway.utils.NetworkMonitor.isNetworkAvailable(context);
     }
 
     // Existing Network Methods (kept as-is or could be Rx, but user didn't ask to change Retrofit yet)
@@ -118,6 +123,7 @@ public class MealRepository {
 
     // Favorites Logic (Online Only for Add/Remove as per user request)
     public Completable addToFavorites(Meal meal) {
+        meal.setFavorite(true);
         // Sync Room + Firestore
         return mealDao.insertFavMeal(meal)
                 .andThen(firebaseManager.addFavorite(meal))
@@ -145,9 +151,15 @@ public class MealRepository {
     }
 
     // Appointments Logic
-    public Completable addAppointment(MealAppointment appointment) {
-        // Room + Firestore (Sync Firestore is optional or best-effort here, but user said "add in local and firestore")
-        return mealDao.insertAppointment(appointment)
+    public Completable addAppointment(Meal meal, MealAppointment appointment) {
+        // Cache full meal details for offline access
+        // We don't overwrite the isFavorite status if it already exists in DB
+        return mealDao.isMealFavorite(meal.getIdMeal())
+                .flatMapCompletable(isFav -> {
+                    meal.setFavorite(isFav);
+                    return mealDao.insertFavMeal(meal);
+                })
+                .andThen(mealDao.insertAppointment(appointment))
                 .andThen(firebaseManager.addAppointment(appointment))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());

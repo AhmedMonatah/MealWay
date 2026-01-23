@@ -33,6 +33,7 @@ public class PlanFragment extends Fragment implements PlanView, PlanAdapter.OnDe
     private TextView tvMonthName, tvNoAppointments;
     private ProgressBar progressBar;
     private CalendarAdapter calendarAdapter;
+    private Calendar currentDisplayMonth = Calendar.getInstance();
     private List<MealAppointment> allAppointments = new ArrayList<>();
     private long selectedDateTimestamp;
 
@@ -55,6 +56,17 @@ public class PlanFragment extends Fragment implements PlanView, PlanAdapter.OnDe
 
         // Setup Grid Calendar (7 columns)
         rvCalendar.setLayoutManager(new androidx.recyclerview.widget.GridLayoutManager(requireContext(), 7));
+        
+        view.findViewById(R.id.btn_prev_month).setOnClickListener(v -> {
+            currentDisplayMonth.add(Calendar.MONTH, -1);
+            setupCalendar();
+        });
+
+        view.findViewById(R.id.btn_next_month).setOnClickListener(v -> {
+            currentDisplayMonth.add(Calendar.MONTH, 1);
+            setupCalendar();
+        });
+
         setupCalendar();
 
         return view;
@@ -62,21 +74,20 @@ public class PlanFragment extends Fragment implements PlanView, PlanAdapter.OnDe
 
     private void setupCalendar() {
         List<Date> days = new ArrayList<>();
-        Calendar cal = Calendar.getInstance();
+        Calendar cal = (Calendar) currentDisplayMonth.clone();
         
         // Month Title
         SimpleDateFormat monthFormat = new SimpleDateFormat("MMMM yyyy", Locale.getDefault());
         tvMonthName.setText(monthFormat.format(cal.getTime()));
 
-        // Start from beginning of current month
+        // Start from beginning of the month being displayed
         cal.set(Calendar.DAY_OF_MONTH, 1);
-        int month = cal.get(Calendar.MONTH);
         
         // Add "padding" days from previous month to align with day headers
         int firstDayOfWeek = cal.get(Calendar.DAY_OF_WEEK); // 1 = Sunday, 2 = Monday...
         cal.add(Calendar.DAY_OF_MONTH, -(firstDayOfWeek - 1));
 
-        // Generate roughly 6 weeks to fill a standard calendar grid
+        // Generate exactly 42 days (6 weeks) to fill the grid
         for (int i = 0; i < 42; i++) {
             days.add(cal.getTime());
             cal.add(Calendar.DAY_OF_MONTH, 1);

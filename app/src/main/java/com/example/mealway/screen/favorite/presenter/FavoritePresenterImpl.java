@@ -40,6 +40,10 @@ public class FavoritePresenterImpl implements FavoritePresenter {
 
     @Override
     public void removeFromFavorites(Meal meal) {
+        if (!repository.isOnline()) {
+            view.showMessage("You cannot remove favorites while offline.");
+            return;
+        }
         view.showLoading();
         disposables.add(repository.removeFromFavorites(meal)
                 .observeOn(AndroidSchedulers.mainThread())

@@ -15,14 +15,17 @@ public class LoginPresenterImpl implements LoginPresenter {
 
     @Override
     public void login(String email, String password) {
+        view.showLoading();
         repository.login(email, password, new com.example.mealway.data.callback.AuthCallback() {
             @Override
             public void onSuccess() {
+                view.hideLoading();
                 view.showLoginSuccess();
             }
 
             @Override
             public void onFailure(String message) {
+                view.hideLoading();
                 view.showLoginError(message);
             }
         });
@@ -30,14 +33,17 @@ public class LoginPresenterImpl implements LoginPresenter {
 
     @Override
     public void loginWithGoogle(String idToken) {
+        view.showLoading();
         repository.signInWithGoogle(idToken, new com.example.mealway.data.callback.AuthCallback() {
             @Override
             public void onSuccess() {
+                view.hideLoading();
                 view.showLoginSuccess();
             }
 
             @Override
             public void onFailure(String message) {
+                view.hideLoading();
                 view.showLoginError(message);
             }
         });

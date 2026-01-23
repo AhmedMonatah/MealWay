@@ -15,8 +15,7 @@ import com.example.mealway.data.model.MealAppointment;
 
 @Dao
 public interface MealDao {
-    // Favorites (Meal)
-    @Query("SELECT * FROM meals")
+    @Query("SELECT * FROM meals WHERE isFavorite = 1")
     Observable<List<Meal>> getAllFavMeals();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -31,16 +30,27 @@ public interface MealDao {
     @Query("SELECT * FROM meals WHERE idMeal = :id LIMIT 1")
     Single<Meal> getFavMealById(String id);
 
-    // Appointments (MealAppointment)
     @Query("SELECT * FROM meal_appointments ORDER BY dateTimestamp ASC")
     Observable<List<MealAppointment>> getAllAppointments();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     Completable insertAppointment(MealAppointment appointment);
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    Completable insertAllFavMeals(List<Meal> meals);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    Completable insertAllAppointments(List<MealAppointment> appointments);
+
     @Delete
     Completable deleteAppointment(MealAppointment appointment);
 
     @Query("SELECT * FROM meal_appointments WHERE mealId = :mealId")
     Observable<List<MealAppointment>> getAppointmentsForMeal(String mealId);
+
+    @Query("DELETE FROM meals")
+    Completable clearAllFavorites();
+
+    @Query("DELETE FROM meal_appointments")
+    Completable clearAllAppointments();
 }

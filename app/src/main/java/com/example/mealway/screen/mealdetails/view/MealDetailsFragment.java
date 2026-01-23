@@ -77,12 +77,14 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView, Me
 
         presenter = new MealDetailsPresenterImpl(this, new MealRepository(requireContext()));
 
-        Meal mealFromArgs = (Meal) getArguments().getSerializable("meal");
-        if (mealFromArgs != null) {
-            String mealId = mealFromArgs.getIdMeal();
-            if (mealId != null) {
-                presenter.getMealDetails(mealId);
-                presenter.checkFavoriteStatus(mealId);
+        if (getArguments() != null) {
+            Meal mealFromArgs = (Meal) getArguments().getSerializable("meal");
+            if (mealFromArgs != null) {
+                String mealId = mealFromArgs.getIdMeal();
+                if (mealId != null) {
+                    presenter.getMealDetails(mealId);
+                    presenter.checkFavoriteStatus(mealId);
+                }
             }
         }
 
@@ -187,8 +189,10 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView, Me
         this.isFavorite = isFavorite;
         if (isFavorite) {
             fabFavorite.setImageResource(android.R.drawable.btn_star_big_on);
+            fabFavorite.setImageTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.RED));
         } else {
             fabFavorite.setImageResource(android.R.drawable.btn_star_big_off);
+            fabFavorite.setImageTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.GRAY));
         }
     }
 

@@ -98,7 +98,7 @@ public class MealDetailsPresenterImpl implements MealDetailsPresenter {
                 timestamp
         );
 
-        disposables.add(repository.addAppointment(appointment)
+        disposables.add(repository.addAppointment(meal, appointment)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         () -> {
@@ -119,10 +119,12 @@ public class MealDetailsPresenterImpl implements MealDetailsPresenter {
             return;
         }
 
+        if (!repository.isOnline()) {
+            view.showError("You cannot modify favorites while offline. Please check your internet connection.");
+            return;
+        }
+
         if (isFavorite) {
-            // Need a context for NetworkMonitor, but repository is often context-aware.
-            // Let's assume the view or repository handles sync.
-            // For now, move the direct repo call.
             removeFromFavorites(meal);
         } else {
             addToFavorites(meal);
@@ -135,6 +137,12 @@ public class MealDetailsPresenterImpl implements MealDetailsPresenter {
             view.navigateToLogin();
             return;
         }
+
+        if (!repository.isOnline()) {
+            view.showError("You cannot plan meals while offline. Please check your internet connection.");
+            return;
+        }
+
         view.showDatePicker();
     }
 

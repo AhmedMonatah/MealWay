@@ -35,11 +35,14 @@ public class ProfileFragment extends Fragment implements ProfileView, ProfileUIL
     private MaterialButton btnLogout;
     private ProgressBar progressBar;
 
-    private final ActivityResultLauncher<String> imagePickerLauncher = registerForActivityResult(
-            new ActivityResultContracts.GetContent(),
+    private final ActivityResultLauncher<androidx.activity.result.PickVisualMediaRequest> imagePickerLauncher = registerForActivityResult(
+            new ActivityResultContracts.PickVisualMedia(),
             uri -> {
                 if (uri != null) {
+                    android.util.Log.d("ProfileFragment", "Image picked: " + uri);
                     presenter.uploadImage(uri);
+                } else {
+                    android.util.Log.d("ProfileFragment", "No image selected");
                 }
             }
     );
@@ -136,7 +139,9 @@ public class ProfileFragment extends Fragment implements ProfileView, ProfileUIL
     @Override
     public void onEditPhotoClicked() {
         if (NetworkMonitor.isNetworkAvailable(requireContext())) {
-            imagePickerLauncher.launch("image/*");
+            imagePickerLauncher.launch(new androidx.activity.result.PickVisualMediaRequest.Builder()
+                    .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
+                    .build());
         } else {
             AlertUtils.showError(requireContext(), "Internet connection required to change photo");
         }
