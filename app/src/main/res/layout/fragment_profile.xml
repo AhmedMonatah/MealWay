@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F8F9FD"
+    android:background="@color/background_light"
     android:fillViewport="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -24,7 +24,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="60dp"
-            android:text="My Profile"
+            android:text="@string/my_profile"
             android:textColor="@color/white"
             android:textSize="28sp"
             android:textStyle="bold"
@@ -61,7 +61,7 @@
                         android:scaleType="centerCrop"
                         android:src="@drawable/filter_button_bg"
                         app:shapeAppearanceOverlay="@style/CircleImageView"
-                        app:strokeColor="#FFFFFF"
+                        app:strokeColor="@color/white"
                         app:strokeWidth="4dp" />
 
                     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -83,8 +83,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
-                    android:text="Loading..."
-                    android:textColor="#212121"
+                    android:text="@string/loading"
+                    android:textColor="@color/black_soft"
                     android:textSize="26sp"
                     android:textStyle="bold" />
 
@@ -101,7 +101,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:layout_marginVertical="28dp"
-                    android:background="#F0F0F0" />
+                    android:background="@color/light_gray_divider" />
 
                 <!-- Info Section -->
                 <LinearLayout
@@ -141,12 +141,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
                     android:layout_marginTop="40dp"
-                    android:text="Logout"
-                    android:textColor="#F44336"
+                    android:text="@string/logout"
+                    android:textColor="@color/error_red"
                     app:cornerRadius="20dp"
                     app:icon="@drawable/ic_logout"
-                    app:iconTint="#F44336"
-                    app:strokeColor="#F44336"
+                    app:iconTint="@color/error_red"
+                    app:strokeColor="@color/error_red"
                     app:strokeWidth="2dp"
                     style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
 

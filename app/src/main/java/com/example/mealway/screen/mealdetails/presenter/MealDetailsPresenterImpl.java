@@ -5,8 +5,9 @@ import com.example.mealway.data.model.Meal;
 import com.example.mealway.data.repository.MealRepository;
 import com.example.mealway.screen.mealdetails.view.MealDetailsView;
 
+import com.example.mealway.R;
+import androidx.fragment.app.Fragment;
 import com.example.mealway.data.model.MealAppointment;
-import com.example.mealway.utils.VideoHelper;
 
 import com.example.mealway.utils.NetworkMonitor;
 import com.google.firebase.auth.FirebaseAuth;
@@ -58,11 +59,11 @@ public class MealDetailsPresenterImpl implements MealDetailsPresenter {
                         () -> {
                             view.hideLoading();
                             view.showFavoriteStatus(true);
-                            view.showSuccess("Added to Favorites");
+                            view.showSuccess(R.string.added_to_favorites);
                         },
                         throwable -> {
                             view.hideLoading();
-                            view.showError("Failed to add to Favorites: " + throwable.getMessage());
+                            view.showError(String.format(view.getClass().getName().contains("Fragment") ? ((Fragment)view).getString(R.string.error_add_favorite) : "Failed to add: %s", throwable.getMessage()));
                         }
                 ));
     }
@@ -76,11 +77,11 @@ public class MealDetailsPresenterImpl implements MealDetailsPresenter {
                         () -> {
                             view.hideLoading();
                             view.showFavoriteStatus(false);
-                            view.showSuccess("Removed from Favorites");
+                            view.showSuccess(R.string.removed_from_favorites);
                         },
                         throwable -> {
                             view.hideLoading();
-                            view.showError("Failed to remove from Favorites: " + throwable.getMessage());
+                            view.showError(String.format(view.getClass().getName().contains("Fragment") ? ((Fragment)view).getString(R.string.error_remove_favorite) : "Failed to remove: %s", throwable.getMessage()));
                         }
                 ));
     }
@@ -102,11 +103,11 @@ public class MealDetailsPresenterImpl implements MealDetailsPresenter {
                 .subscribe(
                         () -> {
                             view.hideLoading();
-                            view.showSuccess("Meal added to plan");
+                            view.showSuccess(R.string.meal_added_to_plan);
                         },
                         throwable -> {
                             view.hideLoading();
-                            view.showError("Failed to add to plan: " + throwable.getMessage());
+                            view.showError(String.format(view.getClass().getName().contains("Fragment") ? ((Fragment)view).getString(R.string.error_add_plan) : "Failed to add: %s", throwable.getMessage()));
                         }
                 ));
     }
@@ -135,16 +136,6 @@ public class MealDetailsPresenterImpl implements MealDetailsPresenter {
             return;
         }
         view.showDatePicker();
-    }
-
-    @Override
-    public void onVideoClicked(String youtubeUrl) {
-        String videoId = VideoHelper.extractVideoId(youtubeUrl);
-        if (videoId != null) {
-            view.prepareVideo(videoId);
-        } else {
-            view.showMessage("Video unavailable");
-        }
     }
 
 

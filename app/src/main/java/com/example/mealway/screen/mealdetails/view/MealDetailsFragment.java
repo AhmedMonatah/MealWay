@@ -1,7 +1,7 @@
 package com.example.mealway.screen.mealdetails.view;
 
 import android.os.Bundle;
-import android.webkit.WebView;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,7 +41,7 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView, Me
     private MealDetailsPresenter presenter;
     private ImageView ivMealImage, ivVideoThumbnail;
     private TextView tvInstructions, tvNoVideo, tvDetailArea;
-    private WebView iframe;
+    private YouTubePlayerView youTubePlayerView;
 
     private Button btnPlanMeal;
     private ProgressBar progressBar;
@@ -70,8 +70,8 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView, Me
         tvNoVideo = view.findViewById(R.id.tv_no_video);
         btnPlanMeal = view.findViewById(R.id.btn_plan_meal);
         progressBar = view.findViewById(R.id.progress_bar);
-        iframe = view.findViewById(R.id.iframe);
-        VideoHelper.configureWebView(iframe);
+        youTubePlayerView = view.findViewById(R.id.youtube_player_view);
+        getLifecycle().addObserver(youTubePlayerView);
 
         rvIngredients.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
 
@@ -92,7 +92,6 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView, Me
 
         fabFavorite.setOnClickListener(v -> onFavoriteClicked());
         btnPlanMeal.setOnClickListener(v -> onPlanClicked());
-        cardVideo.setOnClickListener(v -> onVideoCardClicked());
 
 
         return view;
@@ -108,13 +107,6 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView, Me
         presenter.onPlanClicked();
     }
 
-    @Override
-    public void onVideoCardClicked() {
-        if (currentMeal != null) {
-            presenter.onVideoClicked(currentMeal.getStrYoutube());
-        }
-    }
-
 
 
     @Override
@@ -125,13 +117,6 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView, Me
                 Navigation.findNavController(requireActivity(), R.id.nav_host)
                         .navigate(R.id.loginFragment);
             });
-    }
-
-    @Override
-    public void prepareVideo(String videoId) {
-        cardVideo.setVisibility(View.GONE);
-        iframe.setVisibility(View.VISIBLE);
-        VideoHelper.loadVideo(iframe, videoId);
     }
 
     @Override
@@ -185,22 +170,14 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView, Me
     }
 
     private void setupVideo(String youtubeUrl) {
-        if (youtubeUrl != null && !youtubeUrl.isEmpty()) {
-            cardVideo.setVisibility(View.VISIBLE);
-            iframe.setVisibility(android.view.View.GONE);
-            tvNoVideo.setVisibility(android.view.View.GONE);
-
-            String videoId = VideoHelper.extractVideoId(youtubeUrl);
-            if (videoId != null) {
-                String thumbUrl = "https://img.youtube.com/vi/" + videoId + "/hqdefault.jpg";
-                Glide.with(this).load(thumbUrl).into(ivVideoThumbnail);
-            }
-
-        } else {
-            cardVideo.setVisibility(android.view.View.GONE);
-            iframe.setVisibility(android.view.View.GONE);
-            tvNoVideo.setVisibility(android.view.View.VISIBLE);
-        }
+        VideoHelper.setupVideo(
+                requireContext(),
+                youtubeUrl,
+                ivVideoThumbnail,
+                youTubePlayerView,
+                cardVideo,
+                tvNoVideo
+        );
     }
 
 
@@ -223,9 +200,9 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView, Me
     }
 
     @Override
-    public void showSuccess(String message) {
+    public void showSuccess(int stringResId) {
         if (isAdded()) {
-            AlertUtils.showSuccess(requireContext(), message);
+            AlertUtils.showSuccess(requireContext(), getString(stringResId));
         }
     }
 
