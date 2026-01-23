@@ -76,7 +76,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:text="Ingredients"
+                android:text="@string/ingredients_title"
                 android:textColor="@color/MainColor"
                 android:textSize="20sp"
                 android:textStyle="bold" />
@@ -95,7 +95,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:text="Instructions"
+                android:text="@string/Instructions"
                 android:textColor="@color/MainColor"
                 android:textSize="20sp"
                 android:textStyle="bold" />
@@ -107,7 +107,7 @@
                 android:layout_marginTop="12dp"
                 android:lineSpacingExtra="6dp"
                 android:text="Step by step instructions..."
-                android:textColor="#424242"
+                android:textColor="@color/gray_text_dark"
                 android:textSize="16sp" />
 
             <com.google.android.material.button.MaterialButton
@@ -115,7 +115,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:text="Plan for a Day"
+                android:text="@string/AddToPlan"
                 app:cornerRadius="12dp"
                 android:backgroundTint="@color/MainColor"
                 android:textColor="@color/white"
@@ -126,7 +126,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:text="Watch Video"
+                android:text="@string/watch_video_title"
                 android:textColor="@color/MainColor"
                 android:textSize="20sp"
                 android:textStyle="bold" />
@@ -135,11 +135,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="220dp"
                 android:layout_marginTop="16dp">
-                <WebView
-                    android:id="@+id/iframe"
+                <com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
+                    android:id="@+id/youtube_player_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:visibility="gone" />
+                    android:visibility="visible"
+                    app:autoPlay="false" />
 
 
                 <androidx.cardview.widget.CardView
@@ -189,9 +190,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="Video instruction not available for this meal"
+                android:text="@string/video_not_available"
                 android:visibility="gone"
-                android:textColor="#9E9E9E"
+                android:textColor="@color/gray_text_light"
                 android:gravity="center"
                 android:textSize="14sp" />
 

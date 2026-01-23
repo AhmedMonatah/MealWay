@@ -20,38 +20,43 @@ public class VideoHelper {
     }
 
     /**
-     * Configures the WebView with settings optimized for YouTube playback.
+     * Prepares a video for playback using YouTubePlayerView.
      */
-    public static void configureWebView(android.webkit.WebView webView) {
-        if (webView == null) return;
+    public static void setupVideo(
+            @androidx.annotation.NonNull android.content.Context context,
+            String youtubeUrl,
+            @androidx.annotation.NonNull android.widget.ImageView thumbnailView,
+            @androidx.annotation.NonNull com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView playerView,
+            @androidx.annotation.NonNull android.view.View container,
+            android.widget.TextView noVideoTextView
+    ) {
+        String videoId = extractVideoId(youtubeUrl);
 
-        android.webkit.WebSettings settings = webView.getSettings();
-        settings.setJavaScriptEnabled(true);
-        settings.setDomStorageEnabled(true);
-        settings.setDatabaseEnabled(true);
-        settings.setMediaPlaybackRequiresUserGesture(false);
-        settings.setLoadWithOverviewMode(true);
-        settings.setUseWideViewPort(true);
-        
-        // Mimic a full mobile browser to avoid "An error occurred" or restriction issues
-        settings.setUserAgentString("Mozilla/5.0 (Linux; Android 10; Pixel 4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.119 Mobile Safari/537.36");
+        if (videoId != null && !videoId.isEmpty()) {
+            // Show thumbnail
+            String thumbUrl = "https://img.youtube.com/vi/" + videoId + "/hqdefault.jpg";
+            com.bumptech.glide.Glide.with(context)
+                    .load(thumbUrl)
+                    .centerCrop()
+                    .into(thumbnailView);
 
-        webView.setWebChromeClient(new android.webkit.WebChromeClient());
-        webView.setWebViewClient(new android.webkit.WebViewClient());
-    }
+            // Ensure YouTubePlayerView is visible but behind the card initially so it can init
+            playerView.setVisibility(android.view.View.VISIBLE);
+            container.setVisibility(android.view.View.VISIBLE);
+            if (noVideoTextView != null) noVideoTextView.setVisibility(android.view.View.GONE);
 
-    /**
-     * Loads the YouTube video into the WebView using the embed API.
-     */
-    public static void loadVideo(android.webkit.WebView webView, String videoId) {
-        if (webView == null || videoId == null) return;
-
-        String html = "<html><body style=\"margin: 0; padding: 0\">" +
-                "<iframe width=\"100%\" height=\"100%\" src=\"https://www.youtube.com/embed/" + videoId + "\"" +
-                " frameborder=\"0\" allowfullscreen style=\"border:none\"></iframe>" +
-                "</body></html>";
-
-        // Using loadDataWithBaseURL is crucial for YouTube resources to load correctly
-        webView.loadDataWithBaseURL("https://www.youtube.com", html, "text/html", "utf-8", null);
+            // Click on thumbnail/card to play video
+            container.setOnClickListener(v -> {
+                container.setVisibility(android.view.View.GONE);
+                playerView.getYouTubePlayerWhenReady(youTubePlayer -> {
+                    youTubePlayer.loadVideo(videoId, 0);
+                });
+            });
+        } else {
+            // No valid video
+            container.setVisibility(android.view.View.GONE);
+            playerView.setVisibility(android.view.View.GONE);
+            if (noVideoTextView != null) noVideoTextView.setVisibility(android.view.View.VISIBLE);
+        }
     }
 }
