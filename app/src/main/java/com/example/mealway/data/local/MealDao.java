@@ -28,6 +28,9 @@ public interface MealDao {
     @Query("SELECT EXISTS(SELECT 1 FROM meals WHERE idMeal = :id LIMIT 1)")
     Single<Boolean> isMealFavorite(String id);
 
+    @Query("SELECT * FROM meals WHERE idMeal = :id LIMIT 1")
+    Single<Meal> getFavMealById(String id);
+
     // Appointments (MealAppointment)
     @Query("SELECT * FROM meal_appointments ORDER BY dateTimestamp ASC")
     Observable<List<MealAppointment>> getAllAppointments();
