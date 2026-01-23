@@ -2,12 +2,14 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.MealWay" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="colorPrimary">@color/MainColor</item>
+        <item name="colorSecondary">@color/MainColor</item>
+        <item name="android:statusBarColor">@color/MainColor</item>
     </style>
 
     <style name="Theme.MealWay" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:statusBarColor">@color/MainColor</item>
         <item name="android:windowLightStatusBar">false</item>
     </style>
 
@@ -15,9 +17,8 @@
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_weight">1</item>
-        <item name="android:gravity">center</item>
-        <item name="android:textColor">#9E9E9E</item>
-        <item name="android:textSize">12sp</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:textColor">#8A8A8A</item>
         <item name="android:textStyle">bold</item>
     </style>
 </resources>

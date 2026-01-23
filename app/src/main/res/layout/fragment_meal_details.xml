@@ -135,12 +135,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="220dp"
                 android:layout_marginTop="16dp">
-
-                <com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
-                    android:id="@+id/youtube_player_view"
+                <WebView
+                    android:id="@+id/iframe"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    app:enableAutomaticInitialization="false" />
+                    android:visibility="gone" />
+
 
                 <androidx.cardview.widget.CardView
                     android:id="@+id/card_video"
