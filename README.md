@@ -26,15 +26,47 @@ It allows users to explore meals by categories, countries, and ingredients, save
 | Favorites | Weekly Plan | Profile |
 |-----------|------------|---------|
 | ![MyFav](https://github.com/user-attachments/assets/9d403b13-0caf-4887-95ed-3f0ea7739748) | ![Appointment](https://github.com/user-attachments/assets/3ee2a3fa-d395-4ee9-8dc8-85400bd12733) | ![Profile](https://github.com/user-attachments/assets/6d90e062-26ca-44fb-b1c3-9a81747ee077) |
-
 ### Dark Mode
-| Home | Search | Meal Details |
-|------|--------|--------------|
-|  ![Home-dark](https://github.com/user-attachments/assets/5d8d02cd-7f58-405a-b926-9f2627b5d953) | ![Search-dark](https://github.com/user-attachments/assets/ef6cf62c-9249-4167-9500-e9f840f5c5a8) | ![MealDetails](https://github.com/user-attachments/assets/0d2d6754-427a-442c-99d8-42618f3372e9)|
 
-| Favorites | Weekly Plan  | Profile |
-|------|--------|-----------|
-| ![MyFav-dark](https://github.com/user-attachments/assets/0c29ce87-fbc3-4fea-8b63-4da449f8809e) | ![Appointment-dark](https://github.com/user-attachments/assets/5e6e0db0-6fce-4b94-b684-f69e918793e1) | ![Profile-dark](https://github.com/user-attachments/assets/bebcb29d-f8e6-4793-ac56-b412ed28cc93)
+<table>
+  <tr>
+    <th>Home</th>
+    <th>Search</th>
+    <th>Meal Details</th>
+  </tr>
+  <tr>
+    <td>
+      <img src="https://github.com/user-attachments/assets/adf25b95-70bc-49e7-afb4-b7e35124177e" width="320" />
+    </td>
+    <td>
+      <img src="https://github.com/user-attachments/assets/0e1dcdc7-3230-4516-8710-14f42e50cac0" width="320" />
+    </td>
+    <td>
+      <img src="https://github.com/user-attachments/assets/c3316e94-c4b8-4999-9165-56efef79c8a2" width="320" />
+    </td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <th>Favorites</th>
+    <th>Weekly Plan</th>
+    <th>Profile</th>
+  </tr>
+  <tr>
+    <td>
+      <img src="https://github.com/user-attachments/assets/1bb16b66-6750-4bdf-b577-b3ac4138fca6" width="320" />
+    </td>
+    <td>
+      <img src="https://github.com/user-attachments/assets/779742d5-fdb2-4c2a-a200-0bb2f0e92d07" width="320" />
+    </td>
+    <td>
+      <img src="https://github.com/user-attachments/assets/a68ba680-9743-4e45-80bd-55639a0decec" width="320" />
+    </td>
+  </tr>
+</table>
+
+
 
 
 
