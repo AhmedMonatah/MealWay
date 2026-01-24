@@ -1,5 +1,6 @@
 package com.example.mealway.screen.login.presenter;
 
+import com.example.mealway.data.callback.AuthCallback;
 import com.example.mealway.data.repository.AuthRepository;
 import com.example.mealway.screen.login.view.LoginView;
 
@@ -16,7 +17,7 @@ public class LoginPresenterImpl implements LoginPresenter {
     @Override
     public void login(String email, String password) {
         view.showLoading();
-        repository.login(email, password, new com.example.mealway.data.callback.AuthCallback() {
+        repository.login(email, password, new AuthCallback() {
             @Override
             public void onSuccess() {
                 view.hideLoading();
@@ -34,7 +35,7 @@ public class LoginPresenterImpl implements LoginPresenter {
     @Override
     public void loginWithGoogle(String idToken) {
         view.showLoading();
-        repository.signInWithGoogle(idToken, new com.example.mealway.data.callback.AuthCallback() {
+        repository.signInWithGoogle(idToken, new AuthCallback() {
             @Override
             public void onSuccess() {
                 view.hideLoading();

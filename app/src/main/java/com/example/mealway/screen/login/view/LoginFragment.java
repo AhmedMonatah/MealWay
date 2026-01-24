@@ -20,12 +20,11 @@ import com.example.mealway.R;
 import com.example.mealway.data.repository.AuthRepositoryImpl;
 import com.example.mealway.screen.login.presenter.LoginPresenter;
 import com.example.mealway.screen.login.presenter.LoginPresenterImpl;
-import com.example.mealway.util.GoogleSignInHelper;
+import com.example.mealway.utils.GoogleSignInHelper;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.common.api.ApiException;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 

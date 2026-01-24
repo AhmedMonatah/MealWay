@@ -1,5 +1,12 @@
 package com.example.mealway.utils;
 
+import android.content.Context;
+import android.view.View;
+import android.widget.ImageView;
+
+import com.bumptech.glide.Glide;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,11 +30,11 @@ public class VideoHelper {
      * Prepares a video for playback using YouTubePlayerView.
      */
     public static void setupVideo(
-            @androidx.annotation.NonNull android.content.Context context,
+            @androidx.annotation.NonNull Context context,
             String youtubeUrl,
-            @androidx.annotation.NonNull android.widget.ImageView thumbnailView,
-            @androidx.annotation.NonNull com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView playerView,
-            @androidx.annotation.NonNull android.view.View container,
+            @androidx.annotation.NonNull ImageView thumbnailView,
+            @androidx.annotation.NonNull YouTubePlayerView playerView,
+            @androidx.annotation.NonNull View container,
             android.widget.TextView noVideoTextView
     ) {
         String videoId = extractVideoId(youtubeUrl);
@@ -35,28 +42,28 @@ public class VideoHelper {
         if (videoId != null && !videoId.isEmpty()) {
             // Show thumbnail
             String thumbUrl = "https://img.youtube.com/vi/" + videoId + "/hqdefault.jpg";
-            com.bumptech.glide.Glide.with(context)
+            Glide.with(context)
                     .load(thumbUrl)
                     .centerCrop()
                     .into(thumbnailView);
 
             // Ensure YouTubePlayerView is visible but behind the card initially so it can init
-            playerView.setVisibility(android.view.View.VISIBLE);
-            container.setVisibility(android.view.View.VISIBLE);
-            if (noVideoTextView != null) noVideoTextView.setVisibility(android.view.View.GONE);
+            playerView.setVisibility(View.VISIBLE);
+            container.setVisibility(View.VISIBLE);
+            if (noVideoTextView != null) noVideoTextView.setVisibility(View.GONE);
 
             // Click on thumbnail/card to play video
             container.setOnClickListener(v -> {
-                container.setVisibility(android.view.View.GONE);
+                container.setVisibility(View.GONE);
                 playerView.getYouTubePlayerWhenReady(youTubePlayer -> {
                     youTubePlayer.loadVideo(videoId, 0);
                 });
             });
         } else {
             // No valid video
-            container.setVisibility(android.view.View.GONE);
-            playerView.setVisibility(android.view.View.GONE);
-            if (noVideoTextView != null) noVideoTextView.setVisibility(android.view.View.VISIBLE);
+            container.setVisibility(View.GONE);
+            playerView.setVisibility(View.GONE);
+            if (noVideoTextView != null) noVideoTextView.setVisibility(View.VISIBLE);
         }
     }
 }

@@ -1,7 +1,9 @@
 package com.example.mealway.screen.search.presenter;
 
 import com.example.mealway.data.callback.NetworkCallback;
+import com.example.mealway.data.model.Area;
 import com.example.mealway.data.model.Category;
+import com.example.mealway.data.model.Ingredient;
 import com.example.mealway.data.model.Meal;
 import com.example.mealway.data.repository.MealRepository;
 import com.example.mealway.screen.search.view.SearchView;
@@ -15,7 +17,7 @@ public class SearchPresenterImpl implements SearchPresenter {
 
     private final SearchView view;
     private final MealRepository repository;
-    private int currentMode = 0; // 0: Name, 1: Category, 2: Ingredient, 3: Country
+    private int currentMode = 0;
 
     public SearchPresenterImpl(SearchView view, MealRepository repository) {
         this.view = view;
@@ -34,7 +36,6 @@ public class SearchPresenterImpl implements SearchPresenter {
 
     @Override
     public void loadSuggestions() {
-        // Not used much in Redesign v2, but keeping for compatibility
     }
 
     @Override
@@ -61,13 +62,13 @@ public class SearchPresenterImpl implements SearchPresenter {
     @Override
     public void fetchIngredients() {
         view.showLoading();
-        repository.listIngredients(new NetworkCallback<List<com.example.mealway.data.model.Ingredient>>() {
+        repository.listIngredients(new NetworkCallback<List<Ingredient>>() {
             @Override
-            public void onSuccess(List<com.example.mealway.data.model.Ingredient> result) {
+            public void onSuccess(List<Ingredient> result) {
                 view.hideLoading();
                 List<String> ingredients = new ArrayList<>();
                 if (result != null) {
-                    // Show top list or searchable
+
                     for (int i = 0; i < Math.min(result.size(), 100); i++) {
                         ingredients.add(result.get(i).getStrIngredient());
                     }
@@ -85,13 +86,13 @@ public class SearchPresenterImpl implements SearchPresenter {
     @Override
     public void fetchAreas() {
         view.showLoading();
-        repository.listAreas(new NetworkCallback<List<com.example.mealway.data.model.Area>>() {
+        repository.listAreas(new NetworkCallback<List<Area>>() {
             @Override
-            public void onSuccess(List<com.example.mealway.data.model.Area> result) {
+            public void onSuccess(List<Area> result) {
                 view.hideLoading();
                 List<String> areas = new ArrayList<>();
                 if (result != null) {
-                    for (com.example.mealway.data.model.Area a : result) areas.add(a.getStrArea());
+                    for (Area a : result) areas.add(a.getStrArea());
                 }
                 view.showFilterOptions(areas, "Select Country", 3);
             }

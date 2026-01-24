@@ -39,7 +39,11 @@ public class HomeFragment extends Fragment {
         bottomNavigationView = view.findViewById(R.id.home_bottom_nav);
         noInternetContainer = view.findViewById(R.id.no_internet_container); 
 
-        loadContentFragment(new HomeContentFragment());
+        if (savedInstanceState == null) {
+            loadContentFragment(new HomeContentFragment());
+        } else {
+            currentContentFragment = getChildFragmentManager().findFragmentById(R.id.home_content_container);
+        }
 
         com.example.mealway.data.repository.AuthRepository authRepository = new com.example.mealway.data.repository.AuthRepositoryImpl(requireContext());
 
@@ -100,10 +104,11 @@ public class HomeFragment extends Fragment {
     }
 
     private void loadContentFragment(Fragment fragment) {
+        if (!isAdded()) return;
         currentContentFragment = fragment;
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
         transaction.replace(R.id.home_content_container, fragment);
-        transaction.commit();
+        transaction.commitAllowingStateLoss();
     }
     
     private void checkNetworkForCurrentFragment() {

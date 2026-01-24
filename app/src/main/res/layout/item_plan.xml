@@ -9,6 +9,7 @@
     app:cardElevation="4dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:background="@color/solid_bg_item_profile"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="16dp">
@@ -29,8 +30,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:text="Meal Name"
-            android:textColor="@color/black"
-            android:textSize="20sp"
+            android:textColor="@color/gray_text_dark"            android:textSize="20sp"
             android:textStyle="bold"
             app:layout_constraintStart_toEndOf="@id/iv_meal_thumb"
             app:layout_constraintEnd_toStartOf="@id/btn_delete"
@@ -45,7 +45,7 @@
             android:paddingHorizontal="10dp"
             android:paddingVertical="4dp"
             android:text="Oct 24"
-            android:textColor="@color/MainColor"
+            android:textColor="@color/dynamic_text_color"
             android:textSize="12sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="@id/tv_meal_name"
@@ -57,7 +57,7 @@
             android:layout_height="40dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@android:drawable/ic_menu_delete"
-            app:tint="#D32F2F"
+            app:tint="@color/recycle_for_delete_item"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent" />

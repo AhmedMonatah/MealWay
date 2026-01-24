@@ -1,6 +1,7 @@
 package com.example.mealway.screen.plan.view;
 
 import android.graphics.Color;
+import androidx.core.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,9 +22,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
     private int selectedPosition = -1;
     private final OnDateClickListener listener;
 
-    public interface OnDateClickListener {
-        void onDateClick(Date date, int position);
-    }
+
 
     public CalendarAdapter(List<Date> days, List<Long> plannedTimestamps, OnDateClickListener listener) {
         this.days = days;
@@ -95,9 +94,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
             holder.tvDayNumber.setTextColor(Color.WHITE);
             holder.tvDayNumber.setBackgroundResource(R.drawable.bg_circle_main);
         } else {
-            // Check if it's today (but not selected) to show a light highlight? 
-            // Better to keep it clean.
-            holder.tvDayNumber.setTextColor(Color.BLACK);
+            holder.tvDayNumber.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.black));
             holder.tvDayNumber.setBackground(null);
         }
 

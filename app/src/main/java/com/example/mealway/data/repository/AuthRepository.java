@@ -11,12 +11,11 @@ public interface AuthRepository {
     void signInWithGoogle(String idToken, AuthCallback callback);
     FirebaseUser getCurrentUser();
     void signOut();
-    void uploadProfileImage(Uri imageUri, AuthCallback callback);
     void getUserDetails(UserDataCallback callback);
     void syncUserData(AuthCallback callback);
 
     interface UserDataCallback {
-        void onDataFetched(String fullName, String phone, String email, Uri photoUrl);
+        void onDataFetched(String fullName, String phone, String email);
         void onError(String error);
     }
 }

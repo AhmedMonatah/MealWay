@@ -41,14 +41,6 @@
                 android:maxLines="1"
                 android:ellipsize="end" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="@string/saved_in_favorites"
-                android:textColor="@color/shimmer_background"
-                android:textSize="14sp" />
-
         </LinearLayout>
 
         <ImageButton
@@ -58,7 +50,7 @@
             android:layout_margin="16dp"
             android:background="@drawable/bg_circle_glass"
             android:src="@android:drawable/ic_menu_delete"
-            app:tint="@color/error_red"
+            app:tint="@color/recycle_for_delete_item"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 

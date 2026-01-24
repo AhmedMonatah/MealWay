@@ -27,7 +27,7 @@ import android.widget.ProgressBar;
 
 import java.util.List;
 
-public class FavoriteFragment extends Fragment implements FavoriteView, FavoriteAdapter.OnFavoriteClickListener {
+public class FavoriteFragment extends Fragment implements FavoriteView, OnFavoriteClickListener {
 
     private FavoritePresenter presenter;
     private FavoriteAdapter adapter;

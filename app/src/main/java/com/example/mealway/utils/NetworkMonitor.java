@@ -36,12 +36,10 @@ public class NetworkMonitor extends LiveData<Boolean> {
 
     private void registerCallback() {
         NetworkRequest.Builder builder = new NetworkRequest.Builder();
-        
+
         networkCallback = new ConnectivityManager.NetworkCallback() {
             @Override
             public void onAvailable(@NonNull Network network) {
-                // Network is available, but let's double check capabilities if needed
-                // For now, simple availability is enough
                 postValue(true);
             }
 
@@ -75,12 +73,12 @@ public class NetworkMonitor extends LiveData<Boolean> {
     public static boolean isNetworkAvailable(Context context) {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         if (cm == null) return false;
-        
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             Network activeNetwork = cm.getActiveNetwork();
             if (activeNetwork == null) return false;
             NetworkCapabilities caps = cm.getNetworkCapabilities(activeNetwork);
-            return caps != null && (caps.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) || 
+            return caps != null && (caps.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
                                    caps.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ||
                                    caps.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET));
         } else {

@@ -1,0 +1,41 @@
+<resources>
+
+    <color name="black">#EDEDED</color>
+    <color name="black_soft">#CFCFCF</color>
+    <color name="gray_text">#B0B0B0</color>
+    <color name="gray_text_light">#D6D6D6</color>
+    <color name="gray_text_dark">#FFFFFF</color>
+    <color name="black_title_dialog">#000000</color>
+    <color name="background_light">#121417</color>
+    <color name="background_light_alt">#1B1E22</color>
+    <color name="fragment_background_color">#121417</color>
+    <color name="solid_bg_item_profile">#1B1E22</color>
+    <color name="bottom_nav_bg">#000000</color>
+    <color name="nav_icon_selected">#FFFFFF</color>
+    <color name="nav_icon_unselected">#B0B0B0</color>
+    <color name="dynamic_text_color">#FFFFFF</color>
+    <color name="dynamic_icon_tint">#FFFFFF</color>
+
+    <color name="MainColor">#00193E</color>
+    <color name="blue_dark_signup">#00193E</color>
+    <color name="input_field_background">#1F2329</color>
+    <color name="warning_orange">#FFB74D</color>
+    <color name="error_red">#EF5350</color>
+    <color name="success_green">#66BB6A</color>
+    <color name="solid_filter_button_bg">#046AF8</color>
+
+    <color name="light_gray_divider">#2A2D32</color>
+    <color name="shimmer_background">#2A2D32</color>
+
+    <color name="ic_arrow_back_and_forward">#FFFFFF</color>
+    <color name="calendar_header_text">#B0B0B0</color>
+
+    <color name="background_light_data_picker">#121212</color>
+
+    <color name="background_black_data_picker">#FFFFFF</color>
+    <color name="background_data_picker">#000000</color>
+    <color name="text_data_picker">#FFFFFF</color>
+    <color name="day_selected_color">#9E9E9E</color>
+    <color name="color_picker_button">#FFFFFF</color>
+    <color name="color_picker_header">#1976D2</color>
+</resources>
