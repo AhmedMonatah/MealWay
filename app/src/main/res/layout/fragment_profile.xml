@@ -11,7 +11,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <!-- Decorative Top Section -->
         <View
             android:id="@+id/header_bg"
             android:layout_width="match_parent"
@@ -32,7 +31,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <!-- Main Profile Card -->
         <androidx.cardview.widget.CardView
             android:id="@+id/card_profile"
             android:layout_width="match_parent"
@@ -41,6 +39,7 @@
             android:layout_marginTop="160dp"
             app:cardCornerRadius="40dp"
             app:cardElevation="20dp"
+            app:cardBackgroundColor="@color/solid_bg_item_profile"
             app:layout_constraintTop_toTopOf="parent">
 
             <LinearLayout
@@ -55,27 +54,15 @@
                     android:layout_height="wrap_content">
 
                     <com.google.android.material.imageview.ShapeableImageView
+                        android:background="@color/MainColor"
                         android:id="@+id/iv_profile_pic"
                         android:layout_width="160dp"
                         android:layout_height="160dp"
                         android:scaleType="centerCrop"
-                        android:src="@drawable/ic_profile"
+                        android:src="@drawable/iconimage"
                         app:shapeAppearanceOverlay="@style/CircleImageView"
                         app:strokeColor="@color/background_light"
                         app:strokeWidth="6dp" />
-
-                    <com.google.android.material.floatingactionbutton.FloatingActionButton
-                        android:id="@+id/fab_edit_photo"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignBottom="@id/iv_profile_pic"
-                        android:layout_alignEnd="@id/iv_profile_pic"
-                        android:layout_margin="8dp"
-                        app:fabSize="mini"
-                        app:srcCompat="@android:drawable/ic_menu_camera"
-                        app:tint="@color/white"
-                        android:backgroundTint="@color/MainColor"
-                        app:elevation="8dp" />
                 </RelativeLayout>
 
                 <TextView
@@ -95,7 +82,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="6dp"
                     android:text="..."
-                    android:textColor="#9E9E9E"
+                    android:textColor="@color/gray_text"
                     android:textSize="18sp" />
 
                 <View
@@ -104,7 +91,6 @@
                     android:layout_marginVertical="32dp"
                     android:background="@color/light_gray_divider" />
 
-                <!-- Content Holder -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -122,7 +108,7 @@
                             android:layout_width="28dp"
                             android:layout_height="28dp"
                             android:src="@android:drawable/ic_menu_call"
-                            app:tint="@color/MainColor" />
+                            app:tint="@color/dynamic_icon_tint" />
 
                         <TextView
                             android:id="@+id/tv_user_phone"
@@ -130,7 +116,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="20dp"
                             android:text="Phone: ..."
-                            android:textColor="#424242"
+                            android:textColor="@color/black_soft"
                             android:textSize="18sp"
                             android:fontFamily="sans-serif-medium" />
                     </LinearLayout>

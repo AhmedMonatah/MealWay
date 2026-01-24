@@ -3,6 +3,7 @@
     <solid android:color="@android:color/transparent" />
     <stroke
         android:width="2dp"
-        android:color="#FF4444" />
+        android:color="@color/input_field_background_error" />
     <corners android:radius="10dp" />
 </shape>
+

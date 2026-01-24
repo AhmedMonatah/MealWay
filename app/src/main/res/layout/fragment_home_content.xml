@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@color/background_light"
     android:fillViewport="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -11,7 +11,6 @@
         android:layout_height="wrap_content"
         android:paddingBottom="40dp">
 
-        <!-- Header Section -->
         <View
             android:id="@+id/view_header_bg"
             android:layout_width="match_parent"
@@ -136,7 +135,7 @@
             android:layout_marginStart="24dp"
             android:layout_marginTop="48dp"
             android:text="More to Explore"
-            android:textColor="@color/MainColor"
+            android:textColor="@color/black"
             android:textSize="22sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"

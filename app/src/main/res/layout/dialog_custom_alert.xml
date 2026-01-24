@@ -12,7 +12,6 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- Header Area -->
         <FrameLayout
             android:id="@+id/alert_header"
             android:layout_width="match_parent"
@@ -33,7 +32,9 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="24dp"
-            android:gravity="center">
+            android:gravity="center"
+            android:background="@color/white"
+            >
 
             <TextView
                 android:id="@+id/tv_alert_title"
@@ -42,7 +43,7 @@
                 android:text="Title"
                 android:textSize="20sp"
                 android:textStyle="bold"
-                android:textColor="@color/black" />
+                android:textColor="@color/black_title_dialog" />
 
             <TextView
                 android:id="@+id/tv_alert_message"
@@ -51,9 +52,8 @@
                 android:layout_marginTop="8dp"
                 android:text="This is an alert message."
                 android:textSize="16sp"
-                android:textColor="#616161"
+                android:textColor="@color/text_dialog"
                 android:gravity="center" />
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -68,9 +68,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Cancel"
-                    android:textColor="#9E9E9E"
+                    android:textColor="@color/cancel_btn"
                     android:visibility="gone" />
-
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_alert_positive"
                     android:layout_width="0dp"

@@ -50,7 +50,7 @@ public class FavoritePresenterImpl implements FavoritePresenter {
                 .subscribe(
                         () -> {
                             view.hideLoading();
-                            view.showMessage("Removed from Favorites"); // Room Observable will auto-update view
+                            view.showMessage("Removed from Favorites");
                         },
                         throwable -> {
                             view.hideLoading();

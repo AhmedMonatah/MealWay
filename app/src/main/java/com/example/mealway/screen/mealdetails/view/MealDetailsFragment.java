@@ -1,5 +1,7 @@
 package com.example.mealway.screen.mealdetails.view;
 
+import android.app.DatePickerDialog;
+import android.os.Build;
 import android.os.Bundle;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView;
 import android.view.LayoutInflater;
@@ -130,13 +132,16 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView, Me
         int month = c.get(Calendar.MONTH);
         int day = c.get(Calendar.DAY_OF_MONTH);
 
-        android.app.DatePickerDialog datePickerDialog = new android.app.DatePickerDialog(requireContext(),
+        DatePickerDialog datePickerDialog = new android.app.DatePickerDialog(requireContext(),
+                R.style.CustomPickerTheme,
                 (view, year1, monthOfYear, dayOfMonth) -> {
                     Calendar selectedDate = Calendar.getInstance();
                     selectedDate.set(year1, monthOfYear, dayOfMonth);
                     presenter.addAppointment(currentMeal, selectedDate.getTimeInMillis());
                 }, year, month, day);
-
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            datePickerDialog.getDatePicker().setForceDarkAllowed(false);
+        }
         datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis());
         datePickerDialog.show();
     }

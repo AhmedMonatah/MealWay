@@ -42,10 +42,10 @@
         android:background="@drawable/input_field_background"
         android:clipToPadding="false"
         app:boxBackgroundMode="none"
-        app:boxStrokeColor="@android:color/white"
+        app:boxStrokeColor="@color/white"
         app:boxStrokeWidth="2dp"
         app:endIconMode="clear_text"
-        app:hintTextColor="@android:color/white"
+        app:hintTextColor="@color/white"
         app:layout_constraintEnd_toStartOf="@id/guidelineEnd"
         app:layout_constraintStart_toStartOf="@id/guidelineStart"
         app:layout_constraintTop_toBottomOf="@+id/logoImage"
@@ -58,14 +58,14 @@
             android:id="@+id/usernameInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            android:hint="@string/username"
+            android:background="@color/transparent"
+            android:hint="@string/EmailAddress"
             android:paddingStart="48dp"
             android:paddingTop="20dp"
             android:paddingEnd="8dp"
             android:paddingBottom="16dp"
-            android:textColor="@android:color/white"
-            android:textColorHint="@android:color/white" />
+            android:textColor="@color/white"
+            android:textColorHint="@color/white" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -100,8 +100,8 @@
             android:paddingTop="20dp"
             android:paddingEnd="8dp"
             android:paddingBottom="16dp"
-            android:textColor="@android:color/white"
-            android:textColorHint="@android:color/white" />
+            android:textColor="@color/white"
+            android:textColorHint="@color/white" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <LinearLayout
@@ -121,7 +121,7 @@
             android:layout_height="56dp"
             android:layout_marginEnd="8dp"
             android:layout_weight="1"
-            android:backgroundTint="@android:color/white"
+            android:backgroundTint="@color/white"
             android:text="@string/Login"
             android:textAllCaps="false"
             android:textColor="#0A2E5C"
@@ -135,7 +135,7 @@
             android:layout_height="56dp"
             android:layout_marginStart="8dp"
             android:layout_weight="1"
-            android:backgroundTint="@android:color/white"
+            android:backgroundTint="@color/white"
             android:text="@string/Skip"
             android:textAllCaps="false"
             android:textColor="#0A2E5C"
@@ -176,7 +176,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="24dp"
-        android:background="?android:attr/selectableItemBackground"
+        android:background="?attr/selectableItemBackground"
         android:clickable="true"
         android:focusable="true"
         android:text="@string/don_not_have_account"
@@ -192,7 +192,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        android:indeterminateTint="@android:color/white"
+        android:indeterminateTint="@color/white"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"

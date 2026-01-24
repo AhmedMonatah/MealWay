@@ -1,4 +1,4 @@
-package com.example.mealway.util;
+package com.example.mealway.utils;
 
 import android.content.Context;
 import com.example.mealway.R;

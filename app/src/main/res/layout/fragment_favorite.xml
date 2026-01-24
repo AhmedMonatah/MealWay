@@ -4,8 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
-    tools:context=".screen.favouriate.FavoriteFragment">
+    android:background="@color/background_light"
+    tools:context=".screen.favorite.view.FavoriteFragment">
+
+    <View
+        android:id="@+id/header_bg"
+        android:layout_width="match_parent"
+        android:layout_height="320dp"
+        android:background="@drawable/header_background_shape"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tv_title"
@@ -16,7 +23,7 @@
         android:text="Favorites"
         android:textSize="28sp"
         android:textStyle="bold"
-        android:textColor="@color/black"
+        android:textColor="@color/white"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -33,6 +40,7 @@
         android:id="@+id/tv_no_favorites"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="@color/black_soft"
         android:text="No favorites"
         android:textSize="18sp"
         android:visibility="gone"

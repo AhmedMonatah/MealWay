@@ -11,6 +11,8 @@ import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import android.graphics.Color;
+import androidx.core.content.ContextCompat;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -150,13 +152,15 @@ public class SearchFragment extends Fragment implements SearchView, SearchClickL
     }
 
     private void updateButtonStyles(int activeMode) {
-        int mainColor = android.graphics.Color.parseColor("#00193E");
-        int white = android.graphics.Color.WHITE;
+        int mainColor = ContextCompat.getColor(requireContext(), R.color.MainColor);
+        int white = ContextCompat.getColor(requireContext(), R.color.white);
+        int black = ContextCompat.getColor(requireContext(), R.color.black);
+        int backgroundContrast = ContextCompat.getColor(requireContext(), R.color.background_light_alt);
 
-        // Reset all
-        resetButtonStyle(btnCategory, mainColor, white);
-        resetButtonStyle(btnIngredient, mainColor, white);
-        resetButtonStyle(btnCountry, mainColor, white);
+        // Reset all (Inactive)
+        resetButtonStyle(btnCategory, mainColor, black, backgroundContrast);
+        resetButtonStyle(btnIngredient, mainColor, black, backgroundContrast);
+        resetButtonStyle(btnCountry, mainColor, black, backgroundContrast);
 
         // Set active
         switch (activeMode) {
@@ -166,16 +170,16 @@ public class SearchFragment extends Fragment implements SearchView, SearchClickL
         }
     }
 
-    private void resetButtonStyle(MaterialButton button, int mainColor, int whiteColor) {
-        button.setBackgroundColor(whiteColor);
-        button.setTextColor(mainColor);
-        button.setStrokeColor(android.content.res.ColorStateList.valueOf(mainColor));
+    private void resetButtonStyle(MaterialButton button, int mainColor, int whiteColor, int bgColor) {
+        button.setBackgroundColor(bgColor);
+        button.setTextColor(whiteColor);
+        button.setStrokeColor(android.content.res.ColorStateList.valueOf(whiteColor));
     }
 
     private void setActiveButtonStyle(MaterialButton button, int mainColor, int whiteColor) {
         button.setBackgroundColor(mainColor);
         button.setTextColor(whiteColor);
-        button.setStrokeColor(android.content.res.ColorStateList.valueOf(mainColor));
+        button.setStrokeColor(android.content.res.ColorStateList.valueOf(whiteColor));
     }
 
     @Override

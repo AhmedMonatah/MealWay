@@ -1,8 +1,10 @@
 package com.example.mealway.data.repository;
 
 import com.example.mealway.data.callback.AuthCallback;
+import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
@@ -13,6 +15,8 @@ import android.content.Context;
 import android.net.Uri;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Log;
+
 import com.example.mealway.data.local.AppDatabase;
 import com.example.mealway.data.local.LocalDataSource;
 import com.example.mealway.data.local.MealDao;
@@ -55,7 +59,6 @@ public class AuthRepositoryImpl implements AuthRepository {
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         localDataSource.saveLoginState(true);
-                        // Notify success immediately to prevent UI freeze
                         callback.onSuccess();
                         
                         mealDao.clearAllFavorites()
@@ -92,7 +95,6 @@ public class AuthRepositoryImpl implements AuthRepository {
                         user.put("phone", phone);
                         user.put("email", email);
                         user.put("uid", uid);
-                        user.put("photoUrl", null); 
 
                         db.collection("users").document(uid).set(user)
                                 .addOnSuccessListener(aVoid -> {
@@ -110,7 +112,7 @@ public class AuthRepositoryImpl implements AuthRepository {
     @SuppressLint("CheckResult")
     @Override
     public void signInWithGoogle(String idToken, AuthCallback callback) {
-        com.google.firebase.auth.AuthCredential credential = com.google.firebase.auth.GoogleAuthProvider.getCredential(idToken, null);
+        AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
         firebaseAuth.signInWithCredential(credential)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
@@ -145,109 +147,6 @@ public class AuthRepositoryImpl implements AuthRepository {
                 .subscribe(() -> {}, throwable -> {});
     }
 
-    @SuppressLint("CheckResult")
-    @Override
-    public void uploadProfileImage(Uri imageUri, AuthCallback callback) {
-        FirebaseUser user = getCurrentUser();
-        if (user == null) {
-            callback.onFailure("User not logged in");
-            return;
-        }
-
-        Completable.create(emitter -> {
-            try {
-                Context context = localDataSource.getContext();
-                
-                // Downscale image to prevent OOM
-                BitmapFactory.Options options = new BitmapFactory.Options();
-                options.inJustDecodeBounds = true;
-                InputStream is = context.getContentResolver().openInputStream(imageUri);
-                BitmapFactory.decodeStream(is, null, options);
-                if (is != null) is.close();
-
-                int inSampleSize = 1;
-                if (options.outHeight > 1024 || options.outWidth > 1024) {
-                    final int halfHeight = options.outHeight / 2;
-                    final int halfWidth = options.outWidth / 2;
-                    while ((halfHeight / inSampleSize) >= 1024 && (halfWidth / inSampleSize) >= 1024) {
-                        inSampleSize *= 2;
-                    }
-                }
-                options.inSampleSize = inSampleSize;
-                options.inJustDecodeBounds = false;
-
-                is = context.getContentResolver().openInputStream(imageUri);
-                Bitmap bitmap = BitmapFactory.decodeStream(is, null, options);
-                if (is != null) is.close();
-
-                if (bitmap == null) throw new Exception("Failed to decode bitmap");
-                
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 75, baos);
-                byte[] data = baos.toByteArray();
-                bitmap.recycle(); // Free memory
-
-                String fileName = user.getUid() + "_" + System.currentTimeMillis() + ".jpg";
-                StorageReference storageRef = FirebaseStorage.getInstance().getReference();
-                StorageReference fileRef = storageRef.child("profile_pics/" + fileName);
-
-                android.util.Log.d("AuthRepo", "Starting upload to: " + fileRef.getPath());
-
-                fileRef.putBytes(data)
-                        .addOnSuccessListener(taskSnapshot -> {
-                            android.util.Log.d("AuthRepo", "Upload successful, fetching download URL...");
-                            fileRef.getDownloadUrl()
-                                    .addOnSuccessListener(downloadUri -> {
-                                        android.util.Log.d("AuthRepo", "Got download URL: " + downloadUri);
-                                        
-                                        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                                                .setPhotoUri(downloadUri)
-                                                .build();
-
-                                        user.updateProfile(profileUpdates)
-                                                .addOnSuccessListener(aVoid -> {
-                                                    FirebaseFirestore.getInstance().collection("users").document(user.getUid())
-                                                            .update("photoUrl", downloadUri.toString())
-                                                            .addOnSuccessListener(val -> {
-                                                                android.util.Log.d("AuthRepo", "User profile and Firestore updated successfully");
-                                                                if (!emitter.isDisposed()) emitter.onComplete();
-                                                            })
-                                                            .addOnFailureListener(e -> {
-                                                                android.util.Log.e("AuthRepo", "Firestore update failed", e);
-                                                                if (!emitter.isDisposed()) emitter.onError(e);
-                                                            });
-                                                })
-                                                .addOnFailureListener(e -> {
-                                                    android.util.Log.e("AuthRepo", "Auth profile update failed", e);
-                                                    if (!emitter.isDisposed()) emitter.onError(e);
-                                                });
-                                    })
-                                    .addOnFailureListener(e -> {
-                                        android.util.Log.e("AuthRepo", "Failed to get download URL", e);
-                                        if (!emitter.isDisposed()) emitter.onError(e);
-                                    });
-                        })
-                        .addOnFailureListener(e -> {
-                            android.util.Log.e("AuthRepo", "Upload task failed", e);
-                            if (!emitter.isDisposed()) emitter.onError(e);
-                        });
-            } catch (Exception e) {
-                android.util.Log.e("AuthRepo", "Image processing failed", e);
-                if (!emitter.isDisposed()) emitter.onError(e);
-            }
-        }).subscribeOn(Schedulers.io())
-          .observeOn(AndroidSchedulers.mainThread())
-          .subscribe(
-              () -> {
-                  android.util.Log.d("AuthRepo", "Upload flow completed successfully");
-                  callback.onSuccess();
-              },
-              throwable -> {
-                  android.util.Log.e("AuthRepo", "Overall upload flow failed", throwable);
-                  callback.onFailure("Upload error: " + throwable.getMessage());
-              }
-          );
-    }
 
     @SuppressLint("CheckResult")
     @Override
@@ -297,7 +196,7 @@ public class AuthRepositoryImpl implements AuthRepository {
     public void getUserDetails(UserDataCallback callback) {
         FirebaseUser user = getCurrentUser();
         if (user == null) {
-            callback.onDataFetched("Guest", "N/A", "guest@mealway.com", null);
+            callback.onDataFetched("Guest", "N/A", "guest@mealway.com");
             return;
         }
 
@@ -307,11 +206,10 @@ public class AuthRepositoryImpl implements AuthRepository {
                         callback.onDataFetched(
                                 doc.getString("fullName"),
                                 doc.getString("phone"),
-                                user.getEmail(),
-                                user.getPhotoUrl()
+                                user.getEmail()
                         );
                     } else {
-                        callback.onDataFetched(user.getDisplayName(), "Not set", user.getEmail(), user.getPhotoUrl());
+                        callback.onDataFetched(user.getDisplayName(), "Not set", user.getEmail());
                     }
                 })
                 .addOnFailureListener(e -> callback.onError(e.getMessage()));

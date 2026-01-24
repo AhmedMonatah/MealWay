@@ -25,10 +25,10 @@ public class ProfilePresenterImpl implements ProfilePresenter {
         view.showLoading();
         repository.getUserDetails(new AuthRepository.UserDataCallback() {
             @Override
-            public void onDataFetched(String fullName, String phone, String email, Uri photoUrl) {
+            public void onDataFetched(String fullName, String phone, String email) {
                 if (view != null) {
                     view.hideLoading();
-                    view.showUserData(fullName, email, phone, photoUrl);
+                    view.showUserData(fullName, email, phone);
                 }
             }
 
@@ -48,29 +48,6 @@ public class ProfilePresenterImpl implements ProfilePresenter {
         view.navigateToLogin();
     }
 
-    @Override
-    public void uploadImage(Uri imageUri) {
-        if (view == null) return;
-        view.showLoading();
-        repository.uploadProfileImage(imageUri, new AuthCallback() {
-            @Override
-            public void onSuccess() {
-                if (view != null) {
-                    view.hideLoading();
-                    view.updateProfileImage(imageUri);
-                    view.showMessage("Profile photo updated!");
-                }
-            }
-
-            @Override
-            public void onFailure(String error) {
-                if (view != null) {
-                    view.hideLoading();
-                    view.showMessage("Failed to upload image: " + error);
-                }
-            }
-        });
-    }
 
     @Override
     public void onDestroy() {

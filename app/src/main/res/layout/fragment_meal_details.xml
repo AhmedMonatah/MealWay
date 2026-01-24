@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@color/background_light"
     android:fitsSystemWindows="true">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -59,7 +59,6 @@
             android:orientation="vertical"
             android:padding="24dp">
 
-            <!-- Category and Area -->
             <TextView
                 android:id="@+id/tv_detail_area"
                 android:layout_width="wrap_content"
@@ -77,7 +76,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 android:text="@string/ingredients_title"
-                android:textColor="@color/MainColor"
+                android:textColor="@color/dynamic_text_color"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
@@ -96,7 +95,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 android:text="@string/Instructions"
-                android:textColor="@color/MainColor"
+                android:textColor="@color/dynamic_text_color"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
@@ -107,7 +106,7 @@
                 android:layout_marginTop="12dp"
                 android:lineSpacingExtra="6dp"
                 android:text="Step by step instructions..."
-                android:textColor="@color/gray_text_dark"
+                android:textColor="@color/black"
                 android:textSize="16sp" />
 
             <com.google.android.material.button.MaterialButton
@@ -127,7 +126,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 android:text="@string/watch_video_title"
-                android:textColor="@color/MainColor"
+                android:textColor="@color/dynamic_text_color"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
@@ -156,7 +155,8 @@
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="#F5F5F5">
+                        android:background="@color/background_light_alt"
+                        >
 
                         <ImageView
                             android:id="@+id/iv_video_thumbnail"
@@ -205,7 +205,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="24dp"
-        android:backgroundTint="@color/white"
+        android:backgroundTint="@color/background_light_alt"
         app:layout_anchor="@id/app_bar"
         app:layout_anchorGravity="bottom|end"
         android:clickable="true"

@@ -21,10 +21,7 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.Favori
     private List<Meal> favorites = new ArrayList<>();
     private final OnFavoriteClickListener listener;
 
-    public interface OnFavoriteClickListener {
-        void onMealClick(Meal meal);
-        void onDeleteClick(Meal meal);
-    }
+
 
     public FavoriteAdapter(Context context, OnFavoriteClickListener listener) {
         this.context = context;
