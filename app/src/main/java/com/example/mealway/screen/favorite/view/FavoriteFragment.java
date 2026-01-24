@@ -4,8 +4,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
-import com.google.android.material.snackbar.Snackbar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,11 +16,9 @@ import com.example.mealway.data.model.Meal;
 import com.example.mealway.data.repository.MealRepository;
 import com.example.mealway.screen.favorite.presenter.FavoritePresenter;
 import com.example.mealway.screen.favorite.presenter.FavoritePresenterImpl;
-import com.example.mealway.screen.favorite.view.FavoriteAdapter;
 import com.example.mealway.screen.mealdetails.view.MealDetailsFragment;
 import com.example.mealway.utils.NetworkMonitor;
 import com.example.mealway.utils.AlertUtils;
-import com.google.android.material.snackbar.Snackbar;
 import android.widget.ProgressBar;
 
 import java.util.List;
@@ -32,7 +28,7 @@ public class FavoriteFragment extends Fragment implements FavoriteView, OnFavori
     private FavoritePresenter presenter;
     private FavoriteAdapter adapter;
     private RecyclerView rvFavorites;
-    private android.widget.TextView tvNoFavorites;
+    private View layoutEmptyState;
     private NetworkMonitor networkMonitor;
     private ProgressBar progressBar;
 
@@ -42,7 +38,7 @@ public class FavoriteFragment extends Fragment implements FavoriteView, OnFavori
         View view = inflater.inflate(R.layout.fragment_favorite, container, false);
 
         rvFavorites = view.findViewById(R.id.rv_favorites);
-        tvNoFavorites = view.findViewById(R.id.tv_no_favorites);
+        layoutEmptyState = view.findViewById(R.id.layout_empty_state);
         progressBar = view.findViewById(R.id.progress_bar);
         rvFavorites.setLayoutManager(new GridLayoutManager(requireContext(), 2)); 
         adapter = new FavoriteAdapter(requireContext(), this);
@@ -63,10 +59,10 @@ public class FavoriteFragment extends Fragment implements FavoriteView, OnFavori
     @Override
     public void showFavorites(List<Meal> meals) {
         if (meals == null || meals.isEmpty()) {
-            tvNoFavorites.setVisibility(View.VISIBLE);
+            layoutEmptyState.setVisibility(View.VISIBLE);
             rvFavorites.setVisibility(View.GONE);
         } else {
-            tvNoFavorites.setVisibility(View.GONE);
+            layoutEmptyState.setVisibility(View.GONE);
             rvFavorites.setVisibility(View.VISIBLE);
             adapter.setMeals(meals);
         }
@@ -99,7 +95,7 @@ public class FavoriteFragment extends Fragment implements FavoriteView, OnFavori
     public void onMealClick(Meal meal) {
         MealDetailsFragment fragment = new MealDetailsFragment();
         Bundle args = new Bundle();
-        args.putSerializable("meal", meal);
+        args.putParcelable("meal", meal);
         fragment.setArguments(args);
 
         getParentFragmentManager()

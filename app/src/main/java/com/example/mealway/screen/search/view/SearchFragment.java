@@ -201,7 +201,7 @@ public class SearchFragment extends Fragment implements SearchView, SearchClickL
     public void onMealClick(Meal meal) {
         com.example.mealway.screen.mealdetails.view.MealDetailsFragment fragment = new com.example.mealway.screen.mealdetails.view.MealDetailsFragment();
         Bundle args = new Bundle();
-        args.putSerializable("meal", meal);
+        args.putParcelable("meal", meal);
         fragment.setArguments(args);
 
         getParentFragmentManager()

@@ -5,7 +5,6 @@
     android:orientation="vertical"
     android:background="@color/background_light">
 
-    <!-- Header -->
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -38,7 +37,6 @@
             android:textStyle="normal" />
     </FrameLayout>
 
-    <!-- Month Selector -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -75,7 +73,6 @@
             app:tint="@color/dynamic_icon_tint" />
     </LinearLayout>
 
-    <!-- Calendar Card -->
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="220dp"
@@ -91,7 +88,6 @@
             android:orientation="vertical"
             android:padding="8dp">
 
-            <!-- Days of Week -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -107,7 +103,6 @@
                 <TextView style="@style/CalendarHeader" android:text="S" />
             </LinearLayout>
 
-            <!-- Calendar RecyclerView -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_calendar"
                 android:layout_width="match_parent"
@@ -117,7 +112,6 @@
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
-    <!-- Appointments Section -->
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -130,15 +124,40 @@
             android:paddingTop="4dp"
             android:clipToPadding="false" />
 
-        <TextView
-            android:id="@+id/tv_no_appointments"
+        <LinearLayout
+            android:id="@+id/layout_empty_state"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
             android:layout_gravity="center"
-            android:text="No meals for this day"
-            android:textSize="16sp"
-            android:textColor="@color/dynamic_text_color"
-            android:visibility="gone" />
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:alpha="0.2"
+                android:src="@android:drawable/ic_menu_my_calendar"
+                app:tint="@color/gray_text_light" />
+
+            <TextView
+                android:id="@+id/tv_no_appointments"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="No meals planned"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="@color/gray_text" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Select a date to see your schedule"
+                android:textSize="14sp"
+                android:textColor="@color/gray_text_light" />
+        </LinearLayout>
 
         <ProgressBar
             android:id="@+id/progress_bar"
