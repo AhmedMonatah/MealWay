@@ -18,6 +18,7 @@ import com.example.mealway.data.model.IngredientResponse;
 import com.example.mealway.data.remote.api.MealApiService;
 import com.example.mealway.data.remote.firebase.FirebaseManager;
 import com.example.mealway.data.remote.network.RetrofitClient;
+import com.example.mealway.utils.NetworkMonitor;
 
 import java.util.List;
 import io.reactivex.rxjava3.core.Completable;
@@ -45,12 +46,10 @@ public class MealRepository {
     }
 
     public boolean isOnline() {
-        return com.example.mealway.utils.NetworkMonitor.isNetworkAvailable(context);
+        return NetworkMonitor.isNetworkAvailable(context);
     }
 
-    // Existing Network Methods (kept as-is or could be Rx, but user didn't ask to change Retrofit yet)
-    // We will wrap them if needed, but for now focusing on DB/Sync
-    
+
     public void getRandomMeal(NetworkCallback<Meal> callback) {
         if (cachedDailyMeal != null) {
             callback.onSuccess(cachedDailyMeal);
@@ -121,7 +120,6 @@ public class MealRepository {
                 );
     }
 
-    // Favorites Logic (Online Only for Add/Remove as per user request)
     public Completable addToFavorites(Meal meal) {
         meal.setFavorite(true);
         // Sync Room + Firestore
@@ -150,7 +148,6 @@ public class MealRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    // Appointments Logic
     public Completable addAppointment(Meal meal, MealAppointment appointment) {
         // Cache full meal details for offline access
         // We don't overwrite the isFavorite status if it already exists in DB
@@ -178,7 +175,6 @@ public class MealRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    // Legacy support for search (could be Rx too)
     public void searchMealsByFirstLetter(String firstLetter, NetworkCallback<List<Meal>> callback) {
         apiService.searchMealsByFirstLetter(firstLetter).enqueue(new Callback<MealResponse>() {
             @Override

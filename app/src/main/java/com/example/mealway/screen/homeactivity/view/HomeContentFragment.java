@@ -83,7 +83,7 @@ public class HomeContentFragment extends Fragment implements HomeView {
     private void navigateToDetails(Meal meal) {
         MealDetailsFragment fragment = new MealDetailsFragment();
         Bundle args = new Bundle();
-        args.putSerializable("meal", meal);
+        args.putParcelable("meal", meal);
         fragment.setArguments(args);
 
         getParentFragmentManager()
