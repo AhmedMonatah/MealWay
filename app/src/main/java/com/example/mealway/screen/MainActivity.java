@@ -8,7 +8,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import com.example.mealway.R;
-import com.example.mealway.screen.splash.SplashFragment;
 
 public class MainActivity extends AppCompatActivity {
     @Override

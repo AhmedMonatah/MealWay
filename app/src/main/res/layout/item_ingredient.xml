@@ -41,7 +41,7 @@
         android:layout_height="wrap_content"
         android:text="Measure"
         android:textSize="10sp"
-        android:textColor="#757575"
+        android:textColor="@color/gray_text"
         android:gravity="center"
         android:maxLines="1"
         android:ellipsize="end"

@@ -13,7 +13,6 @@
         android:layout_height="wrap_content"
         android:padding="24dp">
 
-        <!-- GUIDELINES: Restrict width on tablets so content doesn't stretch too far -->
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guidelineStart"
             android:layout_width="wrap_content"
@@ -28,7 +27,6 @@
             android:orientation="vertical"
             app:layout_constraintGuide_percent="0.95" />
 
-        <!-- LOGO -->
         <ImageView
             android:id="@+id/logoImage"
             android:layout_width="308dp"
@@ -42,7 +40,6 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintWidth_percent="0.7" />
 
-        <!-- 1. FULL NAME INPUT -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/fullNameLayout"
             android:layout_width="0dp"
@@ -74,7 +71,6 @@
                 android:textColorHint="@android:color/white" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- 2. EMAIL INPUT -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/emailLayout"
             android:layout_width="0dp"
@@ -106,7 +102,6 @@
                 android:textColorHint="@android:color/white" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- 3. PHONE INPUT -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/phoneLayout"
             android:layout_width="0dp"
@@ -138,7 +133,6 @@
                 android:textColorHint="@android:color/white" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- 4. PASSWORD INPUT -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/passwordLayout"
             android:layout_width="0dp"
@@ -171,7 +165,6 @@
                 android:textColorHint="@android:color/white" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- BUTTONS -->
         <LinearLayout
             android:id="@+id/buttonsContainer"
             android:layout_width="0dp"

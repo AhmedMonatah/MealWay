@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@color/background_light"
     android:fitsSystemWindows="true">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -59,7 +59,6 @@
             android:orientation="vertical"
             android:padding="24dp">
 
-            <!-- Category and Area -->
             <TextView
                 android:id="@+id/tv_detail_area"
                 android:layout_width="wrap_content"
@@ -76,8 +75,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:text="Ingredients"
-                android:textColor="@color/MainColor"
+                android:text="@string/ingredients_title"
+                android:textColor="@color/dynamic_text_color"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
@@ -95,8 +94,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:text="Instructions"
-                android:textColor="@color/MainColor"
+                android:text="@string/Instructions"
+                android:textColor="@color/dynamic_text_color"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
@@ -107,69 +106,96 @@
                 android:layout_marginTop="12dp"
                 android:lineSpacingExtra="6dp"
                 android:text="Step by step instructions..."
-                android:textColor="#424242"
+                android:textColor="@color/black"
                 android:textSize="16sp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_plan_meal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="@string/AddToPlan"
+                app:cornerRadius="12dp"
+                android:backgroundTint="@color/MainColor"
+                android:textColor="@color/white"
+                app:icon="@android:drawable/ic_menu_my_calendar"
+                app:iconTint="@color/white" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:text="Watch Video"
-                android:textColor="@color/MainColor"
+                android:text="@string/watch_video_title"
+                android:textColor="@color/dynamic_text_color"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
-            <androidx.cardview.widget.CardView
-                android:id="@+id/card_video"
+            <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="220dp"
-                android:layout_marginTop="16dp"
-                android:foreground="?attr/selectableItemBackground"
-                android:clickable="true"
-                android:focusable="true"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="6dp">
-
-                <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_marginTop="16dp">
+                <com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
+                    android:id="@+id/youtube_player_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="#F5F5F5">
+                    android:visibility="visible"
+                    app:autoPlay="false" />
 
-                    <ImageView
-                        android:id="@+id/iv_video_thumbnail"
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/card_video"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="6dp">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:scaleType="centerCrop" />
+                        android:background="@color/background_light_alt"
+                        >
 
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="#40000000" />
+                        <ImageView
+                            android:id="@+id/iv_video_thumbnail"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="centerCrop" />
 
-                    <ImageView
-                        android:id="@+id/iv_play_icon"
-                        android:layout_width="80dp"
-                        android:layout_height="80dp"
-                        android:src="@android:drawable/ic_media_play"
-                        app:tint="@color/white"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent" />
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="#40000000" />
 
-                </androidx.constraintlayout.widget.ConstraintLayout>
-            </androidx.cardview.widget.CardView>
+                        <ImageView
+                            android:id="@+id/iv_play_icon"
+                            android:layout_width="80dp"
+                            android:layout_height="80dp"
+                            android:src="@android:drawable/ic_media_play"
+                            app:tint="@color/white"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </androidx.cardview.widget.CardView>
+            </FrameLayout>
+
 
             <TextView
                 android:id="@+id/tv_no_video"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="Video instruction not available for this meal"
+                android:text="@string/video_not_available"
                 android:visibility="gone"
-                android:textColor="#9E9E9E"
+                android:textColor="@color/gray_text_light"
                 android:gravity="center"
                 android:textSize="14sp" />
+
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
@@ -179,7 +205,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="24dp"
-        android:backgroundTint="@color/white"
+        android:backgroundTint="@color/background_light_alt"
         app:layout_anchor="@id/app_bar"
         app:layout_anchorGravity="bottom|end"
         android:clickable="true"
@@ -188,5 +214,13 @@
         app:borderWidth="0dp"
         app:srcCompat="@android:drawable/btn_star_big_off"
         android:contentDescription="Favorite" />
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        android:elevation="10dp"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
