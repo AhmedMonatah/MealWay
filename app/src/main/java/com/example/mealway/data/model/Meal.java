@@ -1,5 +1,7 @@
 package com.example.mealway.data.model;
 
+import android.os.Parcelable;
+
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
@@ -9,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity(tableName = "meals")
-public class Meal implements Serializable {
+public class Meal implements Parcelable {
 
     @PrimaryKey
     @NonNull
@@ -148,9 +150,7 @@ public class Meal implements Serializable {
         this.strYoutube = strYoutube;
     }
 
-    // Getters and Setters for Ingredients and Measures (Example for first few, need all for Room if I want to save them all)
-    // To save space in this file, I will generate getters/setters for all fields.
-
+    // Getters and Setters for Ingredients and Measures
     public String getStrIngredient1() { return strIngredient1; }
     public void setStrIngredient1(String strIngredient1) { this.strIngredient1 = strIngredient1; }
 
@@ -271,6 +271,7 @@ public class Meal implements Serializable {
 
     public String getStrMeasure20() { return strMeasure20; }
     public void setStrMeasure20(String strMeasure20) { this.strMeasure20 = strMeasure20; }
+    
     public List<String> getIngredients() {
         List<String> ingredients = new ArrayList<>();
         if (strIngredient1 != null && !strIngredient1.isEmpty()) ingredients.add(strIngredient1);
@@ -318,5 +319,125 @@ public class Meal implements Serializable {
         if (strIngredient19 != null && !strIngredient19.isEmpty()) list.add(new android.util.Pair<>(strIngredient19, strMeasure19));
         if (strIngredient20 != null && !strIngredient20.isEmpty()) list.add(new android.util.Pair<>(strIngredient20, strMeasure20));
         return list;
+    }
+
+    protected Meal(android.os.Parcel in) {
+        idMeal = in.readString();
+        strMeal = in.readString();
+        strCategory = in.readString();
+        strArea = in.readString();
+        strInstructions = in.readString();
+        strMealThumb = in.readString();
+        strYoutube = in.readString();
+        strIngredient1 = in.readString();
+        strIngredient2 = in.readString();
+        strIngredient3 = in.readString();
+        strIngredient4 = in.readString();
+        strIngredient5 = in.readString();
+        strIngredient6 = in.readString();
+        strIngredient7 = in.readString();
+        strIngredient8 = in.readString();
+        strIngredient9 = in.readString();
+        strIngredient10 = in.readString();
+        strIngredient11 = in.readString();
+        strIngredient12 = in.readString();
+        strIngredient13 = in.readString();
+        strIngredient14 = in.readString();
+        strIngredient15 = in.readString();
+        strIngredient16 = in.readString();
+        strIngredient17 = in.readString();
+        strIngredient18 = in.readString();
+        strIngredient19 = in.readString();
+        strIngredient20 = in.readString();
+        strMeasure1 = in.readString();
+        strMeasure2 = in.readString();
+        strMeasure3 = in.readString();
+        strMeasure4 = in.readString();
+        strMeasure5 = in.readString();
+        strMeasure6 = in.readString();
+        strMeasure7 = in.readString();
+        strMeasure8 = in.readString();
+        strMeasure9 = in.readString();
+        strMeasure10 = in.readString();
+        strMeasure11 = in.readString();
+        strMeasure12 = in.readString();
+        strMeasure13 = in.readString();
+        strMeasure14 = in.readString();
+        strMeasure15 = in.readString();
+        strMeasure16 = in.readString();
+        strMeasure17 = in.readString();
+        strMeasure18 = in.readString();
+        strMeasure19 = in.readString();
+        strMeasure20 = in.readString();
+        isFavorite = in.readByte() != 0;
+    }
+
+    public static final Creator<Meal> CREATOR = new Creator<Meal>() {
+        @Override
+        public Meal createFromParcel(android.os.Parcel in) {
+            return new Meal(in);
+        }
+
+        @Override
+        public Meal[] newArray(int size) {
+            return new Meal[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(android.os.Parcel dest, int flags) {
+        dest.writeString(idMeal);
+        dest.writeString(strMeal);
+        dest.writeString(strCategory);
+        dest.writeString(strArea);
+        dest.writeString(strInstructions);
+        dest.writeString(strMealThumb);
+        dest.writeString(strYoutube);
+        dest.writeString(strIngredient1);
+        dest.writeString(strIngredient2);
+        dest.writeString(strIngredient3);
+        dest.writeString(strIngredient4);
+        dest.writeString(strIngredient5);
+        dest.writeString(strIngredient6);
+        dest.writeString(strIngredient7);
+        dest.writeString(strIngredient8);
+        dest.writeString(strIngredient9);
+        dest.writeString(strIngredient10);
+        dest.writeString(strIngredient11);
+        dest.writeString(strIngredient12);
+        dest.writeString(strIngredient13);
+        dest.writeString(strIngredient14);
+        dest.writeString(strIngredient15);
+        dest.writeString(strIngredient16);
+        dest.writeString(strIngredient17);
+        dest.writeString(strIngredient18);
+        dest.writeString(strIngredient19);
+        dest.writeString(strIngredient20);
+        dest.writeString(strMeasure1);
+        dest.writeString(strMeasure2);
+        dest.writeString(strMeasure3);
+        dest.writeString(strMeasure4);
+        dest.writeString(strMeasure5);
+        dest.writeString(strMeasure6);
+        dest.writeString(strMeasure7);
+        dest.writeString(strMeasure8);
+        dest.writeString(strMeasure9);
+        dest.writeString(strMeasure10);
+        dest.writeString(strMeasure11);
+        dest.writeString(strMeasure12);
+        dest.writeString(strMeasure13);
+        dest.writeString(strMeasure14);
+        dest.writeString(strMeasure15);
+        dest.writeString(strMeasure16);
+        dest.writeString(strMeasure17);
+        dest.writeString(strMeasure18);
+        dest.writeString(strMeasure19);
+        dest.writeString(strMeasure20);
+        dest.writeByte((byte) (isFavorite ? 1 : 0));
     }
 }
