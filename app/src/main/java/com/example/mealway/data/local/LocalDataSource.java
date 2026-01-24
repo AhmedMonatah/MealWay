@@ -7,9 +7,15 @@ public class LocalDataSource {
     private static final String PREF_NAME = "MealWayPrefs";
     private static final String KEY_IS_LOGGED_IN = "is_logged_in";
     private final SharedPreferences sharedPreferences;
+    private final Context context;
 
     public LocalDataSource(Context context) {
+        this.context = context;
         sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+    }
+
+    public Context getContext() {
+        return context;
     }
 
     public void saveLoginState(boolean isLoggedIn) {

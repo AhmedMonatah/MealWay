@@ -31,6 +31,37 @@
     <string name="Youtube">Youtube: </string>
     <string name="AddToPlan">Add to Plan</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
-
-
+    <string name="meal_name">Meal Name</string>
+    <string name="meal_date_placeholder">Oct 24</string>
+    <string name="saved_in_favorites">Saved in Favorites</string>
+    <string name="discover_title_search">Discover\nYour Next Meal</string>
+    <string name="search_hint">Search for recipes...</string>
+    <string name="meal_schedule">Meal Schedule</string>
+    <string name="no_meals_day">No meals for this day</string>
+    <string name="my_profile">My Profile</string>
+    <string name="loading">Loading...</string>
+    <string name="logout">Logout</string>
+    <string name="login_required_title">Login Required</string>
+    <string name="login_required_message">You need to login to perform this action. Go to login?</string>
+    <string name="login_btn">Login</string>
+    <string name="added_to_favorites">Added to Favorites</string>
+    <string name="removed_from_favorites">Removed from Favorites</string>
+    <string name="meal_added_to_plan">Meal added to plan</string>
+    <string name="removed_from_plan">Removed from plan</string>
+    <string name="error_add_favorite">Failed to add to Favorites: %1$s</string>
+    <string name="error_remove_favorite">Failed to remove from Favorites: %1$s</string>
+    <string name="error_add_plan">Failed to add to plan: %1$s</string>
+    <string name="error_load_details">Failed to load details: %1$s</string>
+    <string name="profile_photo_updated">Profile photo updated!</string>
+    <string name="failed_to_upload_image">Failed to upload image: %1$s</string>
+    <string name="registration_successful">Registration Successful</string>
+    <string name="login_successful">Login Successful</string>
+    <string name="internet_connection_required">Internet connection required</string>
+    <string name="great">Great!</string>
+    <string name="try_again">Try Again</string>
+    <string name="success">Success</string>
+    <string name="error_title">Error</string>
+    <string name="ingredients_title">Ingredients</string>
+    <string name="watch_video_title">Watch Video</string>
+    <string name="video_not_available">Video instruction not available for this meal</string>
 </resources>

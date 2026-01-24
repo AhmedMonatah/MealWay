@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/splashFragment"
-        android:name="com.example.mealway.screen.splash.SplashFragment">
+        android:name="com.example.mealway.screen.splash.view.SplashFragment">
         <action
             android:id="@+id/action_splash_to_login"
             app:destination="@id/loginFragment"
@@ -21,7 +21,7 @@
 
     <fragment
         android:id="@+id/loginFragment"
-        android:name="com.example.mealway.screen.login.LoginFragment">
+        android:name="com.example.mealway.screen.login.view.LoginFragment">
         <action
             android:id="@+id/action_login_to_register"
             app:destination="@id/registerFragment"/>
@@ -34,7 +34,7 @@
 
     <fragment
         android:id="@+id/registerFragment"
-        android:name="com.example.mealway.screen.signup.SignUpFragment">
+        android:name="com.example.mealway.screen.signup.view.SignUpFragment">
         <action
             android:id="@+id/action_signup_to_home"
             app:destination="@id/homeFragment"
