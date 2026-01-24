@@ -38,7 +38,6 @@ import android.widget.Toast;
 import com.example.mealway.utils.AlertUtils;
 
 public class MealDetailsFragment extends Fragment implements MealDetailsView, MealDetailsUIListener {
-    private boolean isPlayerReady = false;
 
     private MealDetailsPresenter presenter;
     private ImageView ivMealImage, ivVideoThumbnail;
@@ -80,7 +79,7 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView, Me
         presenter = new MealDetailsPresenterImpl(this, new MealRepository(requireContext()));
 
         if (getArguments() != null) {
-            Meal mealFromArgs = (Meal) getArguments().getSerializable("meal");
+            Meal mealFromArgs = getArguments().getParcelable("meal");
             if (mealFromArgs != null) {
                 String mealId = mealFromArgs.getIdMeal();
                 if (mealId != null) {

@@ -30,7 +30,8 @@ public class PlanFragment extends Fragment implements PlanView, PlanAdapter.OnDe
     private PlanPresenter presenter;
     private PlanAdapter adapter;
     private RecyclerView rvAppointments, rvCalendar;
-    private TextView tvMonthName, tvNoAppointments;
+    private TextView tvMonthName;
+    private View layoutEmptyState;
     private ProgressBar progressBar;
     private CalendarAdapter calendarAdapter;
     private Calendar currentDisplayMonth = Calendar.getInstance();
@@ -44,7 +45,7 @@ public class PlanFragment extends Fragment implements PlanView, PlanAdapter.OnDe
 
         rvAppointments = view.findViewById(R.id.rv_appointments);
         rvCalendar = view.findViewById(R.id.rv_calendar);
-        tvNoAppointments = view.findViewById(R.id.tv_no_appointments);
+        layoutEmptyState = view.findViewById(R.id.layout_empty_state);
         tvMonthName = view.findViewById(R.id.tv_month_name);
         progressBar = view.findViewById(R.id.progress_bar);
         
@@ -155,10 +156,10 @@ public class PlanFragment extends Fragment implements PlanView, PlanAdapter.OnDe
         }
 
         if (filtered.isEmpty()) {
-            tvNoAppointments.setVisibility(View.VISIBLE);
+            layoutEmptyState.setVisibility(View.VISIBLE);
             rvAppointments.setVisibility(View.GONE);
         } else {
-            tvNoAppointments.setVisibility(View.GONE);
+            layoutEmptyState.setVisibility(View.GONE);
             rvAppointments.setVisibility(View.VISIBLE);
             adapter.setAppointments(filtered);
         }

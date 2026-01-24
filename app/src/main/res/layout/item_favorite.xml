@@ -41,6 +41,17 @@
                 android:maxLines="1"
                 android:ellipsize="end" />
 
+            <TextView
+                android:id="@+id/tv_meal_subtitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Category | Area"
+                android:textColor="@color/gray_text_light"
+                android:textSize="14sp"
+                android:maxLines="1"
+                android:ellipsize="end" />
+
         </LinearLayout>
 
         <ImageButton

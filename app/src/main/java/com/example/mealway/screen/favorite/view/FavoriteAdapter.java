@@ -48,6 +48,10 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.Favori
     public void onBindViewHolder(@NonNull FavoriteViewHolder holder, int position) {
         Meal meal = favorites.get(position);
         holder.tvName.setText(meal.getStrMeal());
+        String subtitle = (meal.getStrArea() != null ? meal.getStrArea() : "") + 
+                (meal.getStrCategory() != null ? " | " + meal.getStrCategory() : "");
+        holder.tvSubtitle.setText(subtitle);
+        
         Glide.with(context).load(meal.getStrMealThumb()).into(holder.ivThumb);
 
         holder.itemView.setOnClickListener(v -> listener.onMealClick(meal));
@@ -61,13 +65,14 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.Favori
 
     public static class FavoriteViewHolder extends RecyclerView.ViewHolder {
         ImageView ivThumb;
-        TextView tvName;
+        TextView tvName, tvSubtitle;
         ImageButton btnDelete;
 
         public FavoriteViewHolder(@NonNull View itemView) {
             super(itemView);
             ivThumb = itemView.findViewById(R.id.iv_meal_thumb);
             tvName = itemView.findViewById(R.id.tv_meal_name);
+            tvSubtitle = itemView.findViewById(R.id.tv_meal_subtitle);
             btnDelete = itemView.findViewById(R.id.btn_delete);
         }
     }
