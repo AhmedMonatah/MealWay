@@ -88,15 +88,8 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView, Me
                 }
             }
         }
-
-
-
-
-
         fabFavorite.setOnClickListener(v -> onFavoriteClicked());
         btnPlanMeal.setOnClickListener(v -> onPlanClicked());
-
-
         return view;
     }
 
@@ -109,8 +102,6 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView, Me
     public void onPlanClicked() {
         presenter.onPlanClicked();
     }
-
-
 
     @Override
     public void navigateToLogin() {
@@ -230,4 +221,40 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView, Me
     public void hideLoading() {
         if (progressBar != null) progressBar.setVisibility(View.GONE);
     }
+    @Override
+    public void onResume() {
+        super.onResume();
+        hideBottomNav();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        showBottomNav();
+    }
+
+    private void hideBottomNav() {
+        if (getActivity() != null) {
+            View bottomNavCard = getActivity().findViewById(R.id.bottom_nav_card);
+            if (bottomNavCard != null) {
+                bottomNavCard.animate()
+                        .translationY(bottomNavCard.getHeight())
+                        .setDuration(300)
+                        .start();
+            }
+        }
+    }
+
+    private void showBottomNav() {
+        if (getActivity() != null) {
+            View bottomNavCard = getActivity().findViewById(R.id.bottom_nav_card);
+            if (bottomNavCard != null) {
+                bottomNavCard.animate()
+                        .translationY(0)
+                        .setDuration(300)
+                        .start();
+            }
+        }
+    }
+
 }

@@ -3,6 +3,7 @@ package com.example.mealway.screen;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
+import android.view.animation.DecelerateInterpolator;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -20,5 +21,8 @@ public class MainActivity extends AppCompatActivity {
         );
         getWindow().setStatusBarColor(Color.TRANSPARENT);
     }
+
+
+
 }
 

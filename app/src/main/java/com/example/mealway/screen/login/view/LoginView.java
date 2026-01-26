@@ -5,4 +5,7 @@ public interface LoginView {
     void showLoginError(String msg);
     void showLoading();
     void hideLoading();
+    void showEmailError();
+    void showPasswordError();
+    void navigateToHome();
 }
