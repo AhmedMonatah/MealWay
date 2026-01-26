@@ -61,40 +61,6 @@ public class SignUpFragment extends Fragment implements SignUpView {
             phoneLayout.setBackgroundResource(R.drawable.input_field_background);
             passwordLayout.setBackgroundResource(R.drawable.input_field_background);
 
-            boolean hasError = false;
-
-            if (fullName.isEmpty()) {
-                fullNameLayout.setBackgroundResource(R.drawable.input_field_error_background);
-                hasError = true;
-            }
-
-            if (email.isEmpty()) {
-                emailLayout.setBackgroundResource(R.drawable.input_field_error_background);
-                hasError = true;
-            } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-                emailLayout.setBackgroundResource(R.drawable.input_field_error_background);
-                Toast.makeText(getContext(), "Enter a valid email", Toast.LENGTH_SHORT).show();
-                hasError = true;
-            }
-
-            if (phone.isEmpty()) {
-                phoneLayout.setBackgroundResource(R.drawable.input_field_error_background);
-                hasError = true;
-            }
-
-            if (password.isEmpty()) {
-                passwordLayout.setBackgroundResource(R.drawable.input_field_error_background);
-                hasError = true;
-            } else if (password.length() < 6) {
-                passwordLayout.setBackgroundResource(R.drawable.input_field_error_background);
-                Toast.makeText(getContext(), "Password must be at least 6 characters", Toast.LENGTH_SHORT).show();
-                hasError = true;
-            }
-
-            if (hasError) return;
-
-            progressBar.setVisibility(View.VISIBLE);
-            signUpButton.setEnabled(false);
             presenter.register(email, password, fullName, phone);
         });
 
@@ -124,5 +90,31 @@ public class SignUpFragment extends Fragment implements SignUpView {
             signUpButton.setEnabled(true);
             Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
         }
+    }
+
+    @Override
+    public void showEmailError(String message) {
+        emailLayout.setBackgroundResource(R.drawable.input_field_error_background);
+        if (message != null && !message.isEmpty()) {
+            Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void showPasswordError(String message) {
+        passwordLayout.setBackgroundResource(R.drawable.input_field_error_background);
+        if (message != null && !message.isEmpty()) {
+            Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void showNameError() {
+        fullNameLayout.setBackgroundResource(R.drawable.input_field_error_background);
+    }
+
+    @Override
+    public void showPhoneError() {
+        phoneLayout.setBackgroundResource(R.drawable.input_field_error_background);
     }
 }
