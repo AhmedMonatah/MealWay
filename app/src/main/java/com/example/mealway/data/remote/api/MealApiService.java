@@ -35,4 +35,6 @@ public interface MealApiService {
 
     @GET("filter.php")
     Call<MealResponse> filterByArea(@Query("a") String area);
+
+
 }
