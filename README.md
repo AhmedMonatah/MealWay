@@ -117,8 +117,8 @@ It allows users to explore meals by categories, countries, and ingredients, save
 
 ## 🛠️ Tech Stack & Libraries
 
-- **Language:** Kotlin  
-- **Architecture:** MVVM  
+- **Language:** Java  
+- **Architecture:** MVP
 - **API:** [TheMealDB](https://www.themealdb.com/)  
 - **Local Storage:** Room Database  
 - **Authentication & Sync:** Firebase Authentication & Firebase Firestore  
