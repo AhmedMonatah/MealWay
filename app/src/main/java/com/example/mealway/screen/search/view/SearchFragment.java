@@ -128,6 +128,8 @@ public class SearchFragment extends Fragment implements SearchView, SearchClickL
     public void showMeals(List<Meal> meals) {
         adapter.setMeals(meals);
     }
+
+
     
     @Override
     public void showSuggestions(List<String> suggestions) {

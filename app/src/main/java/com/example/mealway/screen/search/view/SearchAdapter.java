@@ -50,6 +50,8 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
         notifyDataSetChanged();
     }
 
+
+
     public void filterLocally(String query) {
         if (query == null || query.isEmpty()) {
             this.meals = new ArrayList<>(originalMeals);
