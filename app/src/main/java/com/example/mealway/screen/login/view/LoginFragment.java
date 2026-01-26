@@ -21,10 +21,6 @@ import com.example.mealway.data.repository.AuthRepositoryImpl;
 import com.example.mealway.screen.login.presenter.LoginPresenter;
 import com.example.mealway.screen.login.presenter.LoginPresenterImpl;
 import com.example.mealway.utils.GoogleSignInHelper;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.common.api.ApiException;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -56,63 +52,26 @@ public class LoginFragment extends Fragment implements LoginView {
 
         presenter = new LoginPresenterImpl(this, new AuthRepositoryImpl(requireContext()));
 
-        GoogleSignInClient googleSignInClient = GoogleSignInHelper.getGoogleSignInClient(requireContext());
-
-        ActivityResultLauncher<android.content.Intent> googleLauncher =
-                registerForActivityResult(
-                        new ActivityResultContracts.StartActivityForResult(),
-                        result -> {
-                            if (result.getResultCode() == android.app.Activity.RESULT_OK && result.getData() != null) {
-                                try {
-                                    GoogleSignInAccount account =
-                                            GoogleSignIn.getSignedInAccountFromIntent(result.getData())
-                                                    .getResult(ApiException.class);
-
-                                    if (account != null) {
-                                        presenter.loginWithGoogle(account.getIdToken());
-                                    }
-                                } catch (ApiException e) {
-                                    Toast.makeText(getContext(),
-                                            "Google Sign-In failed",
-                                            Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        }
-                );
-
         googleSignInButton.setOnClickListener(v ->
-                googleLauncher.launch(googleSignInClient.getSignInIntent())
+                GoogleSignInHelper.signIn(requireActivity(), new GoogleSignInHelper.CredentialCallback() {
+                    @Override
+                    public void onSuccess(String idToken) {
+                        presenter.loginWithGoogle(idToken);
+                    }
+
+                    @Override
+                    public void onFailure(String error) {
+                        Toast.makeText(getContext(), "Sign In Failed: " + error, Toast.LENGTH_SHORT).show();
+                    }
+                })
         );
 
         loginButton.setOnClickListener(v -> {
             String email = usernameEditText.getText().toString().trim();
             String pass = passwordEditText.getText().toString().trim();
 
-            // Reset backgrounds
             usernameLayout.setBackgroundResource(R.drawable.input_field_background);
             passwordLayout.setBackgroundResource(R.drawable.input_field_background);
-
-            boolean hasError = false;
-
-            if (TextUtils.isEmpty(email)) {
-                usernameLayout.setBackgroundResource(R.drawable.input_field_error_background);
-                hasError = true;
-            } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-                usernameLayout.setBackgroundResource(R.drawable.input_field_error_background);
-                Toast.makeText(getContext(), "Enter a valid email", Toast.LENGTH_SHORT).show();
-                hasError = true;
-            }
-
-            if (TextUtils.isEmpty(pass)) {
-                passwordLayout.setBackgroundResource(R.drawable.input_field_error_background);
-                hasError = true;
-            } else if (pass.length() < 6) {
-                passwordLayout.setBackgroundResource(R.drawable.input_field_error_background);
-                Toast.makeText(getContext(), "Password must be at least 6 characters", Toast.LENGTH_SHORT).show();
-                hasError = true;
-            }
-
-            if (hasError) return;
 
             presenter.login(email, pass);
         });
@@ -135,6 +94,10 @@ public class LoginFragment extends Fragment implements LoginView {
         if (getContext() != null) {
             Toast.makeText(getContext(), "Login Successful", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    @Override
+    public void navigateToHome() {
         if (isAdded()) {
             NavHostFragment.findNavController(this)
                     .navigate(R.id.action_login_to_home);
@@ -156,5 +119,15 @@ public class LoginFragment extends Fragment implements LoginView {
     public void hideLoading() {
         if (progressBar != null) progressBar.setVisibility(View.GONE);
         if (loginButton != null) loginButton.setEnabled(true);
+    }
+
+    @Override
+    public void showEmailError() {
+        usernameLayout.setBackgroundResource(R.drawable.input_field_error_background);
+    }
+
+    @Override
+    public void showPasswordError() {
+        passwordLayout.setBackgroundResource(R.drawable.input_field_error_background);
     }
 }

@@ -16,12 +16,31 @@ public class LoginPresenterImpl implements LoginPresenter {
 
     @Override
     public void login(String email, String password) {
+        if (email.isEmpty()) {
+            view.showEmailError();
+            return;
+        } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            view.showLoginError("Enter a valid email"); 
+            view.showEmailError(); 
+            return;
+        }
+
+        if (password.isEmpty()) {
+            view.showPasswordError();
+            return;
+        } else if (password.length() < 6) {
+            view.showLoginError("Password must be at least 6 characters");
+            view.showPasswordError();
+            return;
+        }
+
         view.showLoading();
         repository.login(email, password, new AuthCallback() {
             @Override
             public void onSuccess() {
                 view.hideLoading();
                 view.showLoginSuccess();
+                view.navigateToHome();
             }
 
             @Override
@@ -40,6 +59,7 @@ public class LoginPresenterImpl implements LoginPresenter {
             public void onSuccess() {
                 view.hideLoading();
                 view.showLoginSuccess();
+                view.navigateToHome();
             }
 
             @Override

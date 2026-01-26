@@ -10,7 +10,7 @@
     <color name="background_light_alt">#1B1E22</color>
     <color name="fragment_background_color">#121417</color>
     <color name="solid_bg_item_profile">#1B1E22</color>
-    <color name="bottom_nav_bg">#000000</color>
+    <color name="bottom_nav_bg">#121417</color>
     <color name="nav_icon_selected">#FFFFFF</color>
     <color name="nav_icon_unselected">#B0B0B0</color>
     <color name="dynamic_text_color">#FFFFFF</color>

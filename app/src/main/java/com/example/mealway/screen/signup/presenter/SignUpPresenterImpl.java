@@ -16,10 +16,35 @@ public class SignUpPresenterImpl implements SignUpPresenter {
 
     @Override
     public void register(String email, String password, String fullName, String phone) {
-        if(email.isEmpty() || password.isEmpty() || fullName.isEmpty() || phone.isEmpty()){
-            view.showError("Please fill all fields");
-            return;
+        boolean hasError = false;
+
+        if (fullName.isEmpty()) {
+            view.showNameError();
+            hasError = true;
         }
+
+        if (email.isEmpty()) {
+            view.showEmailError("Email is required");
+            hasError = true;
+        } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            view.showEmailError("Enter a valid email");
+            hasError = true;
+        }
+
+        if (phone.isEmpty()) {
+            view.showPhoneError();
+            hasError = true;
+        }
+
+        if (password.isEmpty()) {
+            view.showPasswordError("Password is required");
+            hasError = true;
+        } else if (password.length() < 6) {
+            view.showPasswordError("Password must be at least 6 characters");
+            hasError = true;
+        }
+
+        if (hasError) return;
 
         repository.register(email, password, fullName, phone, new AuthCallback() {
             @Override
