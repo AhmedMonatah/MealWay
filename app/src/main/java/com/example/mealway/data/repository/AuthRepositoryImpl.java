@@ -1,37 +1,32 @@
 package com.example.mealway.data.repository;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.util.Log;
+
 import com.example.mealway.data.callback.AuthCallback;
+import com.example.mealway.data.local.AppDatabase;
+import com.example.mealway.data.local.LocalDataSource;
+import com.example.mealway.data.local.MealDao;
+import com.example.mealway.data.model.Meal;
+import com.example.mealway.data.model.MealAppointment;
+import com.example.mealway.data.remote.firebase.FirebaseManager;
+import com.example.mealway.utils.ErrorUtils;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.net.Uri;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.util.Log;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import com.example.mealway.data.local.AppDatabase;
-import com.example.mealway.data.local.LocalDataSource;
-import com.example.mealway.data.local.MealDao;
-import com.example.mealway.data.remote.firebase.FirebaseManager;
-import com.example.mealway.data.model.Meal;
-import com.example.mealway.data.model.MealAppointment;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.List;
 
 public class AuthRepositoryImpl implements AuthRepository {
 
@@ -39,8 +34,10 @@ public class AuthRepositoryImpl implements AuthRepository {
     private final LocalDataSource localDataSource;
     private final MealDao mealDao;
     private final FirebaseManager firebaseManager;
+    private final Context context;
 
     public AuthRepositoryImpl(android.content.Context context) {
+        this.context = context;
         this.firebaseAuth = FirebaseAuth.getInstance();
         this.localDataSource = new LocalDataSource(context);
         this.mealDao = AppDatabase.getInstance(context).mealDao();
@@ -50,6 +47,16 @@ public class AuthRepositoryImpl implements AuthRepository {
     @Override
     public boolean isLoggedIn() {
         return firebaseAuth.getCurrentUser() != null && localDataSource.isLoggedIn();
+    }
+
+    @Override
+    public boolean isOnboardingCompleted() {
+        return localDataSource.isOnboardingCompleted();
+    }
+
+    @Override
+    public void setOnboardingCompleted(boolean completed) {
+        localDataSource.saveOnboardingState(completed);
     }
 
     @SuppressLint("CheckResult")
@@ -66,7 +73,7 @@ public class AuthRepositoryImpl implements AuthRepository {
                                 .subscribeOn(Schedulers.io())
                                 .subscribe(() -> syncUserData(null), throwable -> {});
                     } else {
-                        callback.onFailure(task.getException() != null ? task.getException().getMessage() : "Authentication failed");
+                        callback.onFailure(ErrorUtils.getAuthErrorMessage(context, task.getException()));
                     }
                 });
     }
@@ -76,7 +83,6 @@ public class AuthRepositoryImpl implements AuthRepository {
         firebaseAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        // Clear local DB before starting a new session for a new user
                         mealDao.clearAllFavorites()
                                 .andThen(mealDao.clearAllAppointments())
                                 .subscribeOn(Schedulers.io())
@@ -103,8 +109,7 @@ public class AuthRepositoryImpl implements AuthRepository {
                                 })
                                 .addOnFailureListener(e -> callback.onFailure("Auth succeeded but failed to save profile"));
                     } else {
-                        String error = task.getException() != null ? task.getException().getMessage() : "Registration failed";
-                        callback.onFailure(error);
+                        callback.onFailure(ErrorUtils.getAuthErrorMessage(context, task.getException()));
                     }
                 });
     }
@@ -124,8 +129,7 @@ public class AuthRepositoryImpl implements AuthRepository {
                                 .subscribeOn(Schedulers.io())
                                 .subscribe(() -> syncUserData(null), throwable -> {});
                     } else {
-                        String error = task.getException() != null ? task.getException().getMessage() : "Google Sign-In failed";
-                        callback.onFailure(error);
+                        callback.onFailure(ErrorUtils.getAuthErrorMessage(context, task.getException()));
                     }
                 });
     }

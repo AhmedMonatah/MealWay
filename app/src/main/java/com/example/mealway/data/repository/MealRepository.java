@@ -283,5 +283,88 @@ public class MealRepository {
         });
     }
 
+    // RxJava Observable methods for the new Search implementation
+    public Observable<List<Meal>> searchMealsByFirstLetterObservable(String firstLetter) {
+        return Observable.create(emitter -> {
+            apiService.searchMealsByFirstLetter(firstLetter).enqueue(new Callback<MealResponse>() {
+                @Override
+                public void onResponse(Call<MealResponse> call, Response<MealResponse> response) {
+                    if (response.isSuccessful() && response.body() != null && response.body().getMeals() != null) {
+                        emitter.onNext(response.body().getMeals());
+                        emitter.onComplete();
+                    } else {
+                        emitter.onNext(java.util.Collections.emptyList());
+                        emitter.onComplete();
+                    }
+                }
+                @Override
+                public void onFailure(Call<MealResponse> call, Throwable t) {
+                    emitter.onError(t);
+                }
+            });
+        });
+    }
 
+    public Observable<List<Meal>> filterByCategoryObservable(String category) {
+        return Observable.create(emitter -> {
+            apiService.filterByCategory(category).enqueue(new Callback<MealResponse>() {
+                @Override
+                public void onResponse(Call<MealResponse> call, Response<MealResponse> response) {
+                    if (response.isSuccessful() && response.body() != null && response.body().getMeals() != null) {
+                        emitter.onNext(response.body().getMeals());
+                        emitter.onComplete();
+                    } else {
+                        emitter.onNext(java.util.Collections.emptyList());
+                        emitter.onComplete();
+                    }
+                }
+                @Override
+                public void onFailure(Call<MealResponse> call, Throwable t) {
+                    emitter.onError(t);
+                }
+            });
+        });
+    }
+
+    public Observable<List<Meal>> filterByAreaObservable(String area) {
+        return Observable.create(emitter -> {
+            apiService.filterByArea(area).enqueue(new Callback<MealResponse>() {
+                @Override
+                public void onResponse(Call<MealResponse> call, Response<MealResponse> response) {
+                    if (response.isSuccessful() && response.body() != null && response.body().getMeals() != null) {
+                        emitter.onNext(response.body().getMeals());
+                        emitter.onComplete();
+                    } else {
+                        emitter.onNext(java.util.Collections.emptyList());
+                        emitter.onComplete();
+                    }
+                }
+                @Override
+                public void onFailure(Call<MealResponse> call, Throwable t) {
+                    emitter.onError(t);
+                }
+            });
+        });
+    }
+
+    public Observable<List<Meal>> getMealsByIngredientObservable(String ingredient) {
+        return Observable.create(emitter -> {
+            apiService.getMealsByIngredient(ingredient).enqueue(new Callback<MealResponse>() {
+                @Override
+                public void onResponse(Call<MealResponse> call, Response<MealResponse> response) {
+                    if (response.isSuccessful() && response.body() != null && response.body().getMeals() != null) {
+                        emitter.onNext(response.body().getMeals());
+                        emitter.onComplete();
+                    } else {
+                        emitter.onNext(java.util.Collections.emptyList());
+                        emitter.onComplete();
+                    }
+                }
+                @Override
+                public void onFailure(Call<MealResponse> call, Throwable t) {
+                    emitter.onError(t);
+                }
+            });
+        });
+    }
 }

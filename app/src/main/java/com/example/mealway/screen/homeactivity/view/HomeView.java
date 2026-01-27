@@ -1,5 +1,7 @@
 package com.example.mealway.screen.homeactivity.view;
 
+import android.content.Context;
+
 import com.example.mealway.data.model.Meal;
 import java.util.List;
 
@@ -9,4 +11,5 @@ public interface HomeView {
     void showError(String message);
     void showLoading();
     void hideLoading();
+    Context getContext();
 }

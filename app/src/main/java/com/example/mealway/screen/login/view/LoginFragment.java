@@ -61,7 +61,7 @@ public class LoginFragment extends Fragment implements LoginView {
 
                     @Override
                     public void onFailure(String error) {
-                        Toast.makeText(getContext(), "Sign In Failed: " + error, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), getString(R.string.sign_in_failed_prefix, error), Toast.LENGTH_SHORT).show();
                     }
                 })
         );
@@ -92,7 +92,7 @@ public class LoginFragment extends Fragment implements LoginView {
     @Override
     public void showLoginSuccess() {
         if (getContext() != null) {
-            Toast.makeText(getContext(), "Login Successful", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getString(R.string.login_successful), Toast.LENGTH_SHORT).show();
         }
     }
 

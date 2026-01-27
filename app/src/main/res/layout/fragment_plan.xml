@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
             android:layout_marginTop="80dp"
-            android:text="Meal Schedule"
+            android:text="@string/meal_schedule"
             android:textColor="@color/white"
             android:textSize="28sp"
             android:textStyle="bold" />
@@ -31,7 +31,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
             android:layout_marginTop="130dp"
-            android:text="Plan your meals easily"
+            android:text="@string/plan_sentence"
             android:textColor="@color/white"
             android:textSize="16sp"
             android:textStyle="normal" />
@@ -133,19 +133,13 @@
             android:layout_gravity="center"
             android:visibility="gone">
 
-            <ImageView
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:alpha="0.2"
-                android:src="@android:drawable/ic_menu_my_calendar"
-                app:tint="@color/gray_text_light" />
 
             <TextView
                 android:id="@+id/tv_no_appointments"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="No meals planned"
+                android:layout_marginBottom="70dp"
+                android:text="@string/no_meals_planned"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:textColor="@color/gray_text" />
@@ -154,7 +148,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:text="Select a date to see your schedule"
+                android:layout_marginBottom="65dp"
+                android:text="@string/select_date_hint"
                 android:textSize="14sp"
                 android:textColor="@color/gray_text_light" />
         </LinearLayout>

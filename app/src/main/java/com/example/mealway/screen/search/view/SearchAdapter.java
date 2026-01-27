@@ -39,15 +39,21 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
     }
 
     public void setMeals(List<Meal> meals) {
-        if (meals == null) {
-            this.meals = new ArrayList<>();
-            this.originalMeals.clear();
-        } else {
-            this.meals = new ArrayList<>(meals);
-            this.originalMeals.clear();
+        this.meals.clear();
+        this.originalMeals.clear();
+        if (meals != null) {
+            this.meals.addAll(meals);
             this.originalMeals.addAll(meals);
         }
         notifyDataSetChanged();
+    }
+
+    public void addMeals(List<Meal> newMeals) {
+        if (newMeals != null && !newMeals.isEmpty()) {
+            this.meals.addAll(newMeals);
+            this.originalMeals.addAll(newMeals);
+            notifyDataSetChanged();
+        }
     }
 
 

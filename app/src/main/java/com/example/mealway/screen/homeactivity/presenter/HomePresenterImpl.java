@@ -1,5 +1,6 @@
 package com.example.mealway.screen.homeactivity.presenter;
 
+import com.example.mealway.R;
 import com.example.mealway.data.callback.NetworkCallback;
 import com.example.mealway.data.model.Meal;
 import com.example.mealway.data.repository.MealRepository;
@@ -68,7 +69,7 @@ public class HomePresenterImpl implements HomePresenter {
             }
             
             if (randomMealResult == null && listMealsResult == null) {
-                view.showError("Failed to load home content");
+                view.showError(view.getContext().getString(R.string.error_load_home));
             }
         }
     }

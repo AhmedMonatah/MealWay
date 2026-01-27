@@ -6,7 +6,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.List;
 import io.reactivex.rxjava3.core.Completable;
-import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
 
 public class FirebaseManager {
@@ -20,7 +19,6 @@ public class FirebaseManager {
         return FirebaseAuth.getInstance().getUid();
     }
 
-    // Favorites Sync
     public Completable addFavorite(Meal meal) {
         String userId = getUserId();
         if (userId == null) return Completable.complete();
@@ -45,7 +43,6 @@ public class FirebaseManager {
         });
     }
 
-    // Appointments Sync
     public Completable addAppointment(MealAppointment appointment) {
         String userId = getUserId();
         if (userId == null) return Completable.complete();

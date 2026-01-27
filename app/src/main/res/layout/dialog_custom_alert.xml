@@ -67,7 +67,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Cancel"
+                    android:text="@string/cancel"
                     android:textColor="@color/cancel_btn"
                     android:visibility="gone" />
                 <com.google.android.material.button.MaterialButton
@@ -75,7 +75,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="OK"
+                    android:text="@string/ok"
                     android:backgroundTint="@color/MainColor"
                     android:textColor="@color/white"
                     app:cornerRadius="12dp" />

@@ -3,6 +3,7 @@ package com.example.mealway.screen.profile.presenter;
 import android.net.Uri;
 import com.example.mealway.data.callback.AuthCallback;
 import com.example.mealway.data.repository.AuthRepository;
+import com.example.mealway.data.repository.UserDataCallback;
 import com.example.mealway.screen.profile.view.ProfileView;
 
 public class ProfilePresenterImpl implements ProfilePresenter {
@@ -23,7 +24,7 @@ public class ProfilePresenterImpl implements ProfilePresenter {
         }
 
         view.showLoading();
-        repository.getUserDetails(new AuthRepository.UserDataCallback() {
+        repository.getUserDetails(new UserDataCallback() {
             @Override
             public void onDataFetched(String fullName, String phone, String email) {
                 if (view != null) {

@@ -6,6 +6,8 @@ import android.net.Uri;
 
 public interface AuthRepository {
     boolean isLoggedIn();
+    boolean isOnboardingCompleted();
+    void setOnboardingCompleted(boolean completed);
     void login(String email, String password, AuthCallback callback);
     void register(String email, String password, String fullName, String phone, AuthCallback callback);
     void signInWithGoogle(String idToken, AuthCallback callback);
@@ -14,8 +16,5 @@ public interface AuthRepository {
     void getUserDetails(UserDataCallback callback);
     void syncUserData(AuthCallback callback);
 
-    interface UserDataCallback {
-        void onDataFetched(String fullName, String phone, String email);
-        void onError(String error);
-    }
+
 }

@@ -29,7 +29,6 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
         this.plannedTimestamps = plannedTimestamps;
         this.listener = listener;
         
-        // Default select today
         Calendar today = Calendar.getInstance();
         today.set(Calendar.HOUR_OF_DAY, 0);
         today.set(Calendar.MINUTE, 0);
@@ -80,7 +79,6 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
                 break;
             }
         }
-        // Marker/Shadow logic (Show even if not selected)
         if (isPlanned) {
             holder.itemView.setBackgroundResource(R.drawable.bg_day_highlight);
             holder.viewMarker.setVisibility(View.VISIBLE);
@@ -89,7 +87,6 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
             holder.viewMarker.setVisibility(View.INVISIBLE);
         }
 
-        // Selection logic
         if (position == selectedPosition) {
             holder.tvDayNumber.setTextColor(Color.WHITE);
             holder.tvDayNumber.setBackgroundResource(R.drawable.bg_circle_main);

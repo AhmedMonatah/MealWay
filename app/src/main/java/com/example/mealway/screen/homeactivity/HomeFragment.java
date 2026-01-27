@@ -55,9 +55,9 @@ public class HomeFragment extends Fragment {
             if ((id == R.id.nav_favorite || id == R.id.nav_appointement) && !authRepository.isLoggedIn()) {
                 com.example.mealway.utils.AlertUtils.showConfirmation(
                     requireContext(),
-                    "Login Required",
-                    "Please login to access your favorites and meal plans.",
-                    "Login",
+                    getString(R.string.login_required_title),
+                    getString(R.string.login_required_message),
+                    getString(R.string.Login),
                     () -> {
                         androidx.navigation.Navigation.findNavController(requireActivity(), R.id.nav_host)
                             .navigate(R.id.loginFragment, null, new androidx.navigation.NavOptions.Builder()
