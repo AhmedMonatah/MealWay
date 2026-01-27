@@ -27,7 +27,6 @@ public class SignUpFragment extends Fragment implements SignUpView {
     private android.widget.ProgressBar progressBar;
 
     public SignUpFragment() {
-        // Required empty public constructor
     }
 
     @Override
@@ -77,7 +76,7 @@ public class SignUpFragment extends Fragment implements SignUpView {
             progressBar.setVisibility(View.GONE);
             signUpButton.setEnabled(true);
             if (getContext() != null) {
-                Toast.makeText(getContext(), "Registration Successful", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), getString(R.string.registration_successful), Toast.LENGTH_SHORT).show();
             }
             NavHostFragment.findNavController(this).navigate(R.id.action_signup_to_home);
         }

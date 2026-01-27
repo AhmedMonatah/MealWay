@@ -56,13 +56,17 @@ public class SearchFragment extends Fragment implements SearchView, SearchClickL
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        presenter = new SearchPresenterImpl(this, new MealRepository(requireContext()));
-        
         initViews(view);
         setupListeners();
-        
-        presenter.loadRandomMeals();
         setupNetworkMonitor();
+
+        if (presenter == null) {
+            presenter = new SearchPresenterImpl(this, new MealRepository(requireContext()));
+            presenter.loadRandomMeals();
+        } else {
+            // Already have presenter, just restore data if any
+            presenter.loadRandomMeals(); 
+        }
     }
 
     private void setupNetworkMonitor() {
@@ -89,8 +93,26 @@ public class SearchFragment extends Fragment implements SearchView, SearchClickL
         
         RecyclerView rvResults = view.findViewById(R.id.rv_search_results);
         adapter = new SearchAdapter(requireContext(), this);
-        rvResults.setLayoutManager(new GridLayoutManager(requireContext(), 3));
+        GridLayoutManager layoutManager = new GridLayoutManager(requireContext(), 3);
+        rvResults.setLayoutManager(layoutManager);
         rvResults.setAdapter(adapter);
+
+        rvResults.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (dy > 0) { // Scrolling down
+                    int visibleItemCount = layoutManager.getChildCount();
+                    int totalItemCount = layoutManager.getItemCount();
+                    int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
+
+                    if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount
+                            && firstVisibleItemPosition >= 0) {
+                        presenter.loadNextPage();
+                    }
+                }
+            }
+        });
     }
 
     private void setupListeners() {
@@ -211,5 +233,10 @@ public class SearchFragment extends Fragment implements SearchView, SearchClickL
                 .replace(R.id.home_content_container, fragment)
                 .addToBackStack(null)
                 .commit();
+    }
+
+    @Override
+    public android.content.Context getContext() {
+        return super.getContext();
     }
 }

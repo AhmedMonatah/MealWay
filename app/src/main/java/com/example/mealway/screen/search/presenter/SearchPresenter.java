@@ -14,4 +14,7 @@ public interface SearchPresenter {
     void filterByCategory(String category);
     void filterByIngredient(String ingredient);
     void filterByArea(String area);
+
+    void loadNextPage();
+    void resetPaging();
 }

@@ -63,6 +63,7 @@
                 android:hint="@string/search_hint"
                 android:imeOptions="actionSearch"
                 android:inputType="text"
+                android:textColorHint="@color/search_hint"
                 android:background="@null"
                 android:textSize="16sp"
                 android:padding="18dp"/>
@@ -101,7 +102,7 @@
             android:layout_height="52dp"
             android:layout_weight="1"
             android:layout_marginHorizontal="6dp"
-            android:text="Ingredient"
+            android:text="@string/ingredient_label"
             android:singleLine="true"
             android:ellipsize="none"
             android:textAllCaps="false"

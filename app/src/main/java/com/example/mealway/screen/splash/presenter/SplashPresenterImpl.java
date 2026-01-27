@@ -19,7 +19,9 @@ public class SplashPresenterImpl implements SplashPresenter {
     public void startSplash() {
         new Handler().postDelayed(() -> {
             if(view != null){
-                if (repository.isLoggedIn()) {
+                if (!repository.isOnboardingCompleted()) {
+                    view.navigateToOnboarding();
+                } else if (repository.isLoggedIn()) {
                     view.navigateToHome();
                 } else {
                     view.navigateToLogin();

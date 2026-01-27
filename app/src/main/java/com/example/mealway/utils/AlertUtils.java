@@ -23,11 +23,11 @@ public class AlertUtils {
     }
 
     public static void showError(Context context, String message) {
-        showCustomAlert(context, "Error", message, android.R.drawable.stat_notify_error, "#F44336", "Try Again", false, null);
+        showCustomAlert(context, context.getString(R.string.error_title), message, android.R.drawable.stat_notify_error, "#F44336", context.getString(R.string.try_again), false, null);
     }
     
     public static void showSuccess(Context context, String message) {
-        showCustomAlert(context, "Success", message, android.R.drawable.ic_dialog_info, "#4CAF50", "Great!", false, null);
+        showCustomAlert(context, context.getString(R.string.success), message, android.R.drawable.ic_dialog_info, "#4CAF50", context.getString(R.string.great), false, null);
     }
 
     private static void showCustomAlert(Context context, String title, String message, int iconRes, String colorHex, String positiveBtnText, boolean showNegative, AlertCallback callback) {
