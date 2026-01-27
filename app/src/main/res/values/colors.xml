@@ -52,7 +52,7 @@
     <color name="text_data_picker">#000000</color>
     <color name="day_selected_color">#9E9E9E</color>
     <color name="text_data_picker_header">#FFFFFF</color>
-
+    <color name="search_hint">#FF000000</color>
     <color name="color_picker_button">#000000</color>
     <color name="color_picker_header">#00193E</color>
     <color name="color_picker_button_light">#000000</color>

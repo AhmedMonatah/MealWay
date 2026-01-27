@@ -52,4 +52,14 @@ public class SplashFragment extends Fragment implements SplashView {
                             .build());
         }
     }
+
+    @Override
+    public void navigateToOnboarding() {
+        if (isAdded()) {
+            NavHostFragment.findNavController(this)
+                    .navigate(R.id.action_splash_to_onboarding, null, new NavOptions.Builder()
+                            .setPopUpTo(R.id.splashFragment, true)
+                            .build());
+        }
+    }
 }

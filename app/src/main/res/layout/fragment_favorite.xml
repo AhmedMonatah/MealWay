@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginTop="80dp"
-        android:text="My Favorites"
+        android:text="@string/FavouriteMeals"
         android:textSize="28sp"
         android:textStyle="bold"
         android:textColor="@color/white"
@@ -33,7 +33,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginTop="8dp"
-        android:text="Meals you loved"
+        android:text="@string/favorites_subtitle"
         android:textSize="16sp"
         android:textColor="@color/white"
         android:alpha="0.8"
@@ -75,7 +75,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:textColor="@color/gray_text"
-            android:text="No favorites yet"
+            android:text="@string/no_favorites_yet"
             android:textSize="18sp"
             android:textStyle="bold"/>
 
@@ -84,7 +84,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:textColor="@color/gray_text_light"
-            android:text="Save meals you want to cook again"
+            android:text="@string/save_meals_hint"
             android:textSize="14sp"/>
     </LinearLayout>
 

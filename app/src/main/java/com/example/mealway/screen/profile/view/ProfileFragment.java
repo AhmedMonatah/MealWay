@@ -52,18 +52,18 @@ public class ProfileFragment extends Fragment implements ProfileView, ProfileUIL
 
     @Override
     public void showUserData(String name, String email, String phone) {
-        tvName.setText(name != null ? name : "MealWay User");
+        tvName.setText(name != null ? name : getString(R.string.default_username));
         tvEmail.setText(email);
-        tvPhone.setText("Phone: " + (phone != null ? phone : "Not set"));
-        btnLogout.setText("Logout");
+        tvPhone.setText(getString(R.string.phone_label_with_placeholder, phone != null ? phone : getString(R.string.not_set)));
+        btnLogout.setText(getString(R.string.logout));
     }
 
     @Override
     public void showGuestMode() {
-        tvName.setText("Guest");
-        tvEmail.setText("guest@mealway.com");
-        tvPhone.setText("Login to see more");
-        btnLogout.setText("Login");
+        tvName.setText(getString(R.string.guest));
+        tvEmail.setText(getString(R.string.guest_email));
+        tvPhone.setText(getString(R.string.login_to_see_more));
+        btnLogout.setText(getString(R.string.Login));
         ivProfile.setImageResource(R.drawable.ic_profile);
     }
 
@@ -99,11 +99,15 @@ public class ProfileFragment extends Fragment implements ProfileView, ProfileUIL
 
     @Override
     public void onLogoutClicked() {
-        if (btnLogout.getText().toString().equalsIgnoreCase("Login")) {
+        if (btnLogout.getText().toString().equalsIgnoreCase(getString(R.string.Login))) {
             navigateToLogin();
             return;
         }
-        AlertUtils.showConfirmation(requireContext(), "Logout", "Are you sure you want to sign out?", "Logout", () -> presenter.logout());
+        AlertUtils.showConfirmation(requireContext(), 
+                getString(R.string.logout_confirmation_title), 
+                getString(R.string.logout_confirmation_message), 
+                getString(R.string.logout), 
+                () -> presenter.logout());
     }
 
 

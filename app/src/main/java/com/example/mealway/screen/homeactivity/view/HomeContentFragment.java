@@ -142,4 +142,9 @@ public class HomeContentFragment extends Fragment implements HomeView {
             }
         }
     }
+
+    @Override
+    public android.content.Context getContext() {
+        return super.getContext();
+    }
 }
