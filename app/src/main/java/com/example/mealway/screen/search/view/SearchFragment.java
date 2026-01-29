@@ -3,6 +3,7 @@ package com.example.mealway.screen.search.view;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -208,7 +209,8 @@ public class SearchFragment extends Fragment implements SearchView, SearchClickL
 
     @Override
     public void showError(String message) {
-        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+        Log.i("SearchFragment", message);
     }
 
     @Override

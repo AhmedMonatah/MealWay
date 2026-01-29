@@ -1,6 +1,5 @@
 package com.example.mealway.screen.favorite.presenter;
 
-import com.example.mealway.data.callback.NetworkCallback;
 import com.example.mealway.data.model.Meal;
 import com.example.mealway.data.repository.MealRepository;
 import com.example.mealway.screen.favorite.view.FavoriteView;
