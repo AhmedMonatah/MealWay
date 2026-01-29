@@ -33,7 +33,7 @@
             android:orientation="vertical"
             android:padding="24dp"
             android:gravity="center"
-            android:background="@color/white"
+            android:background="@color/dialog_background"
             >
 
             <TextView
@@ -43,7 +43,7 @@
                 android:text="Title"
                 android:textSize="20sp"
                 android:textStyle="bold"
-                android:textColor="@color/black_title_dialog" />
+                android:textColor="@color/dialog_title" />
 
             <TextView
                 android:id="@+id/tv_alert_message"
@@ -52,7 +52,7 @@
                 android:layout_marginTop="8dp"
                 android:text="This is an alert message."
                 android:textSize="16sp"
-                android:textColor="@color/text_dialog"
+                android:textColor="@color/dialog_text"
                 android:gravity="center" />
             <LinearLayout
                 android:layout_width="match_parent"
