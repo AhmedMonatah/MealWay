@@ -1,5 +1,7 @@
 package com.example.mealway.screen.search.view;
 
+import android.content.Context;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -22,9 +24,13 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mealway.R;
+import com.example.mealway.data.model.Area;
+import com.example.mealway.data.model.Category;
+import com.example.mealway.data.model.Ingredient;
 import com.example.mealway.data.model.Meal;
 import com.example.mealway.data.repository.MealRepository;
 import com.example.mealway.screen.common.NoInternetFragment;
+import com.example.mealway.screen.mealdetails.view.MealDetailsFragment;
 import com.example.mealway.screen.search.presenter.SearchPresenter;
 import com.example.mealway.screen.search.presenter.SearchPresenterImpl;
 import com.example.mealway.utils.NetworkMonitor;
@@ -65,8 +71,8 @@ public class SearchFragment extends Fragment implements SearchView, SearchClickL
             presenter = new SearchPresenterImpl(this, new MealRepository(requireContext()));
             presenter.loadRandomMeals();
         } else {
-            // Already have presenter, just restore data if any
-            presenter.loadRandomMeals(); 
+            updateButtonStyles(presenter.getSearchMode());
+            presenter.loadRandomMeals();
         }
     }
 
@@ -121,7 +127,6 @@ public class SearchFragment extends Fragment implements SearchView, SearchClickL
         btnIngredient.setOnClickListener(v -> presenter.fetchIngredients());
         btnCountry.setOnClickListener(v -> presenter.fetchAreas());
 
-        // Real-time local filtering as requested ("If write name other item deleted in view")
         etSearch.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -135,7 +140,6 @@ public class SearchFragment extends Fragment implements SearchView, SearchClickL
             updateButtonStyles(0);
         });
 
-        // Search by name (API call) when pressing Enter
         etSearch.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 presenter.setSearchMode(0); // Reset to Name search
@@ -159,35 +163,42 @@ public class SearchFragment extends Fragment implements SearchView, SearchClickL
     }
 
     @Override
-    public void showFilterOptions(List<String> options, String title, int mode) {
-        String[] items = options.toArray(new String[0]);
-        new MaterialAlertDialogBuilder(requireContext())
-                .setTitle(title)
-                .setItems(items, (dialog, which) -> {
-                    String selected = items[which];
-                    etSearch.setText(""); // Clear search bar for new filter
-                    updateButtonStyles(mode); // Update UI state
-                    switch (mode) {
-                        case 1: presenter.filterByCategory(selected); break;
-                        case 2: presenter.filterByIngredient(selected); break;
-                        case 3: presenter.filterByArea(selected); break;
-                    }
-                })
-                .show();
+    public void showFilterOptions(List<?> options, String title, int mode) {
+        FilterListFragment fragment = FilterListFragment.newInstance(options, title, mode);
+        fragment.setOnFilterSelectedListener((selected, activeMode) -> {
+            if (!isAdded() || getContext() == null) return;
+
+            String selectedName = "";
+            if (selected instanceof Category) selectedName = ((Category) selected).getStrCategory();
+            else if (selected instanceof Ingredient) selectedName = ((Ingredient) selected).getStrIngredient();
+            else if (selected instanceof Area) selectedName = ((Area) selected).getStrArea();
+
+            if (selectedName == null || selectedName.isEmpty()) return;
+
+            etSearch.setText("");
+            updateButtonStyles(activeMode);
+            switch (activeMode) {
+                case 1: presenter.filterByCategory(selectedName); break;
+                case 2: presenter.filterByIngredient(selectedName); break;
+                case 3: presenter.filterByArea(selectedName); break;
+            }
+        });
+
+        fragment.show(getParentFragmentManager(), "filter_dialog");
     }
 
     private void updateButtonStyles(int activeMode) {
-        int mainColor = ContextCompat.getColor(requireContext(), R.color.MainColor);
-        int white = ContextCompat.getColor(requireContext(), R.color.white);
-        int black = ContextCompat.getColor(requireContext(), R.color.black);
-        int backgroundContrast = ContextCompat.getColor(requireContext(), R.color.background_light_alt);
+        if (!isAdded() || getContext() == null) return;
 
-        // Reset all (Inactive)
+        int mainColor = ContextCompat.getColor(getContext(), R.color.MainColor);
+        int white = ContextCompat.getColor(getContext(), R.color.white);
+        int black = ContextCompat.getColor(getContext(), R.color.black);
+        int backgroundContrast = ContextCompat.getColor(getContext(), R.color.background_light_alt);
+
         resetButtonStyle(btnCategory, mainColor, black, backgroundContrast);
         resetButtonStyle(btnIngredient, mainColor, black, backgroundContrast);
         resetButtonStyle(btnCountry, mainColor, black, backgroundContrast);
 
-        // Set active
         switch (activeMode) {
             case 1: setActiveButtonStyle(btnCategory, mainColor, white); break;
             case 2: setActiveButtonStyle(btnIngredient, mainColor, white); break;
@@ -198,18 +209,17 @@ public class SearchFragment extends Fragment implements SearchView, SearchClickL
     private void resetButtonStyle(MaterialButton button, int mainColor, int whiteColor, int bgColor) {
         button.setBackgroundColor(bgColor);
         button.setTextColor(whiteColor);
-        button.setStrokeColor(android.content.res.ColorStateList.valueOf(whiteColor));
+        button.setStrokeColor(ColorStateList.valueOf(whiteColor));
     }
 
     private void setActiveButtonStyle(MaterialButton button, int mainColor, int whiteColor) {
         button.setBackgroundColor(mainColor);
         button.setTextColor(whiteColor);
-        button.setStrokeColor(android.content.res.ColorStateList.valueOf(whiteColor));
+        button.setStrokeColor(ColorStateList.valueOf(whiteColor));
     }
 
     @Override
     public void showError(String message) {
-        //Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
         Log.i("SearchFragment", message);
     }
 
@@ -225,7 +235,7 @@ public class SearchFragment extends Fragment implements SearchView, SearchClickL
 
     @Override
     public void onMealClick(Meal meal) {
-        com.example.mealway.screen.mealdetails.view.MealDetailsFragment fragment = new com.example.mealway.screen.mealdetails.view.MealDetailsFragment();
+        MealDetailsFragment fragment = new MealDetailsFragment();
         Bundle args = new Bundle();
         args.putParcelable("meal", meal);
         fragment.setArguments(args);
@@ -238,7 +248,18 @@ public class SearchFragment extends Fragment implements SearchView, SearchClickL
     }
 
     @Override
-    public android.content.Context getContext() {
-        return super.getContext();
+    public String getSafeString(int resId) {
+        if (isAdded()) {
+            return getString(resId);
+        }
+        return "";
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (presenter != null) {
+            presenter.clearDisposables();
+        }
     }
 }

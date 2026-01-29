@@ -8,6 +8,8 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.example.mealway.R;
 import androidx.appcompat.app.AlertDialog;
 import com.google.android.material.button.MaterialButton;
@@ -27,7 +29,7 @@ public class AlertUtils {
     }
     
     public static void showSuccess(Context context, String message) {
-        showCustomAlert(context, context.getString(R.string.success), message, android.R.drawable.ic_dialog_info, "#4CAF50", context.getString(R.string.great), false, null);
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
     }
 
     private static void showCustomAlert(Context context, String title, String message, int iconRes, String colorHex, String positiveBtnText, boolean showNegative, AlertCallback callback) {

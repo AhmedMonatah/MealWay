@@ -2,6 +2,7 @@ package com.example.mealway.data.repository;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.net.Uri;
 import android.util.Log;
 
 import com.example.mealway.data.callback.AuthCallback;
@@ -9,7 +10,9 @@ import com.example.mealway.data.local.LocalDataSource;
 import com.example.mealway.data.model.Meal;
 import com.example.mealway.data.model.MealAppointment;
 import com.example.mealway.data.remote.firebase.FirebaseManager;
+import com.example.mealway.utils.AlertUtils;
 import com.example.mealway.utils.ErrorUtils;
+import com.example.mealway.utils.NetworkMonitor;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -27,6 +30,12 @@ import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.schedulers.Schedulers;
+
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Base64;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 
 public class AuthRepositoryImpl implements AuthRepository {
 
@@ -63,13 +72,16 @@ public class AuthRepositoryImpl implements AuthRepository {
         firebaseAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        localDataSource.saveLoginState(true);
-                        callback.onSuccess();
-                        
-                        localDataSource.clearAllFavorites()
-                                .andThen(localDataSource.clearAllAppointments())
+                        syncUserData()
                                 .subscribeOn(Schedulers.io())
-                                .subscribe(() -> syncUserData(null), throwable -> {});
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(() -> {
+                                    localDataSource.saveLoginState(true);
+                                    callback.onSuccess();
+                                }, throwable -> {
+                                    localDataSource.saveLoginState(true); 
+                                    callback.onSuccess();
+                                });
                     } else {
                         callback.onFailure(ErrorUtils.getAuthErrorMessage(context, task.getException()));
                     }
@@ -119,13 +131,27 @@ public class AuthRepositoryImpl implements AuthRepository {
         firebaseAuth.signInWithCredential(credential)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        localDataSource.saveLoginState(true);
-                        callback.onSuccess();
-                        
-                        localDataSource.clearAllFavorites()
-                                .andThen(localDataSource.clearAllAppointments())
+                        FirebaseUser user = firebaseAuth.getCurrentUser();
+                        if (user != null) {
+                            Map<String, Object> userData = new HashMap<>();
+                            userData.put("email", user.getEmail());
+                            userData.put("fullName", user.getDisplayName());
+                            userData.put("uid", user.getUid());
+
+                            FirebaseFirestore.getInstance().collection("users").document(user.getUid())
+                                    .set(userData, com.google.firebase.firestore.SetOptions.merge());
+                        }
+
+                        syncUserData()
                                 .subscribeOn(Schedulers.io())
-                                .subscribe(() -> syncUserData(null), throwable -> {});
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(() -> {
+                                    localDataSource.saveLoginState(true);
+                                    callback.onSuccess();
+                                }, throwable -> {
+                                    localDataSource.saveLoginState(true);
+                                    callback.onSuccess();
+                                });
                     } else {
                         callback.onFailure(ErrorUtils.getAuthErrorMessage(context, task.getException()));
                     }
@@ -137,85 +163,175 @@ public class AuthRepositoryImpl implements AuthRepository {
         return firebaseAuth.getCurrentUser();
     }
 
-    @SuppressLint("CheckResult")
     @Override
-    public void signOut() {
+    public Completable signOut() {
+        if (!NetworkMonitor.isNetworkAvailable(context)) {
+            AlertUtils.showConfirmation(
+                    context,
+                    "Offline",
+                    "Cannot logout while offline.",
+                    "Try Again",
+                    () -> {
+                        signOut().subscribe();
+                    }
+            );
+            return Completable.complete();
+        }
+
         firebaseAuth.signOut();
         localDataSource.saveLoginState(false);
-        localDataSource.clearAllFavorites()
+        return localDataSource.clearAllFavorites()
                 .andThen(localDataSource.clearAllAppointments())
                 .subscribeOn(Schedulers.io())
-                .subscribe(() -> {}, throwable -> {});
+                .observeOn(AndroidSchedulers.mainThread());
     }
 
 
-    @SuppressLint("CheckResult")
+
     @Override
-    public void syncUserData(AuthCallback callback) {
+    public Completable syncUserData() {
         if (getCurrentUser() == null) {
-            if (callback != null) callback.onFailure("Not logged in");
-            return;
+            return Completable.error(new Exception("Not logged in"));
         }
 
-        firebaseManager.getFavorites()
-                .observeOn(Schedulers.io())
-                .flatMap(meals -> {
-                    if (meals == null || meals.isEmpty())
-                        return Single.just(new ArrayList<Meal>());
-                    List<Meal> validMeals = new ArrayList<>();
-                    for (Meal m : meals) {
-                        if (m != null && m.getIdMeal() != null) {
-                            m.setFavorite(true);
-                            validMeals.add(m);
-                        }
-                    }
-                    if (validMeals.isEmpty()) return Single.just(validMeals);
-                    return localDataSource.insertAllFavMeals(validMeals).toSingleDefault(validMeals);
-                })
-                .flatMap(meals -> firebaseManager.getAppointments())
-                .observeOn(Schedulers.io())
-                .flatMap(appointments -> {
-                    if (appointments == null || appointments.isEmpty()) return Single.just(new ArrayList<MealAppointment>());
-                    List<MealAppointment> validApps = new ArrayList<>();
-                    for (MealAppointment a : appointments) {
-                        if (a != null && a.getId() != null) {
-                            validApps.add(a);
-                        }
-                    }
-                    if (validApps.isEmpty()) return Single.just(validApps);
-                    return localDataSource.insertAllAppointments(validApps).toSingleDefault(validApps);
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        result -> { if (callback != null) callback.onSuccess(); },
-                        throwable -> { 
-                            Log.e("AuthRepo", "Sync error: " + throwable.getMessage());
-                            if (callback != null) callback.onFailure("Sync error: " + throwable.getMessage()); 
-                        }
-                );
+        return localDataSource.clearAllFavorites()
+                .andThen(localDataSource.clearAllAppointments())
+                .andThen(firebaseManager.getFavorites()
+                        .observeOn(Schedulers.io())
+                        .flatMap(meals -> {
+                            if (meals == null || meals.isEmpty())
+                                return Single.just(new ArrayList<Meal>());
+                            List<Meal> validMeals = new ArrayList<>();
+                            for (Meal m : meals) {
+                                if (m != null && m.getIdMeal() != null) {
+                                    m.setFavorite(true);
+                                    validMeals.add(m);
+                                }
+                            }
+                            if (validMeals.isEmpty()) return Single.just(validMeals);
+                            return localDataSource.insertAllFavMeals(validMeals).toSingleDefault(validMeals);
+                        })
+                        .flatMap(meals -> firebaseManager.getAppointments())
+                        .observeOn(Schedulers.io())
+                        .flatMap(appointments -> {
+                            if (appointments == null || appointments.isEmpty()) return Single.just(new ArrayList<MealAppointment>());
+                            List<MealAppointment> validApps = new ArrayList<>();
+                            for (MealAppointment a : appointments) {
+                                if (a != null && a.getId() != null) {
+                                    validApps.add(a);
+                                }
+                            }
+                            if (validApps.isEmpty()) return Single.just(validApps);
+                            return localDataSource.insertAllAppointments(validApps).toSingleDefault(validApps);
+                        })
+                        .ignoreElement());
     }
 
     @Override
     public void getUserDetails(UserDataCallback callback) {
         FirebaseUser user = getCurrentUser();
         if (user == null) {
-            callback.onDataFetched("Guest", "N/A", "guest@mealway.com");
+            callback.onDataFetched("Guest", "N/A", "guest@mealway.com", null);
             return;
         }
 
-        FirebaseFirestore.getInstance().collection("users").document(user.getUid()).get()
+        FirebaseFirestore.getInstance().collection("users").document(user.getUid())
+                .get()
                 .addOnSuccessListener(doc -> {
                     if (doc.exists()) {
                         callback.onDataFetched(
-                                doc.getString("fullName"),
+                                doc.getString("fullName") != null ? doc.getString("fullName") : user.getDisplayName(),
                                 doc.getString("phone"),
-                                user.getEmail()
+                                user.getEmail(),
+                                doc.getString("profileImage")
                         );
                     } else {
-                        callback.onDataFetched(user.getDisplayName(), "Not set", user.getEmail());
+                        callback.onDataFetched(
+                                user.getDisplayName() != null ? user.getDisplayName() : "User",
+                                user.getPhoneNumber(),
+                                user.getEmail(),
+                                user.getPhotoUrl() != null ? user.getPhotoUrl().toString() : null
+                        );
                     }
                 })
-                .addOnFailureListener(e -> callback.onError(e.getMessage()));
+                .addOnFailureListener(e -> {
+                    if (!com.example.mealway.utils.NetworkMonitor.isNetworkAvailable(context)) {
+                        callback.onDataFetched(user.getDisplayName(), "Offline", user.getEmail(),
+                                user.getPhotoUrl() != null ? user.getPhotoUrl().toString() : null);
+                    } else {
+                        callback.onError(e.getMessage());
+                    }
+                });
+    }
+
+    @Override
+    public Completable uploadProfileImage(Uri imageUri) {
+        FirebaseUser user = getCurrentUser();
+        if (user == null) {
+            return Completable.error(new Exception("User not logged in"));
+        }
+
+        String uid = user.getUid();
+        return Completable.create(emitter -> {
+            try {
+                InputStream imageStream = context.getContentResolver().openInputStream(imageUri);
+                Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
+                if (selectedImage == null) {
+                    emitter.onError(new Exception("Failed to decode image"));
+                    return;
+                }
+
+                int maxSize = 300;
+                int width = selectedImage.getWidth();
+                int height = selectedImage.getHeight();
+                float ratio = (float) width / (float) height;
+                if (ratio > 1) {
+                    width = maxSize;
+                    height = (int) (maxSize / ratio);
+                } else {
+                    height = maxSize;
+                    width = (int) (maxSize * ratio);
+                }
+                Bitmap scaledBitmap = Bitmap.createScaledBitmap(selectedImage, width, height, true);
+
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 70, baos);
+                byte[] b = baos.toByteArray();
+                
+                String encodedImage = Base64.encodeToString(b, Base64.DEFAULT);
+                String dataUrl = "data:image/jpeg;base64," + encodedImage;
+
+                Map<String, Object> data = new HashMap<>();
+                data.put("profileImage", dataUrl);
+
+                FirebaseFirestore.getInstance().collection("users").document(uid)
+                        .set(data, com.google.firebase.firestore.SetOptions.merge())
+                        .addOnSuccessListener(aVoid -> {
+                            if (!emitter.isDisposed()) {
+                                emitter.onComplete();
+                            }
+                        })
+                        .addOnFailureListener(e -> {
+                            if (!emitter.isDisposed()) {
+                                emitter.onError(e);
+                            }
+                        });
+
+            } catch (Exception e) {
+                if (!emitter.isDisposed()) {
+                    emitter.onError(e);
+                }
+            }
+        });
+    }
+
+
+    @Override
+    public String getProfileImageUrl() {
+        FirebaseUser user = getCurrentUser();
+        if (user != null && user.getPhotoUrl() != null) {
+            return user.getPhotoUrl().toString();
+        }
+        return null;
     }
 }

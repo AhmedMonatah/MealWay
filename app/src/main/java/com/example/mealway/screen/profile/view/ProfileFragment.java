@@ -19,6 +19,13 @@ import com.example.mealway.screen.profile.presenter.ProfilePresenterImpl;
 import com.example.mealway.utils.AlertUtils;
 import com.example.mealway.utils.NetworkMonitor;
 import com.google.android.material.button.MaterialButton;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.textfield.TextInputEditText;
+import com.example.mealway.utils.AlertUtils;
 
 public class ProfileFragment extends Fragment implements ProfileView, ProfileUIListener {
 
@@ -26,8 +33,17 @@ public class ProfileFragment extends Fragment implements ProfileView, ProfileUIL
     private TextView tvName, tvEmail, tvPhone;
     private ImageView ivProfile;
     private MaterialButton btnLogout;
+    private com.google.android.material.floatingactionbutton.FloatingActionButton btnChangePhoto;
     private ProgressBar progressBar;
 
+    private String currentName, currentPhone;
+
+    private final ActivityResultLauncher<String> imagePickerLauncher =
+            registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
+                if (uri != null) {
+                    presenter.uploadProfileImage(uri);
+                }
+            });
 
     @Nullable
     @Override
@@ -39,32 +55,60 @@ public class ProfileFragment extends Fragment implements ProfileView, ProfileUIL
         tvPhone = view.findViewById(R.id.tv_user_phone);
         ivProfile = view.findViewById(R.id.iv_profile_pic);
         btnLogout = view.findViewById(R.id.btn_logout);
+        btnChangePhoto = view.findViewById(R.id.btn_change_photo);
         progressBar = view.findViewById(R.id.progress_bar);
 
         presenter = new ProfilePresenterImpl(this, new AuthRepositoryImpl(requireContext()));
 
         btnLogout.setOnClickListener(v -> onLogoutClicked());
+        ivProfile.setOnClickListener(v -> imagePickerLauncher.launch("image/*"));
+        btnChangePhoto.setOnClickListener(v -> imagePickerLauncher.launch("image/*"));
 
         presenter.loadUserData();
 
         return view;
     }
 
+
+    @Override
+    public void updateProfileImage(String imageUrl) {
+        if (isAdded() && imageUrl != null) {
+            Glide.with(this)
+                    .load(imageUrl)
+                    .apply(RequestOptions.circleCropTransform())
+                    .placeholder(R.drawable.ic_profile)
+                    .into(ivProfile);
+        }
+    }
+
     @Override
     public void showUserData(String name, String email, String phone) {
-        tvName.setText(name != null ? name : getString(R.string.default_username));
+        this.currentName = name;
+        this.currentPhone = phone;
+
+        tvName.setText(name != null ?  name : getString(R.string.default_username));
         tvEmail.setText(email);
-        tvPhone.setText(getString(R.string.phone_label_with_placeholder, phone != null ? phone : getString(R.string.not_set)));
-        btnLogout.setText(getString(R.string.logout));
+        
+        String phoneToShow = (phone != null && !phone.isEmpty()) ? phone : getString(R.string.not_set);
+        tvPhone.setText(getString(R.string.phone_label_with_placeholder, phoneToShow));
+        
+        if (btnChangePhoto != null) {
+            btnChangePhoto.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
     public void showGuestMode() {
+        this.currentName = null;
+        this.currentPhone = null;
         tvName.setText(getString(R.string.guest));
         tvEmail.setText(getString(R.string.guest_email));
         tvPhone.setText(getString(R.string.login_to_see_more));
         btnLogout.setText(getString(R.string.Login));
         ivProfile.setImageResource(R.drawable.ic_profile);
+        if (btnChangePhoto != null) {
+            btnChangePhoto.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -103,6 +147,12 @@ public class ProfileFragment extends Fragment implements ProfileView, ProfileUIL
             navigateToLogin();
             return;
         }
+
+        if (!NetworkMonitor.isNetworkAvailable(requireContext())) {
+            AlertUtils.showError(requireContext(), getString(R.string.no_internet_error));
+            return;
+        }
+
         AlertUtils.showConfirmation(requireContext(), 
                 getString(R.string.logout_confirmation_title), 
                 getString(R.string.logout_confirmation_message), 

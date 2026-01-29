@@ -10,7 +10,7 @@ public interface SearchView {
     void showError(String message);
     void showLoading();
     void hideLoading();
-    void showSuggestions(List<String> suggestions); // Can be used for suggestions or filter options
-    void showFilterOptions(List<String> options, String title, int mode);
-    Context getContext();
+    void showSuggestions(List<String> suggestions);
+    void showFilterOptions(List<?> options, String title, int mode);
+    String getSafeString(int resId);
 }

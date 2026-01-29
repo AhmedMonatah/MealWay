@@ -1,4 +1,4 @@
-package com.example.mealway.screen.mealdetails;
+package com.example.mealway.screen.mealdetails.view;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -9,7 +9,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.airbnb.lottie.LottieAnimationView;
 import com.bumptech.glide.Glide;
 import com.example.mealway.R;
 import java.util.List;
