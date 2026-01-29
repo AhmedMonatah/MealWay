@@ -4,6 +4,7 @@ import android.net.Uri;
 
 public interface ProfilePresenter {
     void loadUserData();
+    void uploadProfileImage(Uri imageUri);
     void logout();
     void onDestroy();
 }

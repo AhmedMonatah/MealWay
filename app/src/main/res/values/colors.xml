@@ -53,10 +53,26 @@
     <color name="day_selected_color">#9E9E9E</color>
     <color name="text_data_picker_header">#FFFFFF</color>
     <color name="search_hint">#FF000000</color>
-    <color name="color_picker_button">#000000</color>
+    <color name="color_picker_button">@color/MainColor</color>
     <color name="color_picker_header">#00193E</color>
     <color name="color_picker_button_light">#000000</color>
     <color name="black_title_dialog">#000000</color>
+    
+    <color name="dialog_background">#FFFFFF</color>
+    <color name="dialog_title">#000000</color>
+    <color name="dialog_text">#616161</color>
+    <color name="search_stroke_icon_color">#000000</color>
 
+    <color name="search_bar_bg">#F5F5F5</color>
+    <color name="card_surface_color">#FFFFFF</color>
 
+    <color name="filter_orange">#FF9800</color>
+    <color name="filter_green">#4CAF50</color>
+    <color name="filter_blue">#2196F3</color>
+    <color name="filter_pink">#E91E63</color>
+    <color name="filter_teal">#009688</color>
+    <color name="filter_purple">#9C27B0</color>
+    <color name="filter_amber">#FFC107</color>
+    <color name="filter_indigo">#3F51B5</color>
+    <color name="card_image_overlay">#11000000</color>
 </resources>

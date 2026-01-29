@@ -4,6 +4,7 @@ import android.net.Uri;
 
 public interface ProfileView {
     void showUserData(String name, String email, String phone);
+    void updateProfileImage(String imageUrl);
     void showGuestMode();
     void showLoading();
     void hideLoading();

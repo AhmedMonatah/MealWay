@@ -49,21 +49,31 @@
                 android:orientation="vertical"
                 android:padding="36dp">
 
-                <RelativeLayout
+                <FrameLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content">
 
                     <com.google.android.material.imageview.ShapeableImageView
-                        android:background="@color/MainColor"
                         android:id="@+id/iv_profile_pic"
                         android:layout_width="160dp"
                         android:layout_height="160dp"
                         android:scaleType="centerCrop"
-                        android:src="@drawable/iconimage"
+                        android:src="@drawable/user_profile"
                         app:shapeAppearanceOverlay="@style/CircleImageView"
                         app:strokeColor="@color/background_light"
                         app:strokeWidth="6dp" />
-                </RelativeLayout>
+
+                    <com.google.android.material.floatingactionbutton.FloatingActionButton
+                        android:id="@+id/btn_change_photo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom|end"
+                        android:layout_margin="4dp"
+                        app:fabSize="mini"
+                        app:srcCompat="@android:drawable/ic_menu_camera"
+                        app:tint="@color/white"
+                        app:backgroundTint="@color/MainColor" />
+                </FrameLayout>
 
                 <TextView
                     android:id="@+id/tv_user_name"
