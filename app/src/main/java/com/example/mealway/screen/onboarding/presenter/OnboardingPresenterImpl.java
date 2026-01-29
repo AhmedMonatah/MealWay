@@ -24,9 +24,9 @@ public class OnboardingPresenterImpl implements OnboardingPresenter {
     public void getOnboardingData() {
         List<OnboardingItem> onboardingItems = new ArrayList<>();
         
-        int meal1 = context.getResources().getIdentifier("meal_1", "drawable", context.getPackageName());
-        int meal2 = context.getResources().getIdentifier("meal_2", "drawable", context.getPackageName());
-        int meal3 = context.getResources().getIdentifier("meal_3", "drawable", context.getPackageName());
+        int meal1 = R.drawable.meal_1;
+        int meal2 = R.drawable.meal_2;
+        int meal3 = R.drawable.meal_3;
 
         onboardingItems.add(new OnboardingItem(
                 context.getString(R.string.onboarding_title_1),

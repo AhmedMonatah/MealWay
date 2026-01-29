@@ -1,10 +1,9 @@
 package com.example.mealway.data.repository;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 
-import com.example.mealway.data.callback.NetworkCallback;
-import com.example.mealway.data.local.AppDatabase;
-import com.example.mealway.data.local.MealDao;
+import com.example.mealway.data.local.LocalDataSource;
 import com.example.mealway.data.model.IngredientResponse;
 import com.example.mealway.data.model.Meal;
 import com.example.mealway.data.model.MealAppointment;
@@ -14,15 +13,16 @@ import com.example.mealway.data.model.CategoryResponse;
 import com.example.mealway.data.model.Area;
 import com.example.mealway.data.model.AreaResponse;
 import com.example.mealway.data.model.Ingredient;
-import com.example.mealway.data.model.IngredientResponse;
 import com.example.mealway.data.remote.api.MealApiService;
 import com.example.mealway.data.remote.firebase.FirebaseManager;
 import com.example.mealway.data.remote.network.RetrofitClient;
 import com.example.mealway.utils.NetworkMonitor;
 
+import java.util.Collections;
 import java.util.List;
 import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.ObservableTransformer;
 import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
@@ -32,7 +32,7 @@ import retrofit2.Response;
 
 public class MealRepository {
     private final MealApiService apiService;
-    private final MealDao mealDao;
+    private final LocalDataSource localDataSource;
     private final FirebaseManager firebaseManager;
     private static Meal cachedDailyMeal;
     private final Context context;
@@ -40,8 +40,7 @@ public class MealRepository {
     public MealRepository(Context context) {
         this.context = context;
         this.apiService = RetrofitClient.getClient().create(MealApiService.class);
-        AppDatabase db = AppDatabase.getInstance(context);
-        this.mealDao = db.mealDao();
+        this.localDataSource = new LocalDataSource(context);
         this.firebaseManager = new FirebaseManager();
     }
 
@@ -49,322 +48,193 @@ public class MealRepository {
         return NetworkMonitor.isNetworkAvailable(context);
     }
 
-
-    public void getRandomMeal(NetworkCallback<Meal> callback) {
+    public Single<Meal> getRandomMeal() {
         if (cachedDailyMeal != null) {
-            callback.onSuccess(cachedDailyMeal);
-            return;
+            return Single.just(cachedDailyMeal);
         }
 
-        apiService.getRandomMeal().enqueue(new Callback<MealResponse>() {
-            @Override
-            public void onResponse(Call<MealResponse> call, Response<MealResponse> response) {
-                if (response.isSuccessful() && response.body() != null && response.body().getMeals() != null && !response.body().getMeals().isEmpty()) {
-                    cachedDailyMeal = response.body().getMeals().get(0);
-                    callback.onSuccess(cachedDailyMeal);
-                } else {
-                    callback.onFailure("No meal found");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<MealResponse> call, Throwable t) {
-                callback.onFailure(t.getMessage());
-            }
-        });
-    }
-
-    public void getMealsByIngredient(String ingredient, NetworkCallback<List<Meal>> callback) {
-        apiService.getMealsByIngredient(ingredient).enqueue(new Callback<MealResponse>() {
-            @Override
-            public void onResponse(Call<MealResponse> call, Response<MealResponse> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    callback.onSuccess(response.body().getMeals());
-                } else {
-                    callback.onFailure("Failed to load meals");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<MealResponse> call, Throwable t) {
-                callback.onFailure(t.getMessage());
-            }
-        });
-    }
-
-    public void getMealById(String id, NetworkCallback<Meal> callback) {
-        apiService.getMealById(id).enqueue(new Callback<MealResponse>() {
-            @Override
-            public void onResponse(Call<MealResponse> call, Response<MealResponse> response) {
-                if (response.isSuccessful() && response.body() != null && response.body().getMeals() != null && !response.body().getMeals().isEmpty()) {
-                    callback.onSuccess(response.body().getMeals().get(0));
-                } else {
-                    checkLocalFavMeal(id, callback, "Meal not found");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<MealResponse> call, Throwable t) {
-                checkLocalFavMeal(id, callback, t.getMessage());
-            }
-        });
-    }
-
-    private void checkLocalFavMeal(String id, NetworkCallback<Meal> callback, String error) {
-        mealDao.getFavMealById(id)
+        return apiService.getRandomMeal()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        meal -> callback.onSuccess(meal),
-                        throwable -> callback.onFailure(error)
-                );
+                .map(response -> {
+                    if (response != null && response.getMeals() != null && !response.getMeals().isEmpty()) {
+                        cachedDailyMeal = response.getMeals().get(0);
+                        return cachedDailyMeal;
+                    } else {
+                        throw new RuntimeException("No meal found");
+                    }
+                });
+    }
+
+    public Single<List<Meal>> getMealsByIngredient(String ingredient) {
+        return apiService.getMealsByIngredient(ingredient)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .map(response -> {
+                    if (response != null && response.getMeals() != null) {
+                        return response.getMeals();
+                    } else {
+                        return Collections.<Meal>emptyList();
+                    }
+                });
+    }
+
+    public Single<Meal> getMealById(String id) {
+        return apiService.getMealById(id)
+                .subscribeOn(Schedulers.io())
+                .flatMap(response -> {
+                    if (response != null && response.getMeals() != null && !response.getMeals().isEmpty()) {
+                        return Single.just(response.getMeals().get(0));
+                    } else {
+                        return localDataSource.getFavMealById(id);
+                    }
+                })
+                .onErrorResumeNext(throwable -> localDataSource.getFavMealById(id))
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    private Single<Meal> ensureFullMeal(Meal meal) {
+        if (meal.getStrInstructions() != null && !meal.getStrInstructions().isEmpty()) {
+            return Single.just(meal);
+        } else {
+            return apiService.getMealById(meal.getIdMeal())
+                    .subscribeOn(Schedulers.io())
+                    .map(response -> {
+                        if (response != null && response.getMeals() != null && !response.getMeals().isEmpty()) {
+                            return response.getMeals().get(0);
+                        } else {
+                            throw new RuntimeException("Could not fetch full meal details");
+                        }
+                    });
+        }
     }
 
     public Completable addToFavorites(Meal meal) {
-        meal.setFavorite(true);
-        // Sync Room + Firestore
-        return mealDao.insertFavMeal(meal)
-                .andThen(firebaseManager.addFavorite(meal))
+        return ensureFullMeal(meal)
+                .flatMapCompletable(fullMeal -> {
+                    fullMeal.setFavorite(true);
+                    return localDataSource.insertFavMeal(fullMeal)
+                            .andThen(firebaseManager.addFavorite(fullMeal));
+                })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
     public Completable removeFromFavorites(Meal meal) {
-        return mealDao.deleteFavMeal(meal)
+        return localDataSource.deleteFavMeal(meal)
                 .andThen(firebaseManager.removeFavorite(meal.getIdMeal()))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
     public Single<Boolean> isFavorite(String mealId) {
-        return mealDao.isMealFavorite(mealId)
+        return localDataSource.isMealFavorite(mealId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
     public Observable<List<Meal>> getStoredFavorites() {
-        return mealDao.getAllFavMeals()
+        return localDataSource.getAllFavMeals()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
     public Completable addAppointment(Meal meal, MealAppointment appointment) {
-        // Cache full meal details for offline access
-        // We don't overwrite the isFavorite status if it already exists in DB
-        return mealDao.isMealFavorite(meal.getIdMeal())
-                .flatMapCompletable(isFav -> {
-                    meal.setFavorite(isFav);
-                    return mealDao.insertFavMeal(meal);
-                })
-                .andThen(mealDao.insertAppointment(appointment))
+        return ensureFullMeal(meal)
+                .flatMapCompletable(fullMeal -> 
+                    localDataSource.isMealFavorite(fullMeal.getIdMeal())
+                        .flatMapCompletable(isFav -> {
+                            fullMeal.setFavorite(isFav);
+                            return localDataSource.insertFavMeal(fullMeal);
+                        })
+                )
+                .andThen(localDataSource.insertAppointment(appointment))
                 .andThen(firebaseManager.addAppointment(appointment))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
     public Completable deleteAppointment(MealAppointment appointment) {
-        return mealDao.deleteAppointment(appointment)
+        return localDataSource.deleteAppointment(appointment)
                 .andThen(firebaseManager.removeAppointment(appointment.getId()))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
     public Observable<List<MealAppointment>> getAllAppointments() {
-        return mealDao.getAllAppointments()
+        return localDataSource.getAllAppointments()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public void searchMealsByFirstLetter(String firstLetter, NetworkCallback<List<Meal>> callback) {
-        apiService.searchMealsByFirstLetter(firstLetter).enqueue(new Callback<MealResponse>() {
-            @Override
-            public void onResponse(Call<MealResponse> call, Response<MealResponse> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    callback.onSuccess(response.body().getMeals());
-                } else {
-                    callback.onFailure("Failed to search meals");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<MealResponse> call, Throwable t) {
-                callback.onFailure(t.getMessage());
-            }
-        });
-    }
-
-    public void filterByCategory(String category, NetworkCallback<List<Meal>> callback) {
-        apiService.filterByCategory(category).enqueue(new Callback<MealResponse>() {
-            @Override
-            public void onResponse(Call<MealResponse> call, Response<MealResponse> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    callback.onSuccess(response.body().getMeals());
-                } else {
-                    callback.onFailure("Failed to filter by category");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<MealResponse> call, Throwable t) {
-                callback.onFailure(t.getMessage());
-            }
-        });
-    }
-
-    public void filterByArea(String area, NetworkCallback<List<Meal>> callback) {
-        apiService.filterByArea(area).enqueue(new Callback<MealResponse>() {
-            @Override
-            public void onResponse(Call<MealResponse> call, Response<MealResponse> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    callback.onSuccess(response.body().getMeals());
-                } else {
-                    callback.onFailure("Failed to filter by area");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<MealResponse> call, Throwable t) {
-                callback.onFailure(t.getMessage());
-            }
-        });
-    }
-
-    public void listCategories(NetworkCallback<List<Category>> callback) {
-        apiService.listCategories().enqueue(new Callback<CategoryResponse>() {
-            @Override
-            public void onResponse(Call<CategoryResponse> call, Response<CategoryResponse> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    callback.onSuccess(response.body().getCategories());
-                } else {
-                    callback.onFailure("Failed to list categories");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<CategoryResponse> call, Throwable t) {
-                callback.onFailure(t.getMessage());
-            }
-        });
-    }
-
-    public void listAreas(NetworkCallback<List<Area>> callback) {
-        apiService.listAreas().enqueue(new Callback<AreaResponse>() {
-            @Override
-            public void onResponse(Call<AreaResponse> call, Response<AreaResponse> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    callback.onSuccess(response.body().getAreas());
-                } else {
-                    callback.onFailure("Failed to list areas");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<AreaResponse> call, Throwable t) {
-                callback.onFailure(t.getMessage());
-            }
-        });
-    }
-
-    public void listIngredients(NetworkCallback<List<Ingredient>> callback) {
-        apiService.listIngredients().enqueue(new Callback<IngredientResponse>() {
-            @Override
-            public void onResponse(Call<IngredientResponse> call, Response<IngredientResponse> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    callback.onSuccess(response.body().getIngredients());
-                } else {
-                    callback.onFailure("Failed to list ingredients");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<IngredientResponse> call, Throwable t) {
-                callback.onFailure(t.getMessage());
-            }
-        });
-    }
-
-    // RxJava Observable methods for the new Search implementation
-    public Observable<List<Meal>> searchMealsByFirstLetterObservable(String firstLetter) {
-        return Observable.create(emitter -> {
-            apiService.searchMealsByFirstLetter(firstLetter).enqueue(new Callback<MealResponse>() {
-                @Override
-                public void onResponse(Call<MealResponse> call, Response<MealResponse> response) {
-                    if (response.isSuccessful() && response.body() != null && response.body().getMeals() != null) {
-                        emitter.onNext(response.body().getMeals());
-                        emitter.onComplete();
+    public Single<List<Category>> listCategories() {
+        return apiService.listCategories()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .map(response -> {
+                    if (response != null && response.getCategories() != null) {
+                        return response.getCategories();
                     } else {
-                        emitter.onNext(java.util.Collections.emptyList());
-                        emitter.onComplete();
+                        return Collections.<Category>emptyList();
                     }
-                }
-                @Override
-                public void onFailure(Call<MealResponse> call, Throwable t) {
-                    emitter.onError(t);
-                }
-            });
-        });
+                });
+    }
+
+    public Single<List<Area>> listAreas() {
+        return apiService.listAreas()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .map(response -> {
+                    if (response != null && response.getAreas() != null) {
+                        return response.getAreas();
+                    } else {
+                        return Collections.<Area>emptyList();
+                    }
+                });
+    }
+
+    public Single<List<Ingredient>> listIngredients() {
+        return apiService.listIngredients()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .map(response -> {
+                    if (response != null && response.getIngredients() != null) {
+                        return response.getIngredients();
+                    } else {
+                        return Collections.<Ingredient>emptyList();
+                    }
+                });
+    }
+
+    private <T extends MealResponse> ObservableTransformer<T, List<Meal>> mealsTransformer() {
+        return upstream -> upstream
+                .map(response ->
+                        response.getMeals() != null
+                                ? response.getMeals()
+                                : Collections.<Meal>emptyList()
+                )
+                .subscribeOn(Schedulers.io());
+    }
+
+    public Observable<List<Meal>> searchMealsByFirstLetterObservable(String firstLetter) {
+        return apiService.searchMealsByFirstLetter(firstLetter)
+                .compose(mealsTransformer());
     }
 
     public Observable<List<Meal>> filterByCategoryObservable(String category) {
-        return Observable.create(emitter -> {
-            apiService.filterByCategory(category).enqueue(new Callback<MealResponse>() {
-                @Override
-                public void onResponse(Call<MealResponse> call, Response<MealResponse> response) {
-                    if (response.isSuccessful() && response.body() != null && response.body().getMeals() != null) {
-                        emitter.onNext(response.body().getMeals());
-                        emitter.onComplete();
-                    } else {
-                        emitter.onNext(java.util.Collections.emptyList());
-                        emitter.onComplete();
-                    }
-                }
-                @Override
-                public void onFailure(Call<MealResponse> call, Throwable t) {
-                    emitter.onError(t);
-                }
-            });
-        });
+        return apiService.filterByCategory(category)
+                .compose(mealsTransformer());
     }
 
     public Observable<List<Meal>> filterByAreaObservable(String area) {
-        return Observable.create(emitter -> {
-            apiService.filterByArea(area).enqueue(new Callback<MealResponse>() {
-                @Override
-                public void onResponse(Call<MealResponse> call, Response<MealResponse> response) {
-                    if (response.isSuccessful() && response.body() != null && response.body().getMeals() != null) {
-                        emitter.onNext(response.body().getMeals());
-                        emitter.onComplete();
-                    } else {
-                        emitter.onNext(java.util.Collections.emptyList());
-                        emitter.onComplete();
-                    }
-                }
-                @Override
-                public void onFailure(Call<MealResponse> call, Throwable t) {
-                    emitter.onError(t);
-                }
-            });
-        });
+        return apiService.filterByArea(area)
+                .compose(mealsTransformer());
     }
 
     public Observable<List<Meal>> getMealsByIngredientObservable(String ingredient) {
-        return Observable.create(emitter -> {
-            apiService.getMealsByIngredient(ingredient).enqueue(new Callback<MealResponse>() {
-                @Override
-                public void onResponse(Call<MealResponse> call, Response<MealResponse> response) {
-                    if (response.isSuccessful() && response.body() != null && response.body().getMeals() != null) {
-                        emitter.onNext(response.body().getMeals());
-                        emitter.onComplete();
-                    } else {
-                        emitter.onNext(java.util.Collections.emptyList());
-                        emitter.onComplete();
-                    }
-                }
-                @Override
-                public void onFailure(Call<MealResponse> call, Throwable t) {
-                    emitter.onError(t);
-                }
-            });
-        });
+        return apiService.getMealsByIngredient(ingredient)
+                .toObservable()
+                .compose(mealsTransformer());
     }
+
 }

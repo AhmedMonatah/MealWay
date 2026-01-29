@@ -17,4 +17,5 @@ public interface SearchPresenter {
 
     void loadNextPage();
     void resetPaging();
+
 }
