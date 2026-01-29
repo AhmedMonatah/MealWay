@@ -15,6 +15,8 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.mealway.R;
 import com.example.mealway.data.model.OnboardingItem;
+import com.example.mealway.data.repository.AuthRepository;
+import com.example.mealway.data.repository.AuthRepositoryImpl;
 import com.example.mealway.screen.onboarding.presenter.OnboardingPresenter;
 import com.example.mealway.screen.onboarding.presenter.OnboardingPresenterImpl;
 import com.google.android.material.tabs.TabLayout;
@@ -151,8 +153,7 @@ public class OnboardingFragment extends Fragment implements OnboardingView {
     @Override
     public void navigateToLogin() {
         if (getContext() != null) {
-            com.example.mealway.data.repository.AuthRepository repository = 
-                new com.example.mealway.data.repository.AuthRepositoryImpl(requireContext());
+          AuthRepository repository = new AuthRepositoryImpl(requireContext());
             repository.setOnboardingCompleted(true);
 
             NavController navController = Navigation.findNavController(requireView());

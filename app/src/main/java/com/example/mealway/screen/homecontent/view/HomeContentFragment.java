@@ -1,4 +1,4 @@
-package com.example.mealway.screen.homeactivity.view;
+package com.example.mealway.screen.homecontent.view;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -20,18 +20,17 @@ import com.bumptech.glide.Glide;
 import com.example.mealway.R;
 import com.example.mealway.data.model.Meal;
 import com.example.mealway.data.repository.MealRepository;
-import com.example.mealway.screen.homeactivity.MealAdapter;
-import com.example.mealway.screen.homeactivity.presenter.HomePresenter;
-import com.example.mealway.screen.homeactivity.presenter.HomePresenterImpl;
+import com.example.mealway.screen.homecontent.presenter.HomeContentPresenter;
+import com.example.mealway.screen.homecontent.presenter.HomeContentPresenterImpl;
 import com.example.mealway.screen.mealdetails.view.MealDetailsFragment;
 import com.facebook.shimmer.ShimmerFrameLayout;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class HomeContentFragment extends Fragment implements HomeView {
+public class HomeContentFragment extends Fragment implements HomeContentView {
 
-    private HomePresenter presenter;
+    private HomeContentPresenter presenter;
     private ImageView ivRandomMeal;
     private TextView tvRandomMealName;
     private CardView cardRandomMeal;
@@ -58,7 +57,7 @@ public class HomeContentFragment extends Fragment implements HomeView {
         setupRecyclerView();
 
         MealRepository repository = new MealRepository(requireContext());
-        presenter = new HomePresenterImpl(this, repository);
+        presenter = new HomeContentPresenterImpl(this, repository);
         
         shimmerRandomMeal.startShimmer();
         shimmerHorizontalList.startShimmer();
@@ -113,7 +112,6 @@ public class HomeContentFragment extends Fragment implements HomeView {
     public void showError(String message) {
         if (isAdded()) {
             Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
-            // Stop shimmers on error to show whatever we have or empty state
             hideLoading();
         }
     }
@@ -121,7 +119,6 @@ public class HomeContentFragment extends Fragment implements HomeView {
     @Override
     public void showLoading() {
         if (isAdded()) {
-            // progressBar is secondary now, shimmers are primary
             if (shimmerRandomMeal != null) shimmerRandomMeal.startShimmer();
             if (shimmerHorizontalList != null) shimmerHorizontalList.startShimmer();
         }
@@ -146,5 +143,13 @@ public class HomeContentFragment extends Fragment implements HomeView {
     @Override
     public android.content.Context getContext() {
         return super.getContext();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (presenter != null) {
+            presenter.onDestroy();
+        }
     }
 }
