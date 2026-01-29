@@ -1,12 +1,13 @@
 package com.example.mealway.data.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
-import java.io.Serializable;
 
 @Entity(tableName = "meal_appointments")
-public class MealAppointment implements Serializable {
+public class MealAppointment implements Parcelable {
     @PrimaryKey
     @NonNull
     private String id;
@@ -24,6 +25,40 @@ public class MealAppointment implements Serializable {
         this.mealName = mealName;
         this.mealThumb = mealThumb;
         this.dateTimestamp = dateTimestamp;
+    }
+
+    protected MealAppointment(Parcel in) {
+        id = in.readString();
+        mealId = in.readString();
+        mealName = in.readString();
+        mealThumb = in.readString();
+        dateTimestamp = in.readLong();
+    }
+
+    public static final Creator<MealAppointment> CREATOR = new Creator<MealAppointment>() {
+        @Override
+        public MealAppointment createFromParcel(Parcel in) {
+            return new MealAppointment(in);
+        }
+
+        @Override
+        public MealAppointment[] newArray(int size) {
+            return new MealAppointment[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
+        dest.writeString(mealId);
+        dest.writeString(mealName);
+        dest.writeString(mealThumb);
+        dest.writeLong(dateTimestamp);
     }
 
     @NonNull

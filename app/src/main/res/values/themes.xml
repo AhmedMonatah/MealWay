@@ -11,6 +11,7 @@
         <item name="android:statusBarColor">@color/MainColor</item>
         <item name="android:windowLightStatusBar">false</item>
         <item name="android:alertDialogTheme">@style/CustomAlertDialogTheme</item>
+        <item name="bottomSheetDialogTheme">@style/CustomBottomSheetDialog</item>
     </style>
 
     <style name="CustomAlertDialogTheme" parent="Theme.Material3.DayNight.Dialog.Alert">
@@ -65,5 +66,41 @@
     <style name="CustomDatePickerStyle" parent="@android:style/Widget.Material.DatePicker">
         <item name="android:headerBackground">@color/color_picker_header</item>
         <item name="android:calendarTextColor">@color/text_data_picker</item>
+    </style>
+
+
+
+    <style name="CustomBottomSheetDialog" parent="Theme.Material3.DayNight.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/CustomBottomSheetStyle</item>
+        <item name="colorPrimary">@color/MainColor</item>
+        <item name="colorSecondary">@color/MainColor</item>
+        <item name="colorTertiary">@color/MainColor</item>
+        <item name="colorSurface">@color/background_data_picker</item>
+        <item name="colorOnSurface">@color/text_data_picker</item>
+        <item name="colorOutline">?attr/colorOnSurface</item>
+        <item name="colorOutlineVariant">?attr/colorOnSurface</item>
+        <item name="android:colorBackground">@android:color/transparent</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:backgroundDimAmount">0.5</item>
+    </style>
+
+    <style name="CustomBottomSheetStyle" parent="Widget.Material3.BottomSheet">
+        <item name="shapeAppearance">@style/CustomBottomSheetShape</item>
+        <item name="backgroundTint">?attr/colorSurface</item>
+    </style>
+
+    <style name="CustomBottomSheetShape" parent="">
+        <item name="cornerSizeTopLeft">24dp</item>
+        <item name="cornerSizeTopRight">24dp</item>
+        <item name="cornerSizeBottomLeft">0dp</item>
+        <item name="cornerSizeBottomRight">0dp</item>
+    </style>
+
+    <style name="RoundedTopCorners" parent="">
+        <item name="cornerSizeTopLeft">24dp</item>
+        <item name="cornerSizeTopRight">24dp</item>
+        <item name="cornerSizeBottomLeft">0dp</item>
+        <item name="cornerSizeBottomRight">0dp</item>
     </style>
 </resources>

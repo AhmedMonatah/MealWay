@@ -76,6 +76,10 @@ public class HomeFragment extends Fragment {
             } else if (id == R.id.nav_appointement) {
                 fragment = new PlanFragment();
             } else if (id == R.id.nav_profile) {
+                if (!NetworkMonitor.isNetworkAvailable(requireContext())) {
+                    com.example.mealway.utils.AlertUtils.showError(requireContext(), getString(R.string.no_internet_error));
+                    return false;
+                }
                 fragment = new ProfileFragment();
             }
             

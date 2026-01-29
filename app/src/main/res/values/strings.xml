@@ -110,4 +110,9 @@
     <string name="logout_confirmation_title">Logout</string>
     <string name="logout_confirmation_message">Are you sure you want to sign out?</string>
     <string name="sign_in_failed_prefix">Sign In Failed: %1$s</string>
+    <string name="no_internet_error">No internet connection. This action is not available offline.</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="edit_name_hint">Full Name</string>
+    <string name="edit_phone_hint">Phone Number</string>
+    <string name="save">Save</string>
 </resources>

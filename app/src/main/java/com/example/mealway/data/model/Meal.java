@@ -1,6 +1,8 @@
 package com.example.mealway.data.model;
 
+import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Pair;
 
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
@@ -36,7 +38,6 @@ public class Meal implements Parcelable {
     @SerializedName("strYoutube")
     private String strYoutube;
 
-    // Ingredients
     @SerializedName("strIngredient1") private String strIngredient1;
     @SerializedName("strIngredient2") private String strIngredient2;
     @SerializedName("strIngredient3") private String strIngredient3;
@@ -58,7 +59,6 @@ public class Meal implements Parcelable {
     @SerializedName("strIngredient19") private String strIngredient19;
     @SerializedName("strIngredient20") private String strIngredient20;
 
-    // Measures
     @SerializedName("strMeasure1") private String strMeasure1;
     @SerializedName("strMeasure2") private String strMeasure2;
     @SerializedName("strMeasure3") private String strMeasure3;
@@ -150,7 +150,6 @@ public class Meal implements Parcelable {
         this.strYoutube = strYoutube;
     }
 
-    // Getters and Setters for Ingredients and Measures
     public String getStrIngredient1() { return strIngredient1; }
     public void setStrIngredient1(String strIngredient1) { this.strIngredient1 = strIngredient1; }
 
@@ -296,8 +295,8 @@ public class Meal implements Parcelable {
         if (strIngredient20 != null && !strIngredient20.isEmpty()) ingredients.add(strIngredient20);
         return ingredients;
     }
-    public List<android.util.Pair<String, String>> getIngredientsWithMeasures() {
-        List<android.util.Pair<String, String>> list = new ArrayList<>();
+    public List<Pair<String, String>> getIngredientsWithMeasures() {
+        List<Pair<String, String>> list = new ArrayList<>();
         if (strIngredient1 != null && !strIngredient1.isEmpty()) list.add(new android.util.Pair<>(strIngredient1, strMeasure1));
         if (strIngredient2 != null && !strIngredient2.isEmpty()) list.add(new android.util.Pair<>(strIngredient2, strMeasure2));
         if (strIngredient3 != null && !strIngredient3.isEmpty()) list.add(new android.util.Pair<>(strIngredient3, strMeasure3));
@@ -321,7 +320,7 @@ public class Meal implements Parcelable {
         return list;
     }
 
-    protected Meal(android.os.Parcel in) {
+    protected Meal(Parcel in) {
         idMeal = in.readString();
         strMeal = in.readString();
         strCategory = in.readString();
@@ -390,7 +389,7 @@ public class Meal implements Parcelable {
     }
 
     @Override
-    public void writeToParcel(android.os.Parcel dest, int flags) {
+    public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(idMeal);
         dest.writeString(strMeal);
         dest.writeString(strCategory);

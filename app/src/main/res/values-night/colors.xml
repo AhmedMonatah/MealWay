@@ -5,7 +5,7 @@
     <color name="gray_text">#B0B0B0</color>
     <color name="gray_text_light">#D6D6D6</color>
     <color name="gray_text_dark">#FFFFFF</color>
-    <color name="black_title_dialog">#000000</color>
+    <color name="black_title_dialog">#FFFFFF</color>
     <color name="background_light">#121417</color>
     <color name="background_light_alt">#1B1E22</color>
     <color name="fragment_background_color">#121417</color>
@@ -15,10 +15,10 @@
     <color name="nav_icon_unselected">#B0B0B0</color>
     <color name="dynamic_text_color">#FFFFFF</color>
     <color name="dynamic_icon_tint">#FFFFFF</color>
-
+    <color name="search_stroke_icon_color">#FFFFFF</color>
     <color name="MainColor">#00193E</color>
     <color name="blue_dark_signup">#00193E</color>
-    <color name="input_field_background">#1F2329</color>
+    <color name="input_field_background">#2C2C2C</color>
     <color name="warning_orange">#FFB74D</color>
     <color name="error_red">#EF5350</color>
     <color name="success_green">#66BB6A</color>
@@ -30,12 +30,30 @@
     <color name="ic_arrow_back_and_forward">#FFFFFF</color>
     <color name="calendar_header_text">#B0B0B0</color>
 
-    <color name="background_light_data_picker">#121212</color>
+    <color name="background_light_data_picker">#1E1E1E</color>
 
     <color name="background_black_data_picker">#FFFFFF</color>
-    <color name="background_data_picker">#000000</color>
-    <color name="text_data_picker">#FFFFFF</color>
+    <color name="background_data_picker">#1E1E1E</color>
+    <color name="text_data_picker">#F0F0F0</color>
     <color name="day_selected_color">#9E9E9E</color>
     <color name="color_picker_button">#FFFFFF</color>
-    <color name="color_picker_header">#1976D2</color>
+    <color name="color_picker_header">#1E1E1E</color>
+
+    <color name="dialog_background">#1E1E1E</color>
+    <color name="dialog_title">#FFFFFF</color>
+    <color name="dialog_text">#E0E0E0</color>
+
+    <color name="search_bar_bg">#2C2C2C</color>
+    <color name="card_surface_color">#1E1E1E</color>
+
+    <!-- Filter Card Palette (Dark Mode) -->
+    <color name="filter_orange">#FFB74D</color>
+    <color name="filter_green">#81C784</color>
+    <color name="filter_blue">#64B5F6</color>
+    <color name="filter_pink">#F06292</color>
+    <color name="filter_teal">#4DB6AC</color>
+    <color name="filter_purple">#BA68C8</color>
+    <color name="filter_amber">#FFD54F</color>
+    <color name="filter_indigo">#7986CB</color>
+    <color name="card_image_overlay">#99000000</color>
 </resources>

@@ -57,11 +57,7 @@ public class SearchPresenterImpl implements SearchPresenter {
                 .subscribe(
                     result -> {
                         view.hideLoading();
-                        List<String> categories = new ArrayList<>();
-                        if (result != null) {
-                            for (Category c : result) categories.add(c.getStrCategory());
-                        }
-                        view.showFilterOptions(categories, view.getContext().getString(R.string.title_select_category), 1);
+                        view.showFilterOptions(result, view.getSafeString(R.string.title_select_category), 1);
                     },
                     throwable -> {
                         view.hideLoading();
@@ -81,13 +77,7 @@ public class SearchPresenterImpl implements SearchPresenter {
                 .subscribe(
                     result -> {
                         view.hideLoading();
-                        List<String> ingredients = new ArrayList<>();
-                        if (result != null) {
-                            for (int i = 0; i < Math.min(result.size(), 100); i++) {
-                                ingredients.add(result.get(i).getStrIngredient());
-                            }
-                        }
-                        view.showFilterOptions(ingredients, view.getContext().getString(R.string.title_select_ingredient), 2);
+                        view.showFilterOptions(result, view.getSafeString(R.string.title_select_ingredient), 2);
                     },
                     throwable -> {
                         view.hideLoading();
@@ -107,11 +97,7 @@ public class SearchPresenterImpl implements SearchPresenter {
                 .subscribe(
                     result -> {
                         view.hideLoading();
-                        List<String> areas = new ArrayList<>();
-                        if (result != null) {
-                            for (Area a : result) areas.add(a.getStrArea());
-                        }
-                        view.showFilterOptions(areas, view.getContext().getString(R.string.title_select_country), 3);
+                        view.showFilterOptions(result, view.getSafeString(R.string.title_select_country), 3);
                     },
                     throwable -> {
                         view.hideLoading();
@@ -165,7 +151,7 @@ public class SearchPresenterImpl implements SearchPresenter {
                         isLoading = false;
                         if (meals != null && !meals.isEmpty()) {
                             cachedMeals.addAll(meals);
-                            view.showMeals(cachedMeals);
+                            view.showMeals(new ArrayList<>(cachedMeals));
                         }
                         
                         // Increment letter for next page
@@ -183,7 +169,7 @@ public class SearchPresenterImpl implements SearchPresenter {
                     throwable -> {
                         view.hideLoading();
                         isLoading = false;
-                        view.showError(view.getContext().getString(R.string.error_loading_meals_prefix, throwable.getMessage()));
+                        view.showError(view.getSafeString(R.string.error_loading_meals_prefix) + ": " + throwable.getMessage());
                     }
                 )
         );
@@ -195,6 +181,10 @@ public class SearchPresenterImpl implements SearchPresenter {
         isAllLoaded = false;
         isLoading = false;
         cachedMeals.clear();
+    }
+
+    @Override
+    public void clearDisposables() {
         disposables.clear();
     }
 
@@ -227,8 +217,10 @@ public class SearchPresenterImpl implements SearchPresenter {
                     result -> {
                         view.hideLoading();
                         cachedMeals.clear();
-                        cachedMeals.addAll(result);
-                        view.showMeals(cachedMeals);
+                        if (result != null) {
+                            cachedMeals.addAll(result);
+                        }
+                        view.showMeals(new ArrayList<>(cachedMeals));
                     },
                     throwable -> {
                         view.hideLoading();

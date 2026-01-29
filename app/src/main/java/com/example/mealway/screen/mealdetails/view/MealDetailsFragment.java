@@ -22,7 +22,6 @@ import com.bumptech.glide.Glide;
 import com.example.mealway.R;
 import com.example.mealway.data.model.Meal;
 import com.example.mealway.data.repository.MealRepository;
-import com.example.mealway.screen.mealdetails.IngredientsAdapter;
 import com.example.mealway.screen.mealdetails.presenter.MealDetailsPresenter;
 import com.example.mealway.screen.mealdetails.presenter.MealDetailsPresenterImpl;
 import com.google.android.material.appbar.CollapsingToolbarLayout;

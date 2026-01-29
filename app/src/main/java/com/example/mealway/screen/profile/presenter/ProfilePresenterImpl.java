@@ -26,10 +26,13 @@ public class ProfilePresenterImpl implements ProfilePresenter {
         view.showLoading();
         repository.getUserDetails(new UserDataCallback() {
             @Override
-            public void onDataFetched(String fullName, String phone, String email) {
+            public void onDataFetched(String fullName, String phone, String email, String profileImage) {
                 if (view != null) {
                     view.hideLoading();
                     view.showUserData(fullName, email, phone);
+                    if (profileImage != null) {
+                        view.updateProfileImage(profileImage);
+                    }
                 }
             }
 
@@ -45,9 +48,45 @@ public class ProfilePresenterImpl implements ProfilePresenter {
 
     @Override
     public void logout() {
-        repository.signOut();
-        view.navigateToLogin();
+        if (view != null) {
+            view.showLoading();
+            repository.signOut()
+                    .subscribe(() -> {
+                        if (view != null) {
+                            view.hideLoading();
+                            view.navigateToLogin();
+                        }
+                    }, throwable -> {
+                        if (view != null) {
+                            view.hideLoading();
+                            view.showMessage("Logout failed and cleanup incomplete: " + throwable.getMessage());
+                            view.navigateToLogin(); // Still navigate since we at least tried
+                        }
+                    });
+        }
     }
+
+
+    @Override
+    public void uploadProfileImage(Uri imageUri) {
+        if (view != null) {
+            view.showLoading();
+            repository.uploadProfileImage(imageUri)
+                    .subscribe(() -> {
+                        if (view != null) {
+                            loadUserData();
+                            view.showMessage("Profile picture updated successfully!");
+                        }
+                    }, throwable -> {
+                        if (view != null) {
+                            view.hideLoading();
+                            view.showMessage("Failed to upload image: " + throwable.getMessage());
+                        }
+                    });
+        }
+    }
+
+
 
 
     @Override
