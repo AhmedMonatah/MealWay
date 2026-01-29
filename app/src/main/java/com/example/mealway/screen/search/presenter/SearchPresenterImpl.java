@@ -1,7 +1,6 @@
 package com.example.mealway.screen.search.presenter;
 
 import com.example.mealway.R;
-import com.example.mealway.data.callback.NetworkCallback;
 import com.example.mealway.data.model.Area;
 import com.example.mealway.data.model.Category;
 import com.example.mealway.data.model.Ingredient;
@@ -51,66 +50,75 @@ public class SearchPresenterImpl implements SearchPresenter {
     @Override
     public void fetchCategories() {
         view.showLoading();
-        repository.listCategories(new NetworkCallback<List<Category>>() {
-            @Override
-            public void onSuccess(List<Category> result) {
-                view.hideLoading();
-                List<String> categories = new ArrayList<>();
-                if (result != null) {
-                    for (Category c : result) categories.add(c.getStrCategory());
-                }
-                view.showFilterOptions(categories, view.getContext().getString(R.string.title_select_category), 1);
-            }
-            @Override
-            public void onFailure(String message) {
-                view.hideLoading();
-                view.showError(message);
-            }
-        });
+        disposables.add(
+            repository.listCategories()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    result -> {
+                        view.hideLoading();
+                        List<String> categories = new ArrayList<>();
+                        if (result != null) {
+                            for (Category c : result) categories.add(c.getStrCategory());
+                        }
+                        view.showFilterOptions(categories, view.getContext().getString(R.string.title_select_category), 1);
+                    },
+                    throwable -> {
+                        view.hideLoading();
+                        view.showError(throwable.getMessage());
+                    }
+                )
+        );
     }
 
     @Override
     public void fetchIngredients() {
         view.showLoading();
-        repository.listIngredients(new NetworkCallback<List<Ingredient>>() {
-            @Override
-            public void onSuccess(List<Ingredient> result) {
-                view.hideLoading();
-                List<String> ingredients = new ArrayList<>();
-                if (result != null) {
-                    for (int i = 0; i < Math.min(result.size(), 100); i++) {
-                        ingredients.add(result.get(i).getStrIngredient());
+        disposables.add(
+            repository.listIngredients()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    result -> {
+                        view.hideLoading();
+                        List<String> ingredients = new ArrayList<>();
+                        if (result != null) {
+                            for (int i = 0; i < Math.min(result.size(), 100); i++) {
+                                ingredients.add(result.get(i).getStrIngredient());
+                            }
+                        }
+                        view.showFilterOptions(ingredients, view.getContext().getString(R.string.title_select_ingredient), 2);
+                    },
+                    throwable -> {
+                        view.hideLoading();
+                        view.showError(throwable.getMessage());
                     }
-                }
-                view.showFilterOptions(ingredients, view.getContext().getString(R.string.title_select_ingredient), 2);
-            }
-            @Override
-            public void onFailure(String message) {
-                view.hideLoading();
-                view.showError(message);
-            }
-        });
+                )
+        );
     }
 
     @Override
     public void fetchAreas() {
         view.showLoading();
-        repository.listAreas(new NetworkCallback<List<Area>>() {
-            @Override
-            public void onSuccess(List<Area> result) {
-                view.hideLoading();
-                List<String> areas = new ArrayList<>();
-                if (result != null) {
-                    for (Area a : result) areas.add(a.getStrArea());
-                }
-                view.showFilterOptions(areas, view.getContext().getString(R.string.title_select_country), 3);
-            }
-            @Override
-            public void onFailure(String message) {
-                view.hideLoading();
-                view.showError(message);
-            }
-        });
+        disposables.add(
+            repository.listAreas()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    result -> {
+                        view.hideLoading();
+                        List<String> areas = new ArrayList<>();
+                        if (result != null) {
+                            for (Area a : result) areas.add(a.getStrArea());
+                        }
+                        view.showFilterOptions(areas, view.getContext().getString(R.string.title_select_country), 3);
+                    },
+                    throwable -> {
+                        view.hideLoading();
+                        view.showError(throwable.getMessage());
+                    }
+                )
+        );
     }
 
     @Override

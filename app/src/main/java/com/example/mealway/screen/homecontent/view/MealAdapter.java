@@ -1,4 +1,4 @@
-package com.example.mealway.screen.homeactivity;
+package com.example.mealway.screen.homecontent.view;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -56,7 +56,6 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealViewHolder
         Meal meal = meals.get(position);
         holder.tvName.setText(meal.getStrMeal());
 
-        // Show Shimmer, Hide Image
         holder.shimmerLayout.startShimmer();
         holder.shimmerLayout.setVisibility(View.VISIBLE);
         holder.ivThumb.setVisibility(View.INVISIBLE);
@@ -69,7 +68,7 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealViewHolder
                         holder.shimmerLayout.stopShimmer();
                         holder.shimmerLayout.setVisibility(View.GONE);
                         holder.ivThumb.setVisibility(View.VISIBLE);
-                        holder.ivThumb.setImageResource(R.drawable.error404); // Default error image
+                        holder.ivThumb.setImageResource(R.drawable.error404);
                         return false;
                     }
 

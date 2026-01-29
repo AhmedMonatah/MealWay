@@ -1,11 +1,10 @@
-package com.example.mealway.screen.homeactivity.view;
+package com.example.mealway.screen.homecontent.view;
 
 import android.content.Context;
-
 import com.example.mealway.data.model.Meal;
 import java.util.List;
 
-public interface HomeView {
+public interface HomeContentView {
     void showRandomMeal(Meal meal);
     void showHorizontalMealList(List<Meal> meals);
     void showError(String message);

@@ -4,37 +4,37 @@ import com.example.mealway.data.model.MealResponse;
 import com.example.mealway.data.model.CategoryResponse;
 import com.example.mealway.data.model.AreaResponse;
 import com.example.mealway.data.model.IngredientResponse;
-import retrofit2.Call;
+
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.Single;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
 
 public interface MealApiService {
     @GET("random.php")
-    Call<MealResponse> getRandomMeal();
+    Single<MealResponse> getRandomMeal();
 
     @GET("filter.php")
-    Call<MealResponse> getMealsByIngredient(@Query("i") String ingredient);
+    Single<MealResponse> getMealsByIngredient(@Query("i") String ingredient);
     
     @GET("lookup.php")
-    Call<MealResponse> getMealById(@Query("i") String id);
+    Single<MealResponse> getMealById(@Query("i") String id);
 
     @GET("search.php")
-    Call<MealResponse> searchMealsByFirstLetter(@Query("f") String firstLetter);
+    Observable<MealResponse> searchMealsByFirstLetter(@Query("f") String firstLetter);
 
     @GET("list.php?c=list")
-    Call<CategoryResponse> listCategories();
+    Single<CategoryResponse> listCategories();
 
     @GET("list.php?a=list")
-    Call<AreaResponse> listAreas();
+    Single<AreaResponse> listAreas();
 
     @GET("list.php?i=list")
-    Call<IngredientResponse> listIngredients();
+    Single<IngredientResponse> listIngredients();
 
     @GET("filter.php")
-    Call<MealResponse> filterByCategory(@Query("c") String category);
+    Observable<MealResponse> filterByCategory(@Query("c") String category);
 
     @GET("filter.php")
-    Call<MealResponse> filterByArea(@Query("a") String area);
-
-
+    Observable<MealResponse> filterByArea(@Query("a") String area);
 }

@@ -5,9 +5,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.example.mealway.data.callback.AuthCallback;
-import com.example.mealway.data.local.AppDatabase;
 import com.example.mealway.data.local.LocalDataSource;
-import com.example.mealway.data.local.MealDao;
 import com.example.mealway.data.model.Meal;
 import com.example.mealway.data.model.MealAppointment;
 import com.example.mealway.data.remote.firebase.FirebaseManager;
@@ -19,6 +17,7 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,21 +25,20 @@ import java.util.Map;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class AuthRepositoryImpl implements AuthRepository {
 
     private final FirebaseAuth firebaseAuth;
     private final LocalDataSource localDataSource;
-    private final MealDao mealDao;
     private final FirebaseManager firebaseManager;
     private final Context context;
 
-    public AuthRepositoryImpl(android.content.Context context) {
+    public AuthRepositoryImpl(Context context) {
         this.context = context;
         this.firebaseAuth = FirebaseAuth.getInstance();
         this.localDataSource = new LocalDataSource(context);
-        this.mealDao = AppDatabase.getInstance(context).mealDao();
         this.firebaseManager = new FirebaseManager();
     }
 
@@ -68,8 +66,8 @@ public class AuthRepositoryImpl implements AuthRepository {
                         localDataSource.saveLoginState(true);
                         callback.onSuccess();
                         
-                        mealDao.clearAllFavorites()
-                                .andThen(mealDao.clearAllAppointments())
+                        localDataSource.clearAllFavorites()
+                                .andThen(localDataSource.clearAllAppointments())
                                 .subscribeOn(Schedulers.io())
                                 .subscribe(() -> syncUserData(null), throwable -> {});
                     } else {
@@ -83,8 +81,8 @@ public class AuthRepositoryImpl implements AuthRepository {
         firebaseAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        mealDao.clearAllFavorites()
-                                .andThen(mealDao.clearAllAppointments())
+                        localDataSource.clearAllFavorites()
+                                .andThen(localDataSource.clearAllAppointments())
                                 .subscribeOn(Schedulers.io())
                                 .subscribe();
                         
@@ -124,8 +122,8 @@ public class AuthRepositoryImpl implements AuthRepository {
                         localDataSource.saveLoginState(true);
                         callback.onSuccess();
                         
-                        mealDao.clearAllFavorites()
-                                .andThen(mealDao.clearAllAppointments())
+                        localDataSource.clearAllFavorites()
+                                .andThen(localDataSource.clearAllAppointments())
                                 .subscribeOn(Schedulers.io())
                                 .subscribe(() -> syncUserData(null), throwable -> {});
                     } else {
@@ -144,9 +142,8 @@ public class AuthRepositoryImpl implements AuthRepository {
     public void signOut() {
         firebaseAuth.signOut();
         localDataSource.saveLoginState(false);
-        // Clear local database to prevent data leaking
-        mealDao.clearAllFavorites()
-                .andThen(mealDao.clearAllAppointments())
+        localDataSource.clearAllFavorites()
+                .andThen(localDataSource.clearAllAppointments())
                 .subscribeOn(Schedulers.io())
                 .subscribe(() -> {}, throwable -> {});
     }
@@ -162,35 +159,38 @@ public class AuthRepositoryImpl implements AuthRepository {
 
         firebaseManager.getFavorites()
                 .observeOn(Schedulers.io())
-                .flatMapCompletable(meals -> {
-                    if (meals == null || meals.isEmpty()) return Completable.complete();
-                    List<Meal> validMeals = new java.util.ArrayList<>();
+                .flatMap(meals -> {
+                    if (meals == null || meals.isEmpty())
+                        return Single.just(new ArrayList<Meal>());
+                    List<Meal> validMeals = new ArrayList<>();
                     for (Meal m : meals) {
                         if (m != null && m.getIdMeal() != null) {
                             m.setFavorite(true);
                             validMeals.add(m);
                         }
                     }
-                    return validMeals.isEmpty() ? Completable.complete() : mealDao.insertAllFavMeals(validMeals);
+                    if (validMeals.isEmpty()) return Single.just(validMeals);
+                    return localDataSource.insertAllFavMeals(validMeals).toSingleDefault(validMeals);
                 })
-                .andThen(firebaseManager.getAppointments())
+                .flatMap(meals -> firebaseManager.getAppointments())
                 .observeOn(Schedulers.io())
-                .flatMapCompletable(appointments -> {
-                    if (appointments == null || appointments.isEmpty()) return Completable.complete();
-                    List<MealAppointment> validApps = new java.util.ArrayList<>();
+                .flatMap(appointments -> {
+                    if (appointments == null || appointments.isEmpty()) return Single.just(new ArrayList<MealAppointment>());
+                    List<MealAppointment> validApps = new ArrayList<>();
                     for (MealAppointment a : appointments) {
                         if (a != null && a.getId() != null) {
                             validApps.add(a);
                         }
                     }
-                    return validApps.isEmpty() ? Completable.complete() : mealDao.insertAllAppointments(validApps);
+                    if (validApps.isEmpty()) return Single.just(validApps);
+                    return localDataSource.insertAllAppointments(validApps).toSingleDefault(validApps);
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        () -> { if (callback != null) callback.onSuccess(); },
+                        result -> { if (callback != null) callback.onSuccess(); },
                         throwable -> { 
-                            android.util.Log.e("AuthRepo", "Sync error: " + throwable.getMessage());
+                            Log.e("AuthRepo", "Sync error: " + throwable.getMessage());
                             if (callback != null) callback.onFailure("Sync error: " + throwable.getMessage()); 
                         }
                 );

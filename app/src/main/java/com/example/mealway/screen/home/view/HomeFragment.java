@@ -1,4 +1,4 @@
-package com.example.mealway.screen.homeactivity;
+package com.example.mealway.screen.home.view;
 
 import android.os.Bundle;
 import androidx.annotation.NonNull;
@@ -13,7 +13,7 @@ import android.widget.FrameLayout;
 
 import com.example.mealway.R;
 import com.example.mealway.screen.common.NoInternetFragment;
-import com.example.mealway.screen.homeactivity.view.HomeContentFragment;
+import com.example.mealway.screen.homecontent.view.HomeContentFragment;
 import com.example.mealway.screen.favorite.view.FavoriteFragment;
 import com.example.mealway.screen.plan.view.PlanFragment;
 import com.example.mealway.screen.profile.view.ProfileFragment;
@@ -51,7 +51,6 @@ public class HomeFragment extends Fragment {
             int id = item.getItemId();
             Fragment fragment = null;
             
-            // Guest check for sensitive screens
             if ((id == R.id.nav_favorite || id == R.id.nav_appointement) && !authRepository.isLoggedIn()) {
                 com.example.mealway.utils.AlertUtils.showConfirmation(
                     requireContext(),
@@ -65,7 +64,7 @@ public class HomeFragment extends Fragment {
                                 .build());
                     }
                 );
-                return false; // Don't switch tab
+                return false;
             }
 
             if (id == R.id.nav_home) {
@@ -82,7 +81,7 @@ public class HomeFragment extends Fragment {
             
             if (fragment != null) {
                 loadContentFragment(fragment);
-                checkNetworkForCurrentFragment(); // Re-check when switching
+                checkNetworkForCurrentFragment();
             }
             return true;
         });

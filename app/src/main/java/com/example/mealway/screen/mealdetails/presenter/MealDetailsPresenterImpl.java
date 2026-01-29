@@ -1,6 +1,5 @@
 package com.example.mealway.screen.mealdetails.presenter;
 
-import com.example.mealway.data.callback.NetworkCallback;
 import com.example.mealway.data.model.Meal;
 import com.example.mealway.data.repository.MealRepository;
 import com.example.mealway.screen.mealdetails.view.MealDetailsView;
@@ -13,6 +12,7 @@ import com.example.mealway.utils.NetworkMonitor;
 import com.google.firebase.auth.FirebaseAuth;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class MealDetailsPresenterImpl implements MealDetailsPresenter {
 
@@ -27,17 +27,13 @@ public class MealDetailsPresenterImpl implements MealDetailsPresenter {
 
     @Override
     public void getMealDetails(String mealId) {
-        repository.getMealById(mealId, new NetworkCallback<Meal>() {
-            @Override
-            public void onSuccess(Meal meal) {
-                view.showMealDetails(meal);
-            }
-
-            @Override
-            public void onFailure(String message) {
-                view.showMessage("Failed to load details: " + message);
-            }
-        });
+        disposables.add(repository.getMealById(mealId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        meal -> view.showMealDetails(meal),
+                        throwable -> view.showMessage("Failed to load details: " + throwable.getMessage())
+                ));
     }
 
     @Override
