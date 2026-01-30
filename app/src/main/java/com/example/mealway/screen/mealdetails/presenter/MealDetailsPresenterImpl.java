@@ -42,7 +42,7 @@ public class MealDetailsPresenterImpl implements MealDetailsPresenter {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         isFavorite -> view.showFavoriteStatus(isFavorite),
-                        throwable -> {} // Ignore error for toggle check
+                        throwable -> {}
                 ));
     }
 
@@ -100,6 +100,7 @@ public class MealDetailsPresenterImpl implements MealDetailsPresenter {
                         () -> {
                             view.hideLoading();
                             view.showSuccess(R.string.meal_added_to_plan);
+                            view.addToCalendar(meal, timestamp);
                         },
                         throwable -> {
                             view.hideLoading();

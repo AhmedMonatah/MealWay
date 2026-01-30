@@ -15,6 +15,23 @@ public class FirebaseManager {
         this.db = FirebaseFirestore.getInstance();
     }
 
+    public Completable saveUserProfile(String uid, java.util.Map<String, Object> userData) {
+        return Completable.create(emitter -> {
+            db.collection("users").document(uid)
+                    .set(userData, com.google.firebase.firestore.SetOptions.merge())
+                    .addOnSuccessListener(aVoid -> emitter.onComplete())
+                    .addOnFailureListener(emitter::onError);
+        });
+    }
+
+    public Single<com.google.firebase.firestore.DocumentSnapshot> getUserProfile(String uid) {
+        return Single.create(emitter -> {
+            db.collection("users").document(uid).get()
+                    .addOnSuccessListener(emitter::onSuccess)
+                    .addOnFailureListener(emitter::onError);
+        });
+    }
+
     private String getUserId() {
         return FirebaseAuth.getInstance().getUid();
     }
