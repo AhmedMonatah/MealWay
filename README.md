@@ -155,7 +155,7 @@ Users can explore meals by categories, countries, and ingredients, save favorite
 - **Networking:** Retrofit  
 - **Asynchronous:**  RxJava 3  
 - **UI:** XML, Material Design  
-- **State Management: RxJava (Single, Observable, Completable) 
+- **State Management:** RxJava (Single, Observable, Completable) 
 
 ---
 
