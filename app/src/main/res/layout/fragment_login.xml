@@ -60,6 +60,8 @@
             android:layout_height="wrap_content"
             android:background="@color/transparent"
             android:hint="@string/EmailAddress"
+            android:inputType="textEmailAddress"
+            android:maxLines="1"
             android:paddingStart="48dp"
             android:paddingTop="20dp"
             android:paddingEnd="8dp"
