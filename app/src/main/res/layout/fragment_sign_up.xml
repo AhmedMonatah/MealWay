@@ -94,6 +94,7 @@
                 android:background="@android:color/transparent"
                 android:hint="@string/EmailAddress"
                 android:inputType="textEmailAddress"
+                android:maxLines="1"
                 android:paddingStart="50dp"
                 android:paddingTop="20dp"
                 android:paddingEnd="8dp"
