@@ -153,9 +153,9 @@ Users can explore meals by categories, countries, and ingredients, save favorite
 - **Local Storage:** Room Database  
 - **Authentication & Sync:** Firebase Authentication & Firebase Firestore  
 - **Networking:** Retrofit  
-- **Asynchronous:** Coroutines / Flow  
+- **Asynchronous:**  RxJava 3  
 - **UI:** XML, Material Design  
-- **State Management:** ViewModel, LiveData  
+- **State Management: RxJava (Single, Observable, Completable) 
 
 ---
 
