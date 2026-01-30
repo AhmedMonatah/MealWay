@@ -12,12 +12,15 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.example.mealway.R;
+import com.example.mealway.data.repository.AuthRepository;
+import com.example.mealway.data.repository.AuthRepositoryImpl;
 import com.example.mealway.screen.common.NoInternetFragment;
 import com.example.mealway.screen.homecontent.view.HomeContentFragment;
 import com.example.mealway.screen.favorite.view.FavoriteFragment;
 import com.example.mealway.screen.plan.view.PlanFragment;
 import com.example.mealway.screen.profile.view.ProfileFragment;
 import com.example.mealway.screen.search.view.SearchFragment;
+import com.example.mealway.utils.AlertUtils;
 import com.example.mealway.utils.NetworkMonitor;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -45,7 +48,7 @@ public class HomeFragment extends Fragment {
             currentContentFragment = getChildFragmentManager().findFragmentById(R.id.home_content_container);
         }
 
-        com.example.mealway.data.repository.AuthRepository authRepository = new com.example.mealway.data.repository.AuthRepositoryImpl(requireContext());
+       AuthRepository authRepository = new AuthRepositoryImpl(requireContext());
 
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
@@ -77,7 +80,7 @@ public class HomeFragment extends Fragment {
                 fragment = new PlanFragment();
             } else if (id == R.id.nav_profile) {
                 if (!NetworkMonitor.isNetworkAvailable(requireContext())) {
-                    com.example.mealway.utils.AlertUtils.showError(requireContext(), getString(R.string.no_internet_error));
+                    AlertUtils.showError(requireContext(), getString(R.string.no_internet_error));
                     return false;
                 }
                 fragment = new ProfileFragment();

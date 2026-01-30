@@ -2,6 +2,7 @@ package com.example.mealway.data.repository;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.util.Log;
 
@@ -31,10 +32,7 @@ import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.util.Base64;
-import java.io.ByteArrayOutputStream;
+import com.example.mealway.utils.ImageUtils;
 import java.io.InputStream;
 
 public class AuthRepositoryImpl implements AuthRepository {
@@ -93,31 +91,32 @@ public class AuthRepositoryImpl implements AuthRepository {
         firebaseAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
+                        FirebaseUser user = firebaseAuth.getCurrentUser();
+                        String uid = user.getUid();
+                        
                         localDataSource.clearAllFavorites()
                                 .andThen(localDataSource.clearAllAppointments())
                                 .subscribeOn(Schedulers.io())
                                 .subscribe();
                         
-                        String uid = firebaseAuth.getCurrentUser().getUid();
-                        
                         UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
                                 .setDisplayName(fullName)
                                 .build();
-                        firebaseAuth.getCurrentUser().updateProfile(profileUpdates);
+                        user.updateProfile(profileUpdates);
 
-                        FirebaseFirestore db = FirebaseFirestore.getInstance();
-                        Map<String, Object> user = new HashMap<>();
-                        user.put("fullName", fullName);
-                        user.put("phone", phone);
-                        user.put("email", email);
-                        user.put("uid", uid);
+                        Map<String, Object> userData = new HashMap<>();
+                        userData.put("fullName", fullName);
+                        userData.put("phone", phone);
+                        userData.put("email", email);
+                        userData.put("uid", uid);
 
-                        db.collection("users").document(uid).set(user)
-                                .addOnSuccessListener(aVoid -> {
+                        firebaseManager.saveUserProfile(uid, userData)
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(() -> {
                                     localDataSource.saveLoginState(true);
                                     callback.onSuccess();
-                                })
-                                .addOnFailureListener(e -> callback.onFailure("Auth succeeded but failed to save profile"));
+                                }, throwable -> callback.onFailure("Auth succeeded but failed to save profile"));
                     } else {
                         callback.onFailure(ErrorUtils.getAuthErrorMessage(context, task.getException()));
                     }
@@ -138,8 +137,9 @@ public class AuthRepositoryImpl implements AuthRepository {
                             userData.put("fullName", user.getDisplayName());
                             userData.put("uid", user.getUid());
 
-                            FirebaseFirestore.getInstance().collection("users").document(user.getUid())
-                                    .set(userData, com.google.firebase.firestore.SetOptions.merge());
+                            firebaseManager.saveUserProfile(user.getUid(), userData)
+                                    .subscribeOn(Schedulers.io())
+                                    .subscribe();
                         }
 
                         syncUserData()
@@ -166,25 +166,19 @@ public class AuthRepositoryImpl implements AuthRepository {
     @Override
     public Completable signOut() {
         if (!NetworkMonitor.isNetworkAvailable(context)) {
-            AlertUtils.showConfirmation(
-                    context,
-                    "Offline",
-                    "Cannot logout while offline.",
-                    "Try Again",
-                    () -> {
-                        signOut().subscribe();
-                    }
+            return Completable.error(
+                    new IllegalStateException("NO_NETWORK")
             );
-            return Completable.complete();
         }
 
         firebaseAuth.signOut();
         localDataSource.saveLoginState(false);
+
         return localDataSource.clearAllFavorites()
                 .andThen(localDataSource.clearAllAppointments())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
+                .subscribeOn(Schedulers.io());
     }
+
 
 
 
@@ -193,7 +187,6 @@ public class AuthRepositoryImpl implements AuthRepository {
         if (getCurrentUser() == null) {
             return Completable.error(new Exception("Not logged in"));
         }
-
         return localDataSource.clearAllFavorites()
                 .andThen(localDataSource.clearAllAppointments())
                 .andThen(firebaseManager.getFavorites()
@@ -214,7 +207,8 @@ public class AuthRepositoryImpl implements AuthRepository {
                         .flatMap(meals -> firebaseManager.getAppointments())
                         .observeOn(Schedulers.io())
                         .flatMap(appointments -> {
-                            if (appointments == null || appointments.isEmpty()) return Single.just(new ArrayList<MealAppointment>());
+                            if (appointments == null || appointments.isEmpty())
+                                return Single.just(new ArrayList<MealAppointment>());
                             List<MealAppointment> validApps = new ArrayList<>();
                             for (MealAppointment a : appointments) {
                                 if (a != null && a.getId() != null) {
@@ -235,9 +229,10 @@ public class AuthRepositoryImpl implements AuthRepository {
             return;
         }
 
-        FirebaseFirestore.getInstance().collection("users").document(user.getUid())
-                .get()
-                .addOnSuccessListener(doc -> {
+        firebaseManager.getUserProfile(user.getUid())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(doc -> {
                     if (doc.exists()) {
                         callback.onDataFetched(
                                 doc.getString("fullName") != null ? doc.getString("fullName") : user.getDisplayName(),
@@ -253,13 +248,12 @@ public class AuthRepositoryImpl implements AuthRepository {
                                 user.getPhotoUrl() != null ? user.getPhotoUrl().toString() : null
                         );
                     }
-                })
-                .addOnFailureListener(e -> {
-                    if (!com.example.mealway.utils.NetworkMonitor.isNetworkAvailable(context)) {
+                }, throwable -> {
+                    if (!NetworkMonitor.isNetworkAvailable(context)) {
                         callback.onDataFetched(user.getDisplayName(), "Offline", user.getEmail(),
                                 user.getPhotoUrl() != null ? user.getPhotoUrl().toString() : null);
                     } else {
-                        callback.onError(e.getMessage());
+                        callback.onError(throwable.getMessage());
                     }
                 });
     }
@@ -274,48 +268,22 @@ public class AuthRepositoryImpl implements AuthRepository {
         String uid = user.getUid();
         return Completable.create(emitter -> {
             try {
-                InputStream imageStream = context.getContentResolver().openInputStream(imageUri);
-                Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
+               Bitmap selectedImage = ImageUtils.decodeUriToBitmap(context, imageUri);
                 if (selectedImage == null) {
                     emitter.onError(new Exception("Failed to decode image"));
                     return;
                 }
 
-                int maxSize = 300;
-                int width = selectedImage.getWidth();
-                int height = selectedImage.getHeight();
-                float ratio = (float) width / (float) height;
-                if (ratio > 1) {
-                    width = maxSize;
-                    height = (int) (maxSize / ratio);
-                } else {
-                    height = maxSize;
-                    width = (int) (maxSize * ratio);
-                }
-                Bitmap scaledBitmap = Bitmap.createScaledBitmap(selectedImage, width, height, true);
-
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 70, baos);
-                byte[] b = baos.toByteArray();
-                
-                String encodedImage = Base64.encodeToString(b, Base64.DEFAULT);
-                String dataUrl = "data:image/jpeg;base64," + encodedImage;
+                Bitmap scaledBitmap = ImageUtils.scaleBitmap(selectedImage, 300);
+                String encodedImage = ImageUtils.bitmapToBase64(scaledBitmap, 70);
+                String dataUrl = ImageUtils.toDataUrl(encodedImage);
 
                 Map<String, Object> data = new HashMap<>();
                 data.put("profileImage", dataUrl);
 
-                FirebaseFirestore.getInstance().collection("users").document(uid)
-                        .set(data, com.google.firebase.firestore.SetOptions.merge())
-                        .addOnSuccessListener(aVoid -> {
-                            if (!emitter.isDisposed()) {
-                                emitter.onComplete();
-                            }
-                        })
-                        .addOnFailureListener(e -> {
-                            if (!emitter.isDisposed()) {
-                                emitter.onError(e);
-                            }
-                        });
+                firebaseManager.saveUserProfile(uid, data)
+                        .subscribeOn(Schedulers.io())
+                        .subscribe(emitter::onComplete, emitter::onError);
 
             } catch (Exception e) {
                 if (!emitter.isDisposed()) {

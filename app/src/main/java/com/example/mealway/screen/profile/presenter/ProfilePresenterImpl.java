@@ -6,6 +6,8 @@ import com.example.mealway.data.repository.AuthRepository;
 import com.example.mealway.data.repository.UserDataCallback;
 import com.example.mealway.screen.profile.view.ProfileView;
 
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+
 public class ProfilePresenterImpl implements ProfilePresenter {
 
     private ProfileView view;
@@ -48,23 +50,35 @@ public class ProfilePresenterImpl implements ProfilePresenter {
 
     @Override
     public void logout() {
-        if (view != null) {
-            view.showLoading();
-            repository.signOut()
-                    .subscribe(() -> {
-                        if (view != null) {
-                            view.hideLoading();
-                            view.navigateToLogin();
-                        }
-                    }, throwable -> {
-                        if (view != null) {
-                            view.hideLoading();
-                            view.showMessage("Logout failed and cleanup incomplete: " + throwable.getMessage());
-                            view.navigateToLogin(); // Still navigate since we at least tried
-                        }
-                    });
-        }
+        if (view == null) return;
+
+        view.showLoading();
+
+        repository.signOut()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(() -> {
+                    if (view != null) {
+                        view.hideLoading();
+                        view.navigateToLogin();
+                    }
+                }, throwable -> {
+                    if (view == null) return;
+
+                    view.hideLoading();
+
+                    if (throwable instanceof IllegalStateException
+                            && "NO_NETWORK".equals(throwable.getMessage())) {
+
+                        view.showOfflineDialog(
+                                "Offline",
+                                "Cannot logout while offline"
+                        );
+                    } else {
+                        view.showMessage("Logout failed");
+                    }
+                });
     }
+
 
 
     @Override

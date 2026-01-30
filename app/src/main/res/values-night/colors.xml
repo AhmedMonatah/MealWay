@@ -46,7 +46,6 @@
     <color name="search_bar_bg">#2C2C2C</color>
     <color name="card_surface_color">#1E1E1E</color>
 
-    <!-- Filter Card Palette (Dark Mode) -->
     <color name="filter_orange">#FFB74D</color>
     <color name="filter_green">#81C784</color>
     <color name="filter_blue">#64B5F6</color>
@@ -56,4 +55,5 @@
     <color name="filter_amber">#FFD54F</color>
     <color name="filter_indigo">#7986CB</color>
     <color name="card_image_overlay">#99000000</color>
+    <color name="calendar_selection_color">#2196F3</color>
 </resources>

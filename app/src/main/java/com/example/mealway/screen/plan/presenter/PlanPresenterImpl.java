@@ -3,6 +3,7 @@ package com.example.mealway.screen.plan.presenter;
 import com.example.mealway.data.model.MealAppointment;
 import com.example.mealway.data.repository.MealRepository;
 import com.example.mealway.screen.plan.view.PlanView;
+import com.example.mealway.utils.CalendarHelper;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 
@@ -46,6 +47,13 @@ public class PlanPresenterImpl implements PlanPresenter {
                         () -> {
                             view.hideLoading();
                             view.showMessage("Removed from plan");
+                            if (view.getContext() != null) {
+                                CalendarHelper.deleteFromCalendar(
+                                    view.getContext(), 
+                                    "Meal: " + appointment.getMealName(), 
+                                    appointment.getDateTimestamp()
+                                );
+                            }
                         },
                         throwable -> {
                             view.hideLoading();

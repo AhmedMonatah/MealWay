@@ -8,4 +8,5 @@ public interface PlanView {
     void showMessage(String message);
     void showLoading();
     void hideLoading();
+    android.content.Context getContext();
 }

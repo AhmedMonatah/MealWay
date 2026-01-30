@@ -160,6 +160,16 @@ public class ProfileFragment extends Fragment implements ProfileView, ProfileUIL
                 () -> presenter.logout());
     }
 
+    @Override
+    public void showOfflineDialog(String title, String message) {
+        AlertUtils.showConfirmation(
+                requireContext(),
+                title,
+                message,
+                "Try Again",
+                () -> presenter.logout()
+        );
+    }
 
     @Override
     public void onDestroy() {

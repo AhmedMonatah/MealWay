@@ -1,5 +1,6 @@
 package com.example.mealway.screen.homecontent.view;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -141,7 +142,7 @@ public class HomeContentFragment extends Fragment implements HomeContentView {
     }
 
     @Override
-    public android.content.Context getContext() {
+    public Context getContext() {
         return super.getContext();
     }
 

@@ -17,6 +17,7 @@
     <color name="warning_orange">#FF9800</color>
     <color name="error_red">#F44336</color>
     <color name="success_green">#4CAF50</color>
+    <color name="calendar_event_color">#FF5722</color>
     <color name="blue_dark_signup">#0A2E5C</color>
     <color name="black_soft">#212121</color>
     <color name="recycle_for_delete_item">#D32F2F</color>
@@ -75,4 +76,5 @@
     <color name="filter_amber">#FFC107</color>
     <color name="filter_indigo">#3F51B5</color>
     <color name="card_image_overlay">#11000000</color>
+    <color name="calendar_selection_color">#FF9800</color>
 </resources>

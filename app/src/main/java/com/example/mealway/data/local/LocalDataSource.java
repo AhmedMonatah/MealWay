@@ -52,7 +52,6 @@ public class LocalDataSource {
         return sharedPreferences.getBoolean(KEY_ONBOARDING_COMPLETED, false);
     }
 
-    // MealDao wrappers
     public Observable<List<Meal>> getAllFavMeals() {
         return mealDao.getAllFavMeals();
     }
