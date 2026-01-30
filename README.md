@@ -9,24 +9,39 @@
 
 <h1 align="center">MealWay</h1>
 
-
-
-**MealWay** is an Android mobile application that helps users plan their weekly meals easily and efficiently.  
-It allows users to explore meals by categories, countries, and ingredients, save favorites for offline use, and plan meals for the current week — all powered by **TheMealDB API**.
+<p align="center">
+  <b>Plan your meals smarter, easier, and offline-ready 🍽️</b>
+</p>
 
 ---
 
-## 📱 Screenshots
+## 📱 About MealWay
 
-### Light Mode
-| Home | Search | Meal Details |
-|------|--------|--------------|
-| ![Home](https://github.com/user-attachments/assets/4a0985f1-ec54-4eaf-9cec-8b64aedaac67) | ![Search](https://github.com/user-attachments/assets/13bf1fb2-0573-4773-a147-9265fb8871fe) | ![MealDetails](https://github.com/user-attachments/assets/48b8ed14-7a54-401c-8597-224185cb0128) |
+**MealWay** is an Android application that helps users plan their weekly meals easily and efficiently.  
+Users can explore meals by categories, countries, and ingredients, save favorites for offline use, and plan meals for the current week — all powered by **TheMealDB API**.
 
-| Favorites | Weekly Plan | Profile |
-|-----------|------------|---------|
-| ![MyFav](https://github.com/user-attachments/assets/9d403b13-0caf-4887-95ed-3f0ea7739748) | ![Appointment](https://github.com/user-attachments/assets/3ee2a3fa-d395-4ee9-8dc8-85400bd12733) | ![Profile](https://github.com/user-attachments/assets/6d90e062-26ca-44fb-b1c3-9a81747ee077) |
-### Dark Mode
+---
+
+## 📸 Screenshots
+
+### 🚀 Onboarding
+
+<table>
+  <tr>
+    <th>Onboarding 1</th>
+    <th>Onboarding 2</th>
+    <th>Onboarding 3</th>
+  </tr>
+  <tr>
+    <td><img src="https://github.com/user-attachments/assets/b7f1c4ed-bcb9-4e18-983c-051f4e737708" width="300"/></td>
+    <td><img src="https://github.com/user-attachments/assets/12e9f7a0-b586-49ee-8f35-b76c00a2d6ef" width="300"/></td>
+    <td><img src="https://github.com/user-attachments/assets/546a8a40-4edd-4977-a575-41f98e5f1f55" width="300"/></td>
+  </tr>
+</table>
+
+---
+
+### ☀️ Light Mode
 
 <table>
   <tr>
@@ -35,15 +50,9 @@ It allows users to explore meals by categories, countries, and ingredients, save
     <th>Meal Details</th>
   </tr>
   <tr>
-    <td>
-      <img src="https://github.com/user-attachments/assets/adf25b95-70bc-49e7-afb4-b7e35124177e" width="320" />
-    </td>
-    <td>
-      <img src="https://github.com/user-attachments/assets/0e1dcdc7-3230-4516-8710-14f42e50cac0" width="320" />
-    </td>
-    <td>
-      <img src="https://github.com/user-attachments/assets/c3316e94-c4b8-4999-9165-56efef79c8a2" width="320" />
-    </td>
+    <td><img src="https://github.com/user-attachments/assets/25a4f33c-69b5-4578-bb5c-417ad24c405e" width="300"/></td>
+    <td><img src="https://github.com/user-attachments/assets/96925e9e-6bf5-4e6e-90a7-f29924149f56" width="300"/></td>
+    <td><img src="https://github.com/user-attachments/assets/d09e162e-5a0e-4c08-8da8-2f7651bda44c" width="300"/></td>
   </tr>
 </table>
 
@@ -54,20 +63,41 @@ It allows users to explore meals by categories, countries, and ingredients, save
     <th>Profile</th>
   </tr>
   <tr>
-    <td>
-      <img src="https://github.com/user-attachments/assets/1bb16b66-6750-4bdf-b577-b3ac4138fca6" width="320" />
-    </td>
-    <td>
-      <img src="https://github.com/user-attachments/assets/779742d5-fdb2-4c2a-a200-0bb2f0e92d07" width="320" />
-    </td>
-    <td>
-      <img src="https://github.com/user-attachments/assets/a68ba680-9743-4e45-80bd-55639a0decec" width="320" />
-    </td>
+    <td><img src="https://github.com/user-attachments/assets/ccd843ba-273c-42e9-a053-de2b262555fd" width="300"/></td>
+    <td><img src="https://github.com/user-attachments/assets/f9b2742e-e47c-4214-92cf-d01f322e9415" width="300"/></td>
+    <td><img src="https://github.com/user-attachments/assets/406dad14-c575-481d-a006-02c77dbc763d" width="300"/></td>
   </tr>
 </table>
 
+---
 
+### 🌙 Dark Mode
 
+<table>
+  <tr>
+    <th>Home</th>
+    <th>Search</th>
+    <th>Meal Details</th>
+  </tr>
+  <tr>
+    <td><img src="https://github.com/user-attachments/assets/65d89c6a-e3d2-4731-9d9f-9ceb43ea55a7" width="300"/></td>
+    <td><img src="https://github.com/user-attachments/assets/4d3daecd-1804-489e-8c70-c5e78aa301e7" width="300"/></td>
+    <td><img src="https://github.com/user-attachments/assets/ae9e27d7-0032-49b1-a90a-911159de823f" width="300"/></td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <th>Favorites</th>
+    <th>Weekly Plan</th>
+    <th>Profile</th>
+  </tr>
+  <tr>
+    <td><img src="https://github.com/user-attachments/assets/ce611dff-91cc-4805-bb51-c5b8db412dd9" width="300"/></td>
+    <td><img src="https://github.com/user-attachments/assets/fbccf72a-e3aa-4590-9e41-2edc6dd068c9" width="300"/></td>
+    <td><img src="https://github.com/user-attachments/assets/5164ce79-0cfd-455c-af6e-f7c736fc1200" width="300"/></td>
+  </tr>
+</table>
 
 
 ---
