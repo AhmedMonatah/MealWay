@@ -12,5 +12,6 @@ public interface MealDetailsView {
     void hideLoading();
     void navigateToLogin();
     void showDatePicker();
+    void addToCalendar(Meal meal, long timestamp);
 
 }

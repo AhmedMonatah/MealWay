@@ -35,6 +35,14 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.mealway.utils.AlertUtils;
+import com.example.mealway.utils.CalendarHelper;
+import android.Manifest;
+import android.content.pm.PackageManager;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.core.app.ActivityCompat;
 
 public class MealDetailsFragment extends Fragment implements MealDetailsView, MealDetailsUIListener {
 
@@ -52,6 +60,20 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView, Me
     private CardView cardVideo;
     private Meal currentMeal;
     private boolean isFavorite = false;
+    private static final int CALENDAR_PERMISSION_CODE = 100;
+    private Meal pendingMeal;
+    private long pendingTimestamp;
+
+    private final ActivityResultLauncher<String[]> requestPermissionsLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), result -> {
+                Boolean writeGranted = result.getOrDefault(Manifest.permission.WRITE_CALENDAR, false);
+                Boolean readGranted = result.getOrDefault(Manifest.permission.READ_CALENDAR, false);
+                if (writeGranted != null && writeGranted && readGranted != null && readGranted) {
+                    performSaveToCalendar();
+                } else {
+                    showError("Calendar permission is required to save meals to your calendar.");
+                }
+            });
 
     @Nullable
     @Override
@@ -115,17 +137,19 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView, Me
     @Override
     public void showDatePicker() {
         if (currentMeal == null) return;
-
         final Calendar c = Calendar.getInstance();
         int year = c.get(Calendar.YEAR);
         int month = c.get(Calendar.MONTH);
         int day = c.get(Calendar.DAY_OF_MONTH);
-
         DatePickerDialog datePickerDialog = new android.app.DatePickerDialog(requireContext(),
                 R.style.CustomPickerTheme,
                 (view, year1, monthOfYear, dayOfMonth) -> {
                     Calendar selectedDate = Calendar.getInstance();
                     selectedDate.set(year1, monthOfYear, dayOfMonth);
+                    selectedDate.set(Calendar.HOUR_OF_DAY, 0);
+                    selectedDate.set(Calendar.MINUTE, 0);
+                    selectedDate.set(Calendar.SECOND, 0);
+                    selectedDate.set(Calendar.MILLISECOND, 0);
                     presenter.addAppointment(currentMeal, selectedDate.getTimeInMillis());
                 }, year, month, day);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -135,9 +159,33 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView, Me
         datePickerDialog.show();
     }
 
+    @Override
+    public void addToCalendar(Meal meal, long timestamp) {
+        this.pendingMeal = meal;
+        this.pendingTimestamp = timestamp;
+
+        if (!CalendarHelper.hasPermissions(requireContext())) {
+            requestPermissionsLauncher.launch(new String[]{
+                    Manifest.permission.WRITE_CALENDAR,
+                    Manifest.permission.READ_CALENDAR
+            });
+        } else {
+            performSaveToCalendar();
+        }
+    }
+
+    private void performSaveToCalendar() {
+        if (pendingMeal == null) return;
+        
+        boolean success = CalendarHelper.saveToCalendar(
+            requireContext(), 
+            "Meal: " + pendingMeal.getStrMeal(), 
+            "Recipe Instructions: " + pendingMeal.getStrInstructions(), 
+            pendingTimestamp
+        );
 
 
-
+    }
 
     @Override
     public void onDestroy() {
@@ -193,7 +241,7 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView, Me
     @Override
     public void showMessage(String message) {
         if (isAdded()) {
-            Toast.makeText(requireContext(), message, android.widget.Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
         }
     }
 

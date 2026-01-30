@@ -10,4 +10,7 @@ public interface ProfileView {
     void hideLoading();
     void navigateToLogin();
     void showMessage(String message);
+
+    void showOfflineDialog(String title, String message);
+
 }

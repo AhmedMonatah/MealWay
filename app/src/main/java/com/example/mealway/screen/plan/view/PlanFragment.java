@@ -1,40 +1,47 @@
 package com.example.mealway.screen.plan.view;
 
+import android.graphics.Color;
+import androidx.core.content.ContextCompat;
+
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.mealway.R;
 import com.example.mealway.data.model.MealAppointment;
 import com.example.mealway.data.repository.MealRepository;
 import com.example.mealway.screen.plan.presenter.PlanPresenter;
 import com.example.mealway.screen.plan.presenter.PlanPresenterImpl;
 import com.example.mealway.utils.AlertUtils;
+import com.example.mealway.utils.CalendarHelper;
 import com.example.mealway.utils.NetworkMonitor;
+import com.prolificinteractive.materialcalendarview.CalendarDay;
+import com.prolificinteractive.materialcalendarview.DayViewDecorator;
+import com.prolificinteractive.materialcalendarview.DayViewFacade;
+import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
+import com.prolificinteractive.materialcalendarview.spans.DotSpan;
+
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
-import java.text.SimpleDateFormat;
 
 public class PlanFragment extends Fragment implements PlanView, PlanAdapter.OnDeleteClickListener {
 
     private PlanPresenter presenter;
     private PlanAdapter adapter;
-    private RecyclerView rvAppointments, rvCalendar;
-    private TextView tvMonthName;
+    private RecyclerView rvAppointments;
+    private MaterialCalendarView calendarView;
     private View layoutEmptyState;
     private ProgressBar progressBar;
-    private CalendarAdapter calendarAdapter;
-    private Calendar currentDisplayMonth = Calendar.getInstance();
     private List<MealAppointment> allAppointments = new ArrayList<>();
     private long selectedDateTimestamp;
 
@@ -44,29 +51,15 @@ public class PlanFragment extends Fragment implements PlanView, PlanAdapter.OnDe
         View view = inflater.inflate(R.layout.fragment_plan, container, false);
 
         rvAppointments = view.findViewById(R.id.rv_appointments);
-        rvCalendar = view.findViewById(R.id.rv_calendar);
+        calendarView = view.findViewById(R.id.calendarView);
         layoutEmptyState = view.findViewById(R.id.layout_empty_state);
-        tvMonthName = view.findViewById(R.id.tv_month_name);
         progressBar = view.findViewById(R.id.progress_bar);
-        
+
         rvAppointments.setLayoutManager(new LinearLayoutManager(requireContext()));
         adapter = new PlanAdapter(requireContext(), this);
         rvAppointments.setAdapter(adapter);
 
         presenter = new PlanPresenterImpl(this, new MealRepository(requireContext()));
-
-        // Setup Grid Calendar (7 columns)
-        rvCalendar.setLayoutManager(new androidx.recyclerview.widget.GridLayoutManager(requireContext(), 7));
-        
-        view.findViewById(R.id.btn_prev_month).setOnClickListener(v -> {
-            currentDisplayMonth.add(Calendar.MONTH, -1);
-            setupCalendar();
-        });
-
-        view.findViewById(R.id.btn_next_month).setOnClickListener(v -> {
-            currentDisplayMonth.add(Calendar.MONTH, 1);
-            setupCalendar();
-        });
 
         setupCalendar();
 
@@ -74,57 +67,15 @@ public class PlanFragment extends Fragment implements PlanView, PlanAdapter.OnDe
     }
 
     private void setupCalendar() {
-        List<Date> days = new ArrayList<>();
-        Calendar cal = (Calendar) currentDisplayMonth.clone();
-        
-        // Month Title
-        SimpleDateFormat monthFormat = new SimpleDateFormat("MMMM yyyy", Locale.getDefault());
-        tvMonthName.setText(monthFormat.format(cal.getTime()));
-
-        // Start from beginning of the month being displayed
-        cal.set(Calendar.DAY_OF_MONTH, 1);
-        
-        // Add "padding" days from previous month to align with day headers
-        int firstDayOfWeek = cal.get(Calendar.DAY_OF_WEEK); // 1 = Sunday, 2 = Monday...
-        cal.add(Calendar.DAY_OF_MONTH, -(firstDayOfWeek - 1));
-
-        // Generate exactly 42 days (6 weeks) to fill the grid
-        for (int i = 0; i < 42; i++) {
-            days.add(cal.getTime());
-            cal.add(Calendar.DAY_OF_MONTH, 1);
-        }
-
-        // Selected date (today by default)
         Calendar today = Calendar.getInstance();
-        today.set(Calendar.HOUR_OF_DAY, 0);
-        today.set(Calendar.MINUTE, 0);
-        today.set(Calendar.SECOND, 0);
-        today.set(Calendar.MILLISECOND, 0);
-        selectedDateTimestamp = today.getTimeInMillis();
-
-        // Extract planned timestamps
-        List<Long> plannedTs = new ArrayList<>();
-        for (MealAppointment appt : allAppointments) {
-            Calendar pCal = Calendar.getInstance();
-            pCal.setTimeInMillis(appt.getDateTimestamp());
-            pCal.set(Calendar.HOUR_OF_DAY, 0);
-            pCal.set(Calendar.MINUTE, 0);
-            pCal.set(Calendar.SECOND, 0);
-            pCal.set(Calendar.MILLISECOND, 0);
-            plannedTs.add(pCal.getTimeInMillis());
-        }
-
-        calendarAdapter = new CalendarAdapter(days, plannedTs, (date, pos) -> {
-            Calendar selected = Calendar.getInstance();
-            selected.setTime(date);
-            selected.set(Calendar.HOUR_OF_DAY, 0);
-            selected.set(Calendar.MINUTE, 0);
-            selected.set(Calendar.SECOND, 0);
-            selected.set(Calendar.MILLISECOND, 0);
-            selectedDateTimestamp = selected.getTimeInMillis();
+        selectedDateTimestamp = CalendarHelper.normalizeTimestamp(today.getTimeInMillis());
+        
+        calendarView.setSelectedDate(today);
+        calendarView.setOnDateChangedListener((widget, date, selected) -> {
+            Calendar cal = date.getCalendar();
+            selectedDateTimestamp = CalendarHelper.normalizeTimestamp(cal.getTimeInMillis());
             filterAppointmentsByDate();
         });
-        rvCalendar.setAdapter(calendarAdapter);
     }
 
     @Override
@@ -136,21 +87,26 @@ public class PlanFragment extends Fragment implements PlanView, PlanAdapter.OnDe
     @Override
     public void showAppointments(List<MealAppointment> appointments) {
         this.allAppointments = appointments != null ? appointments : new ArrayList<>();
-        setupCalendar(); // Re-setup to update markers
+        updateDecorators();
         filterAppointmentsByDate();
+    }
+
+    private void updateDecorators() {
+        calendarView.removeDecorators();
+        HashSet<CalendarDay> dates = new HashSet<>();
+        for (MealAppointment appt : allAppointments) {
+            Calendar cal = Calendar.getInstance();
+            cal.setTimeInMillis(appt.getDateTimestamp());
+            dates.add(CalendarDay.from(cal));
+        }
+        int color = ContextCompat.getColor(requireContext(), R.color.calendar_event_color);
+        calendarView.addDecorator(new EventDecorator(color, dates));
     }
 
     private void filterAppointmentsByDate() {
         List<MealAppointment> filtered = new ArrayList<>();
         for (MealAppointment appointment : allAppointments) {
-            Calendar apptCal = Calendar.getInstance();
-            apptCal.setTimeInMillis(appointment.getDateTimestamp());
-            apptCal.set(Calendar.HOUR_OF_DAY, 0);
-            apptCal.set(Calendar.MINUTE, 0);
-            apptCal.set(Calendar.SECOND, 0);
-            apptCal.set(Calendar.MILLISECOND, 0);
-
-            if (apptCal.getTimeInMillis() == selectedDateTimestamp) {
+            if (CalendarHelper.normalizeTimestamp(appointment.getDateTimestamp()) == selectedDateTimestamp) {
                 filtered.add(appointment);
             }
         }
@@ -204,6 +160,26 @@ public class PlanFragment extends Fragment implements PlanView, PlanAdapter.OnDe
         super.onDestroy();
         if (presenter != null) {
             presenter.onDestroy();
+        }
+    }
+
+    private static class EventDecorator implements DayViewDecorator {
+        private final int color;
+        private final HashSet<CalendarDay> dates;
+
+        public EventDecorator(int color, Collection<CalendarDay> dates) {
+            this.color = color;
+            this.dates = new HashSet<>(dates);
+        }
+
+        @Override
+        public boolean shouldDecorate(CalendarDay day) {
+            return dates.contains(day);
+        }
+
+        @Override
+        public void decorate(DayViewFacade view) {
+            view.addSpan(new DotSpan(5, color));
         }
     }
 }
