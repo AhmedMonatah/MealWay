@@ -66,6 +66,7 @@
 
     <color name="search_bar_bg">#F5F5F5</color>
     <color name="card_surface_color">#FFFFFF</color>
+    <color name="black_search">#FF000000</color>
 
     <color name="filter_orange">#FF9800</color>
     <color name="filter_green">#4CAF50</color>

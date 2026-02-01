@@ -49,6 +49,7 @@
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="@color/black_search"
             app:hintEnabled="false"
             app:startIconDrawable="@android:drawable/ic_menu_search"
             app:startIconTint="@color/MainColor"
@@ -60,6 +61,7 @@
                 android:id="@+id/et_search"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textColor="@color/black_search"
                 android:hint="@string/search_hint"
                 android:imeOptions="actionSearch"
                 android:inputType="text"

@@ -8,6 +8,7 @@ import java.util.List;
 
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class FavoritePresenterImpl implements FavoritePresenter {
 
@@ -24,6 +25,7 @@ public class FavoritePresenterImpl implements FavoritePresenter {
     public void getFavorites() {
         view.showLoading();
         disposables.add(repository.getStoredFavorites()
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         meals -> {
@@ -45,6 +47,7 @@ public class FavoritePresenterImpl implements FavoritePresenter {
         }
         view.showLoading();
         disposables.add(repository.removeFromFavorites(meal)
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         () -> {

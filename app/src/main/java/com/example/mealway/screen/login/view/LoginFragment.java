@@ -1,7 +1,9 @@
 package com.example.mealway.screen.login.view;
 
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -73,7 +75,26 @@ public class LoginFragment extends Fragment implements LoginView {
             usernameLayout.setBackgroundResource(R.drawable.input_field_background);
             passwordLayout.setBackgroundResource(R.drawable.input_field_background);
 
+            loginButton.setEnabled(false);
             presenter.login(email, pass);
+        });
+
+        usernameEditText.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+                usernameLayout.setBackgroundResource(R.drawable.input_field_background);
+                loginButton.setEnabled(true);
+            }
+            @Override public void afterTextChanged(Editable s) {}
+        });
+
+        passwordEditText.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+                passwordLayout.setBackgroundResource(R.drawable.input_field_background);
+                loginButton.setEnabled(true);
+            }
+            @Override public void afterTextChanged(Editable s) {}
         });
 
         skipButton.setOnClickListener(v ->

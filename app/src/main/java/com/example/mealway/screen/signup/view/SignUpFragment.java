@@ -1,6 +1,8 @@
 package com.example.mealway.screen.signup.view;
 
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,7 +62,55 @@ public class SignUpFragment extends Fragment implements SignUpView {
             phoneLayout.setBackgroundResource(R.drawable.input_field_background);
             passwordLayout.setBackgroundResource(R.drawable.input_field_background);
 
+            signUpButton.setEnabled(false);
             presenter.register(email, password, fullName, phone);
+        });
+
+        TextWatcher clearErrorWatcher = new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+                fullNameLayout.setBackgroundResource(R.drawable.input_field_background);
+                emailLayout.setBackgroundResource(R.drawable.input_field_background);
+                phoneLayout.setBackgroundResource(R.drawable.input_field_background);
+                passwordLayout.setBackgroundResource(R.drawable.input_field_background);
+            }
+            @Override public void afterTextChanged(Editable s) {}
+        };
+
+        fullNameEditText.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+                fullNameLayout.setBackgroundResource(R.drawable.input_field_background);
+                signUpButton.setEnabled(true);
+            }
+            @Override public void afterTextChanged(Editable s) {}
+        });
+
+        emailEditText.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+                emailLayout.setBackgroundResource(R.drawable.input_field_background);
+                signUpButton.setEnabled(true);
+            }
+            @Override public void afterTextChanged(Editable s) {}
+        });
+
+        phoneEditText.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+                phoneLayout.setBackgroundResource(R.drawable.input_field_background);
+                signUpButton.setEnabled(true);
+            }
+            @Override public void afterTextChanged(Editable s) {}
+        });
+
+        passwordEditText.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+                passwordLayout.setBackgroundResource(R.drawable.input_field_background);
+                signUpButton.setEnabled(true);
+            }
+            @Override public void afterTextChanged(Editable s) {}
         });
 
         skipButton.setOnClickListener(v ->

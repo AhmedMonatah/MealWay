@@ -115,28 +115,21 @@ public class MealRepository {
                     fullMeal.setFavorite(true);
                     return localDataSource.insertFavMeal(fullMeal)
                             .andThen(firebaseManager.addFavorite(fullMeal));
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
+                });
     }
 
     public Completable removeFromFavorites(Meal meal) {
         return localDataSource.deleteFavMeal(meal)
-                .andThen(firebaseManager.removeFavorite(meal.getIdMeal()))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
+                .andThen(firebaseManager.removeFavorite(meal.getIdMeal()));
     }
 
     public Single<Boolean> isFavorite(String mealId) {
-        return localDataSource.isMealFavorite(mealId)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
+        return localDataSource.isMealFavorite(mealId);
     }
 
     public Observable<List<Meal>> getStoredFavorites() {
-        return localDataSource.getAllFavMeals()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
+        return localDataSource.getAllFavMeals();
+
     }
 
     public Completable addAppointment(Meal meal, MealAppointment appointment) {
@@ -150,21 +143,18 @@ public class MealRepository {
                 )
                 .andThen(localDataSource.insertAppointment(appointment))
                 .andThen(firebaseManager.addAppointment(appointment))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
+                .subscribeOn(Schedulers.io());
     }
 
     public Completable deleteAppointment(MealAppointment appointment) {
         return localDataSource.deleteAppointment(appointment)
                 .andThen(firebaseManager.removeAppointment(appointment.getId()))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
+                .subscribeOn(Schedulers.io());
     }
 
     public Observable<List<MealAppointment>> getAllAppointments() {
         return localDataSource.getAllAppointments()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
+                .subscribeOn(Schedulers.io());
     }
 
     public Single<List<Category>> listCategories() {
@@ -196,7 +186,6 @@ public class MealRepository {
     public Single<List<Ingredient>> listIngredients() {
         return apiService.listIngredients()
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
                 .map(response -> {
                     if (response != null && response.getIngredients() != null) {
                         return response.getIngredients();

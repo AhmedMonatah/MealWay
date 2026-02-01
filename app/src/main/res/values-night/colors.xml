@@ -23,6 +23,7 @@
     <color name="error_red">#EF5350</color>
     <color name="success_green">#66BB6A</color>
     <color name="solid_filter_button_bg">#046AF8</color>
+    <color name="black_search">#FF000000</color>
 
     <color name="light_gray_divider">#2A2D32</color>
     <color name="shimmer_background">#2A2D32</color>

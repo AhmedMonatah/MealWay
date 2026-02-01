@@ -3,6 +3,7 @@ package com.example.mealway.data.remote.firebase;
 import com.example.mealway.data.model.Meal;
 import com.example.mealway.data.model.MealAppointment;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.List;
 import io.reactivex.rxjava3.core.Completable;
@@ -24,7 +25,7 @@ public class FirebaseManager {
         });
     }
 
-    public Single<com.google.firebase.firestore.DocumentSnapshot> getUserProfile(String uid) {
+    public Single<DocumentSnapshot> getUserProfile(String uid) {
         return Single.create(emitter -> {
             db.collection("users").document(uid).get()
                     .addOnSuccessListener(emitter::onSuccess)

@@ -40,6 +40,10 @@ public class LocalDataSource {
         return sharedPreferences.getBoolean(KEY_IS_LOGGED_IN, false);
     }
 
+    public Observable<Boolean> observeLoggedIn() {
+        return createBooleanObservable(KEY_IS_LOGGED_IN, false);
+    }
+
     public void clearLoginState() {
         sharedPreferences.edit().remove(KEY_IS_LOGGED_IN).apply();
     }
@@ -50,6 +54,23 @@ public class LocalDataSource {
 
     public boolean isOnboardingCompleted() {
         return sharedPreferences.getBoolean(KEY_ONBOARDING_COMPLETED, false);
+    }
+
+    public Observable<Boolean> observeOnboardingCompleted() {
+        return createBooleanObservable(KEY_ONBOARDING_COMPLETED, false);
+    }
+
+    private Observable<Boolean> createBooleanObservable(String key, boolean defaultValue) {
+        return Observable.create(emitter -> {
+            SharedPreferences.OnSharedPreferenceChangeListener listener = (prefs, k) -> {
+                if (key.equals(k)) {
+                    emitter.onNext(prefs.getBoolean(key, defaultValue));
+                }
+            };
+            emitter.onNext(sharedPreferences.getBoolean(key, defaultValue));
+            sharedPreferences.registerOnSharedPreferenceChangeListener(listener);
+            emitter.setCancellable(() -> sharedPreferences.unregisterOnSharedPreferenceChangeListener(listener));
+        });
     }
 
     public Observable<List<Meal>> getAllFavMeals() {

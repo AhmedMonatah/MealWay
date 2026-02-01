@@ -39,6 +39,7 @@ public class MealDetailsPresenterImpl implements MealDetailsPresenter {
     @Override
     public void checkFavoriteStatus(String mealId) {
         disposables.add(repository.isFavorite(mealId)
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         isFavorite -> view.showFavoriteStatus(isFavorite),
@@ -50,6 +51,7 @@ public class MealDetailsPresenterImpl implements MealDetailsPresenter {
     public void addToFavorites(Meal meal) {
         view.showLoading();
         disposables.add(repository.addToFavorites(meal)
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         () -> {

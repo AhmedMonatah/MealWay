@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="@android:color/transparent" />
+    <solid android:color="#0DFFFFFF" /> <!-- Subtle dark tint for semi-transparent look -->
     <stroke
-        android:width="1.5dp"
-        android:color="@color/static_white" />
-    <corners android:radius="10dp" />
+        android:width="1dp"
+        android:color="#4DFFFFFF" /> <!-- Faded white stroke -->
+    <corners android:radius="12dp" />
 </shape>
 
