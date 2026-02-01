@@ -6,6 +6,7 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -81,6 +82,11 @@ public class FilterListFragment extends BottomSheetDialogFragment implements Fil
 
         TextInputEditText etSearch = view.findViewById(R.id.et_filter_search_page);
         RecyclerView rvGrid = view.findViewById(R.id.rv_filter_grid);
+        TextView tvTitle = view.findViewById(R.id.tv_filter_title);
+
+        if (title != null) {
+            tvTitle.setText(title);
+        }
 
         adapter = new FilterCardAdapter(new ArrayList<>(), item -> {
             presenter.selectFilter(item);
