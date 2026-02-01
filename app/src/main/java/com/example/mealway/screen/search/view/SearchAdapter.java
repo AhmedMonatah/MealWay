@@ -27,7 +27,7 @@ import java.util.List;
 public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchViewHolder> {
 
     private List<Meal> meals;
-    private final List<Meal> originalMeals; // For internal filtering
+    private final List<Meal> originalMeals;
     private final Context context;
     private final SearchClickListener listener;
 

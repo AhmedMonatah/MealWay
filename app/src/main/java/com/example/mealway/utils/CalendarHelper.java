@@ -9,6 +9,8 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.CalendarContract;
 import androidx.core.content.ContextCompat;
+
+import java.util.Calendar;
 import java.util.TimeZone;
 
 public class CalendarHelper {
@@ -47,7 +49,7 @@ public class CalendarHelper {
     }
 
     private static long getPrimaryCalendarId(ContentResolver cr) {
-        long calID = 1; // Default fallback
+        long calID = 1;
         String[] projection = new String[]{CalendarContract.Calendars._ID, CalendarContract.Calendars.IS_PRIMARY};
         try (Cursor cur = cr.query(CalendarContract.Calendars.CONTENT_URI, projection, null, null, null)) {
             if (cur != null) {
@@ -82,7 +84,7 @@ public class CalendarHelper {
     }
 
     public static long normalizeTimestamp(long timestamp) {
-        java.util.Calendar cal = java.util.Calendar.getInstance();
+        Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(timestamp);
         cal.set(java.util.Calendar.HOUR_OF_DAY, 0);
         cal.set(java.util.Calendar.MINUTE, 0);

@@ -3,10 +3,9 @@ package com.example.mealway.data.local;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.example.mealway.data.local.AppDatabase;
-import com.example.mealway.data.local.MealDao;
 import com.example.mealway.data.model.Meal;
 import com.example.mealway.data.model.MealAppointment;
+import com.f2prateek.rx.preferences2.RxSharedPreferences;
 
 import java.util.List;
 
@@ -15,16 +14,20 @@ import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
 
 public class LocalDataSource {
+
     private static final String PREF_NAME = "MealWayPrefs";
     private static final String KEY_IS_LOGGED_IN = "is_logged_in";
     private static final String KEY_ONBOARDING_COMPLETED = "OnboardingCompleted";
-    private final SharedPreferences sharedPreferences;
+
     private final Context context;
     private final MealDao mealDao;
+    private final RxSharedPreferences rxPrefs;
 
     public LocalDataSource(Context context) {
         this.context = context;
-        this.sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences prefs =
+                context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        this.rxPrefs = RxSharedPreferences.create(prefs);
         this.mealDao = AppDatabase.getInstance(context).mealDao();
     }
 
@@ -32,46 +35,38 @@ public class LocalDataSource {
         return context;
     }
 
+
     public void saveLoginState(boolean isLoggedIn) {
-        sharedPreferences.edit().putBoolean(KEY_IS_LOGGED_IN, isLoggedIn).apply();
+        rxPrefs.getBoolean(KEY_IS_LOGGED_IN).set(isLoggedIn);
     }
 
     public boolean isLoggedIn() {
-        return sharedPreferences.getBoolean(KEY_IS_LOGGED_IN, false);
+        return rxPrefs.getBoolean(KEY_IS_LOGGED_IN, false).get();
     }
 
-    public Observable<Boolean> observeLoggedIn() {
-        return createBooleanObservable(KEY_IS_LOGGED_IN, false);
+    public io.reactivex.Observable<Boolean> observeLoggedIn() {
+        return rxPrefs.getBoolean(KEY_IS_LOGGED_IN, false)
+                .asObservable();
     }
 
     public void clearLoginState() {
-        sharedPreferences.edit().remove(KEY_IS_LOGGED_IN).apply();
+        rxPrefs.getBoolean(KEY_IS_LOGGED_IN).delete();
     }
 
+
     public void saveOnboardingState(boolean isCompleted) {
-        sharedPreferences.edit().putBoolean(KEY_ONBOARDING_COMPLETED, isCompleted).apply();
+        rxPrefs.getBoolean(KEY_ONBOARDING_COMPLETED).set(isCompleted);
     }
 
     public boolean isOnboardingCompleted() {
-        return sharedPreferences.getBoolean(KEY_ONBOARDING_COMPLETED, false);
+        return rxPrefs.getBoolean(KEY_ONBOARDING_COMPLETED, false).get();
     }
 
-    public Observable<Boolean> observeOnboardingCompleted() {
-        return createBooleanObservable(KEY_ONBOARDING_COMPLETED, false);
+    public io.reactivex.Observable<Boolean> observeOnboardingCompleted() {
+        return rxPrefs.getBoolean(KEY_ONBOARDING_COMPLETED, false)
+                .asObservable();
     }
 
-    private Observable<Boolean> createBooleanObservable(String key, boolean defaultValue) {
-        return Observable.create(emitter -> {
-            SharedPreferences.OnSharedPreferenceChangeListener listener = (prefs, k) -> {
-                if (key.equals(k)) {
-                    emitter.onNext(prefs.getBoolean(key, defaultValue));
-                }
-            };
-            emitter.onNext(sharedPreferences.getBoolean(key, defaultValue));
-            sharedPreferences.registerOnSharedPreferenceChangeListener(listener);
-            emitter.setCancellable(() -> sharedPreferences.unregisterOnSharedPreferenceChangeListener(listener));
-        });
-    }
 
     public Observable<List<Meal>> getAllFavMeals() {
         return mealDao.getAllFavMeals();
@@ -93,6 +88,11 @@ public class LocalDataSource {
         return mealDao.getFavMealById(id);
     }
 
+    public Completable clearAllFavorites() {
+        return mealDao.clearAllFavorites();
+    }
+
+
     public Observable<List<MealAppointment>> getAllAppointments() {
         return mealDao.getAllAppointments();
     }
@@ -111,10 +111,6 @@ public class LocalDataSource {
 
     public Completable deleteAppointment(MealAppointment appointment) {
         return mealDao.deleteAppointment(appointment);
-    }
-
-    public Completable clearAllFavorites() {
-        return mealDao.clearAllFavorites();
     }
 
     public Completable clearAllAppointments() {
