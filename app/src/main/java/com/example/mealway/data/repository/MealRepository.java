@@ -15,6 +15,7 @@ import com.example.mealway.data.model.AreaResponse;
 import com.example.mealway.data.model.Ingredient;
 import com.example.mealway.data.remote.api.MealApiService;
 import com.example.mealway.data.remote.firebase.FirebaseManager;
+import com.example.mealway.data.remote.network.RemoteDataSource;
 import com.example.mealway.data.remote.network.RetrofitClient;
 import com.example.mealway.utils.NetworkMonitor;
 
@@ -31,7 +32,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class MealRepository {
-    private final MealApiService apiService;
+    private final RemoteDataSource remoteDataSource;
     private final LocalDataSource localDataSource;
     private final FirebaseManager firebaseManager;
     private static Meal cachedDailyMeal;
@@ -39,7 +40,7 @@ public class MealRepository {
 
     public MealRepository(Context context) {
         this.context = context;
-        this.apiService = RetrofitClient.getClient().create(MealApiService.class);
+        this.remoteDataSource = new RemoteDataSource();
         this.localDataSource = new LocalDataSource(context);
         this.firebaseManager = new FirebaseManager();
     }
@@ -53,7 +54,7 @@ public class MealRepository {
             return Single.just(cachedDailyMeal);
         }
 
-        return apiService.getRandomMeal()
+        return remoteDataSource.getRandomMeal()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .map(response -> {
@@ -67,7 +68,7 @@ public class MealRepository {
     }
 
     public Single<List<Meal>> getMealsByIngredient(String ingredient) {
-        return apiService.getMealsByIngredient(ingredient)
+        return remoteDataSource.getMealsByIngredient(ingredient)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .map(response -> {
@@ -80,7 +81,7 @@ public class MealRepository {
     }
 
     public Single<Meal> getMealById(String id) {
-        return apiService.getMealById(id)
+        return remoteDataSource.getMealById(id)
                 .subscribeOn(Schedulers.io())
                 .flatMap(response -> {
                     if (response != null && response.getMeals() != null && !response.getMeals().isEmpty()) {
@@ -97,7 +98,7 @@ public class MealRepository {
         if (meal.getStrInstructions() != null && !meal.getStrInstructions().isEmpty()) {
             return Single.just(meal);
         } else {
-            return apiService.getMealById(meal.getIdMeal())
+            return remoteDataSource.getMealById(meal.getIdMeal())
                     .subscribeOn(Schedulers.io())
                     .map(response -> {
                         if (response != null && response.getMeals() != null && !response.getMeals().isEmpty()) {
@@ -158,7 +159,7 @@ public class MealRepository {
     }
 
     public Single<List<Category>> listCategories() {
-        return apiService.listCategories()
+        return remoteDataSource.listCategories()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .map(response -> {
@@ -171,7 +172,7 @@ public class MealRepository {
     }
 
     public Single<List<Area>> listAreas() {
-        return apiService.listAreas()
+        return remoteDataSource.listAreas()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .map(response -> {
@@ -184,7 +185,7 @@ public class MealRepository {
     }
 
     public Single<List<Ingredient>> listIngredients() {
-        return apiService.listIngredients()
+        return remoteDataSource.listIngredients()
                 .subscribeOn(Schedulers.io())
                 .map(response -> {
                     if (response != null && response.getIngredients() != null) {
@@ -206,22 +207,22 @@ public class MealRepository {
     }
 
     public Observable<List<Meal>> searchMealsByFirstLetterObservable(String firstLetter) {
-        return apiService.searchMealsByFirstLetter(firstLetter)
+        return remoteDataSource.searchMealsByFirstLetter(firstLetter)
                 .compose(mealsTransformer());
     }
 
     public Observable<List<Meal>> filterByCategoryObservable(String category) {
-        return apiService.filterByCategory(category)
+        return remoteDataSource.filterByCategory(category)
                 .compose(mealsTransformer());
     }
 
     public Observable<List<Meal>> filterByAreaObservable(String area) {
-        return apiService.filterByArea(area)
+        return remoteDataSource.filterByArea(area)
                 .compose(mealsTransformer());
     }
 
     public Observable<List<Meal>> getMealsByIngredientObservable(String ingredient) {
-        return apiService.getMealsByIngredient(ingredient)
+        return remoteDataSource.getMealsByIngredient(ingredient)
                 .toObservable()
                 .compose(mealsTransformer());
     }

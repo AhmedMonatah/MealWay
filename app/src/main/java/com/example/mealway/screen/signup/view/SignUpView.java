@@ -7,4 +7,6 @@ public interface SignUpView {
     void showPasswordError(String message);
     void showNameError();
     void showPhoneError();
+    void showLoading();
+    void hideLoading();
 }

@@ -46,14 +46,17 @@ public class SignUpPresenterImpl implements SignUpPresenter {
 
         if (hasError) return;
 
+        view.showLoading();
         repository.register(email, password, fullName, phone, new AuthCallback() {
             @Override
             public void onSuccess() {
+                view.hideLoading();
                 view.showSuccess();
             }
 
             @Override
             public void onFailure(String message) {
+                view.hideLoading();
                 view.showError(message);
             }
         });

@@ -123,7 +123,6 @@ public class SignUpFragment extends Fragment implements SignUpView {
     @Override
     public void showSuccess() {
         if (isAdded()) {
-            progressBar.setVisibility(View.GONE);
             signUpButton.setEnabled(true);
             if (getContext() != null) {
                 Toast.makeText(getContext(), getString(R.string.registration_successful), Toast.LENGTH_SHORT).show();
@@ -135,7 +134,6 @@ public class SignUpFragment extends Fragment implements SignUpView {
     @Override
     public void showError(String message) {
         if (isAdded()) {
-            progressBar.setVisibility(View.GONE);
             signUpButton.setEnabled(true);
             Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
         }
@@ -165,5 +163,19 @@ public class SignUpFragment extends Fragment implements SignUpView {
     @Override
     public void showPhoneError() {
         phoneLayout.setBackgroundResource(R.drawable.input_field_error_background);
+    }
+
+    @Override
+    public void showLoading() {
+        if (progressBar != null) {
+            progressBar.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    public void hideLoading() {
+        if (progressBar != null) {
+            progressBar.setVisibility(View.GONE);
+        }
     }
 }
